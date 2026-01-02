@@ -1,0 +1,1017 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Character Viewer</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* ================= BACKGROUND WITH DARK OVERLAY ================= */
+body {
+    height: 100vh;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: white;
+    background:
+        linear-gradient(rgba(0,0,0,0.65), rgba(0,0,0,0.65)),
+        url("images/bg.png") center / cover no-repeat;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+/* ================= ANIMATED BACKGROUND OVERLAY ================= */
+body::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), 
+                rgba(255,255,255,0.03) 0%, 
+                transparent 50%);
+    pointer-events: none;
+    z-index: 1;
+}
+
+/* ================= SWAN HOME BUTTON ================= */
+.swan-home-button {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    font-size: 48px;
+    cursor: pointer;
+    z-index: 100;
+    transition: all 0.3s ease;
+    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.5));
+    animation: float 3s ease-in-out infinite;
+}
+
+.swan-home-button:hover {
+    transform: scale(1.2) rotate(-10deg);
+    filter: drop-shadow(0 6px 12px rgba(255,255,255,0.3));
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+}
+
+/* ================= TOP TABS ================= */
+.tabs {
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+    padding: 25px;
+    z-index: 2;
+    position: relative;
+}
+
+.tab {
+    padding: 12px 36px;
+    border-radius: 40px;
+    background: rgba(0,0,0,0.7);
+    cursor: pointer;
+    font-weight: bold;
+    letter-spacing: 1px;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+    position: relative;
+    overflow: hidden;
+}
+
+.tab::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.1);
+    transform: translate(-50%, -50%);
+    transition: width 0.4s, height 0.4s;
+}
+
+.tab:hover::before {
+    width: 300px;
+    height: 300px;
+}
+
+.tab:hover {
+    background: rgba(255,255,255,0.15);
+    border-color: rgba(255,255,255,0.3);
+    transform: translateY(-2px);
+}
+
+.tab.active {
+    background: white;
+    color: black;
+    box-shadow: 0 4px 20px rgba(255,255,255,0.3);
+}
+
+/* ================= MAIN CONTENT ================= */
+.content {
+    flex: 1;
+    min-height: 100vh;
+    display: none;
+    flex-direction: column;
+    padding: 20px 60px 40px;
+    position: relative;
+    z-index: 2;
+    opacity: 0;
+    animation: fadeIn 0.5s ease forwards;
+    overflow-y: auto;
+}
+
+.content.active {
+    display: flex;
+}
+
+@keyframes fadeIn {
+    to { opacity: 1; }
+}
+
+/* Custom Scrollbar */
+.content::-webkit-scrollbar {
+    width: 10px;
+}
+
+.content::-webkit-scrollbar-track {
+    background: rgba(0,0,0,0.3);
+    border-radius: 10px;
+}
+
+.content::-webkit-scrollbar-thumb {
+    background: var(--faction-color, rgba(107,63,160,0.6));
+    border-radius: 10px;
+}
+
+.content::-webkit-scrollbar-thumb:hover {
+    background: var(--faction-color, rgba(107,63,160,0.9));
+}
+
+/* ================= TOP SECTION (Character Info) ================= */
+.top-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 0 20px;
+    margin-bottom: 20px;
+    animation: slideInTop 0.6s ease;
+}
+
+@keyframes slideInTop {
+    from {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.character-info {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.faction-logo {
+    background: var(--faction-color, black);
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: bold;
+    width: fit-content;
+    letter-spacing: 2px;
+    box-shadow: 0 4px 15px var(--faction-glow, rgba(0,0,0,0.5));
+    transition: all 0.3s ease;
+    border: 2px solid var(--faction-border, rgba(255,255,255,0.2));
+}
+
+.faction-logo:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 25px var(--faction-glow, rgba(0,0,0,0.7));
+}
+
+.faction-name {
+    font-size: 15px;
+    opacity: 0.9;
+    letter-spacing: 1px;
+    font-weight: 500;
+}
+
+.char-name {
+    background: var(--faction-color, #6b3fa0);
+    padding: 12px 26px;
+    border-radius: 14px;
+    font-weight: bold;
+    letter-spacing: 1px;
+    font-size: 24px;
+    box-shadow: 0 4px 15px var(--faction-glow, rgba(107,63,160,0.5));
+    transition: all 0.3s ease;
+    border: 2px solid var(--faction-border, rgba(255,255,255,0.3));
+}
+
+.char-name:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 25px var(--faction-glow, rgba(107,63,160,0.7));
+}
+
+/* ================= BANNER CHARACTER IMAGE ================= */
+.character-banner-container {
+    position: relative;
+    width: 100%;
+    height: calc(100vh - 260px); /* fills most of screen */
+    min-height: 420px;
+    max-height: 720px;
+    margin-bottom: 20px;
+    overflow: hidden;
+    border-radius: 24px;
+    box-shadow: 0 15px 60px rgba(0,0,0,0.85);
+    border: 3px solid var(--faction-border, rgba(255,255,255,0.2));
+    background: linear-gradient(
+        135deg,
+        rgba(0,0,0,0.95) 0%,
+        var(--faction-glow, rgba(107,63,160,0.25)) 50%,
+        rgba(0,0,0,0.95) 100%
+    );
+}
+
+.character-banner-container::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(
+        ellipse at center,
+        transparent 0%,
+        var(--faction-glow, rgba(107,63,160,0.15)) 100%
+    );
+    z-index: 1;
+    pointer-events: none;
+    animation: bannerPulse 4s ease-in-out infinite;
+}
+
+@keyframes bannerPulse {
+    0%, 100% { opacity: 0.3; }
+    50% { opacity: 0.6; }
+}
+
+.character-image {
+     width: 100%;
+    height: 100%;
+    object-fit: cover; /* ⬅️ important */
+    object-position: center top;
+    transform: scale(1.08); /* subtle zoom */
+    transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    z-index: 2;
+    filter:
+        drop-shadow(0 0 25px var(--faction-glow, rgba(107,63,160,0.6)))
+        brightness(1.05);
+}
+
+.character-image.changing {
+    opacity: 0;
+    transform: scale(1.05);
+}
+
+/* ================= NAVIGATION CONTROLS ================= */
+.navigation-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+    margin-bottom: 20px;
+}
+
+.navigation {
+    display: flex;
+    gap: 15px;
+}
+
+.arrow {
+    background: rgba(255,255,255,0.9);
+    color: black;
+    font-size: 24px;
+    padding: 12px 20px;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: 2px solid transparent;
+    font-weight: bold;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+}
+
+.arrow:hover {
+    background: white;
+    transform: scale(1.1);
+    box-shadow: 0 6px 25px var(--faction-glow, rgba(255,255,255,0.5));
+    border-color: var(--faction-color, white);
+}
+
+.arrow:active {
+    transform: scale(0.95);
+}
+
+/* ================= RIGHT SIDE ================= */
+.right {
+    max-width: 480px;
+    animation: slideInRight 0.6s ease;
+}
+
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.comic-title {
+    font-size: 28px;
+    margin-bottom: 15px;
+    font-weight: 700;
+    text-shadow: 2px 2px 10px rgba(0,0,0,0.5);
+    letter-spacing: 1px;
+}
+
+.desc-box {
+    background: rgba(0,0,0,0.85);
+    padding: 24px;
+    border-radius: 18px;
+    box-shadow: 0 0 40px rgba(0,0,0,0.6);
+    border: 2px solid var(--faction-border, rgba(255,255,255,0.1));
+    transition: all 0.3s ease;
+}
+
+.desc-box:hover {
+    border-color: var(--faction-color, rgba(255,255,255,0.3));
+    box-shadow: 0 0 50px var(--faction-glow, rgba(0,0,0,0.8));
+}
+
+.desc-title {
+    font-weight: bold;
+    margin-bottom: 12px;
+    letter-spacing: 1px;
+    font-size: 18px;
+    color: var(--faction-color, white);
+}
+
+.desc-text {
+    line-height: 1.7;
+    opacity: 0.9;
+    margin-bottom: 20px;
+}
+
+/* ================= CHARACTER STATS ================= */
+.stats-container {
+    margin-top: 0;
+    padding-top: 0;
+}
+
+.stat-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    padding: 8px 0;
+}
+
+.stat-label {
+    font-weight: 600;
+    font-size: 14px;
+    letter-spacing: 0.5px;
+    color: var(--faction-color, #aaa);
+}
+
+.stat-value {
+    font-weight: bold;
+    font-size: 16px;
+    color: white;
+    padding: 4px 12px;
+    background: var(--faction-color, rgba(107,63,160,0.3));
+    border-radius: 8px;
+    min-width: 60px;
+    text-align: center;
+    box-shadow: 0 2px 10px var(--faction-glow, rgba(0,0,0,0.3));
+}
+
+/* ================= CHARACTER SELECTOR ================= */
+.character-selector {
+    display: flex;
+    gap: 15px;
+    margin-top: 20px;
+    flex-wrap: wrap;
+}
+
+.char-thumb {
+    width: 60px;
+    height: 60px;
+    border-radius: 12px;
+    cursor: pointer;
+    border: 3px solid transparent;
+    transition: all 0.3s ease;
+    object-fit: cover;
+    opacity: 0.6;
+    filter: grayscale(50%);
+}
+
+.char-thumb:hover {
+    opacity: 0.9;
+    transform: scale(1.1) translateY(-3px);
+    filter: grayscale(0%);
+}
+
+.char-thumb.active {
+    border-color: var(--faction-color, white);
+    opacity: 1;
+    filter: grayscale(0%);
+    box-shadow: 0 4px 20px var(--faction-glow, rgba(255,255,255,0.5));
+}
+
+/* ================= OUTFIT INDICATOR ================= */
+.outfit-indicator {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.outfit-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.4);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+.outfit-dot:hover {
+    background: rgba(255,255,255,0.7);
+    transform: scale(1.3);
+    border-color: rgba(255,255,255,0.5);
+}
+
+.outfit-dot.active {
+    background: var(--faction-color, white);
+    box-shadow: 0 0 15px var(--faction-glow, rgba(255,255,255,0.8));
+    transform: scale(1.4);
+    border-color: var(--faction-color, white);
+}
+
+/* ================= BOTTOM SECTION (Description) ================= */
+.bottom-section {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+    padding: 0 20px;
+    margin-bottom: 30px;
+}
+
+.comic-info, .character-details {
+    animation: slideInBottom 0.6s ease;
+}
+
+@keyframes slideInBottom {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ================= RESPONSIVE ================= */
+@media (max-width: 1024px) {
+    .content {
+        padding: 20px 30px;
+    }
+    
+    .top-section {
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .character-banner-container {
+        height: 300px;
+    }
+    
+    .bottom-section {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+}
+
+@media (max-width: 768px) {
+    .character-banner-container {
+        height: 55vh;
+        min-height: 300px;
+    }
+    
+    .char-name {
+        font-size: 20px;
+    }
+    .character-image {
+        object-position: center;
+        transform: scale(1);
+    }
+    
+    .swan-home-button {
+        font-size: 36px;
+        top: 15px;
+        left: 15px;
+    }
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- ================= SWAN ICON (HOME BUTTON) ================= -->
+<a href="home.html" class="swan-home-button" title="Home">
+    🦢
+</a>
+
+<!-- ================= TABS ================= -->
+<div class="tabs">
+    
+    <div class="tab active" onclick="switchTab('comics', this)">Comics</div>
+    <div class="tab" onclick="switchTab('factions', this)">Factions</div>
+</div>
+
+<!-- ================= COMICS TAB ================= -->
+<div class="content active" id="comics">
+    <!-- Top Section: Character Info -->
+    <div class="top-section">
+        <div class="character-info">
+            <div class="faction-logo" id="factionLogo">FACTION LOGO</div>
+            <div class="faction-name" id="factionName">Faction Name</div>
+        </div>
+        <div class="char-name" id="charName">CHAR NAME</div>
+    </div>
+
+    <!-- Banner Character Image -->
+    <div class="character-banner-container">
+        <img id="characterImg" class="character-image" src="images/HELSIE TEST.png" alt="Character">
+    </div>
+
+    <!-- Navigation Controls -->
+    <div class="navigation-controls">
+        <div class="navigation">
+            <div class="arrow" onclick="changeOutfit(-1)">←</div>
+            <div class="arrow" onclick="changeOutfit(1)">→</div>
+        </div>
+        <div class="outfit-indicator" id="outfitIndicator"></div>
+        <div class="character-selector" id="characterSelector"></div>
+    </div>
+
+    <!-- Bottom Section: Description & Stats -->
+    <div class="bottom-section">
+        <div class="comic-info">
+            <div class="comic-title" id="comicTitle">Comic of Debut</div>
+            <div class="desc-box">
+                <div class="desc-title" id="descTitle">CHARACTER DESCRIPTION</div>
+                <div class="desc-text" id="descText">
+                    Character description will appear here.
+                </div>
+            </div>
+        </div>
+        
+        <div class="character-details">
+            <div class="comic-title">Character Stats</div>
+            <div class="desc-box">
+                <div class="stats-container" id="statsContainer">
+                    <!-- Stats will be dynamically generated -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ================= FACTIONS TAB ================= -->
+<div class="content" id="factions">
+    <!-- Top Section: Faction Info -->
+    <div class="top-section">
+        <div class="character-info">
+            <div class="faction-logo" id="factionLogoFaction">FACTION LOGO</div>
+            <div class="faction-name" id="factionNameFaction">Faction Name</div>
+        </div>
+        <div class="char-name" id="factionDisplayName">FACTION</div>
+    </div>
+
+    <!-- Banner Faction Image -->
+    <div class="character-banner-container">
+        <img id="factionImg" class="character-image" src="images/HELSIE TEST.png" alt="Faction">
+    </div>
+
+    <!-- Faction Selector -->
+    <div class="navigation-controls">
+        <div class="character-selector" id="factionSelector"></div>
+    </div>
+
+    <!-- Bottom Section: Description & Stats -->
+    <div class="bottom-section">
+        <div class="comic-info">
+            <div class="comic-title">Faction Information</div>
+            <div class="desc-box">
+                <div class="desc-title" id="factionDescTitle">FACTION OVERVIEW</div>
+                <div class="desc-text" id="factionDescText">
+                    Faction description will appear here.
+                </div>
+            </div>
+        </div>
+        
+        <div class="character-details">
+            <div class="comic-title">Faction Stats</div>
+            <div class="desc-box">
+                <div class="stats-container" id="factionStatsContainer">
+                    <!-- Faction stats will be dynamically generated -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// ================= DATA STRUCTURE =================
+// 🎨 EASY TO EDIT: Add new factions here!
+const FACTIONS = {
+    shadow: {
+        name: "High Stakes Club",
+        logo: "HSC",
+        color: "#6b3fa0",
+        borderColor: "rgba(107, 63, 160, 0.5)",
+        glowColor: "rgba(107, 63, 160, 0.6)",
+        description: "Hunts vampires.",
+        image: "images/HELSIE TEST.png",
+        stats: {
+            "Total Members": "5",
+            "First Appearance": "Issue #1",
+            "Territory": "Underground"
+        }
+    },
+    band: {
+        name: "Chors N Chaos",
+        logo: "CNC",
+        color: "#db12ce",
+        borderColor: "rgba(107, 63, 160, 0.5)",
+        glowColor: "rgba(107, 63, 160, 0.6)",
+        description: "Rock Band.",
+        image: "images/HELSIE TEST.png",
+        stats: {
+            "Total Members": "5",
+            "First Appearance": "Issue #1",
+            "Territory": "Underground"
+        }
+    },
+    // 🔥 ADD MORE FACTIONS LIKE THIS:
+    // light: {
+    //     name: "Light Brigade",
+    //     logo: "LIGHT",
+    //     color: "#f4d03f",
+    //     borderColor: "rgba(244, 208, 63, 0.5)",
+    //     glowColor: "rgba(244, 208, 63, 0.6)",
+    //     description: "Defenders of justice and order.",
+    //     image: "images/light-faction.png",
+    //     stats: {
+    //         "Total Members": "50+",
+    //         "First Appearance": "Issue #3",
+    //         "Territory": "City Center"
+    //     }
+    // }
+};
+
+// 🎨 EASY TO EDIT: Add new characters here!
+const CHARACTERS = [
+    {
+        name: "HELSIE",
+        faction: "shadow",
+        thumbnail: "images/Helsie_thumb.png", // 🎨 Character icon for selector
+        outfits: [
+            "images/HELSIE TEST1.png",
+            "images/HELSIE TEST33.png",
+            "images/HELSIE TEST22.png",
+            // Add more outfit images here:
+            // "images/HELSIE TEST_2.png",
+            // "images/HELSIE TEST_3.png"
+        ],
+        debutComic: "High Stakes Club #1",
+        description: "The dumbass of the group, Boba tea artist, skilled vampire hunter",
+        stats: {
+            "Appearances": "1 Issue",
+            "Debut": "Issue #1",
+            "Status": "Active",
+            "Affiliation": "HIGH STAKES CLUB"
+        }
+        
+    },
+    {
+        name: "Joni",
+        faction: "band",
+        thumbnail: "images/HELSIE TESTJ.png", // 🎨 Character icon for selector
+        outfits: [
+            "images/HELSIE TESTJ.png",
+            // Add more outfit images here:
+            // "images/HELSIE TEST_2.png",
+            // "images/HELSIE TEST_3.png"
+        ],
+        debutComic: "Chors N Chaos #1",
+        description: "The Leader",
+        stats: {
+            "Appearances": "1 Issue",
+            "Debut": "Issue #1",
+            "Status": "Active",
+            "Affiliation": "CHORS N CHAOS"
+        }
+        
+    },
+    // 🔥 ADD MORE CHARACTERS LIKE THIS:
+    // {
+    //     name: "NOVA",
+    //     faction: "light",
+    //     outfits: [
+    //         "images/nova-1.png",
+    //         "images/nova-2.png"
+    //     ],
+    //     debutComic: "Dawn of Heroes #3",
+    //     description: "A beacon of hope with incredible light-based powers.",
+    //     stats: {
+    //         "Appearances": "8 Issues",
+    //         "Debut": "Issue #3",
+    //         "Status": "Active",
+    //         "Affiliation": "Light Brigade"
+    //     }
+    // }
+];
+
+// ================= STATE MANAGEMENT =================
+let currentCharacterIndex = 0;
+let currentOutfitIndex = 0;
+let currentFactionKey = 'shadow';
+
+// ================= INITIALIZATION =================
+function init() {
+    renderCharacterSelector();
+    renderFactionSelector();
+    loadCharacter(0);
+    loadFactionView('shadow');
+    
+    // Mouse tracking for subtle background effect
+    document.addEventListener('mousemove', (e) => {
+        const x = (e.clientX / window.innerWidth) * 100;
+        const y = (e.clientY / window.innerHeight) * 100;
+        document.body.style.setProperty('--mouse-x', x + '%');
+        document.body.style.setProperty('--mouse-y', y + '%');
+    });
+}
+
+// ================= CHARACTER SELECTOR =================
+function renderCharacterSelector() {
+    const selector = document.getElementById('characterSelector');
+    selector.innerHTML = '';
+    
+    CHARACTERS.forEach((char, index) => {
+        const thumb = document.createElement('img');
+        // Use thumbnail if available, otherwise fall back to first outfit
+        thumb.src = char.thumbnail || char.outfits[0];
+        thumb.className = 'char-thumb' + (index === 0 ? ' active' : '');
+        thumb.alt = char.name;
+        thumb.onclick = () => loadCharacter(index);
+        selector.appendChild(thumb);
+    });
+}
+
+// ================= LOAD CHARACTER =================
+function loadCharacter(index) {
+    currentCharacterIndex = index;
+    currentOutfitIndex = 0;
+    
+    const char = CHARACTERS[index];
+    const faction = FACTIONS[char.faction];
+    
+    // Apply faction theme
+    applyFactionTheme(faction);
+    
+    // Animate image transition
+    const img = document.getElementById('characterImg');
+    img.classList.add('changing');
+    
+    setTimeout(() => {
+        // Update character info
+        document.getElementById('charName').textContent = char.name;
+        document.getElementById('factionLogo').textContent = faction.logo;
+        document.getElementById('factionName').textContent = faction.name;
+        document.getElementById('comicTitle').textContent = char.debutComic;
+        document.getElementById('descTitle').textContent = char.name + ' - PROFILE';
+        document.getElementById('descText').textContent = char.description;
+        
+        // Update image
+        img.src = char.outfits[0];
+        img.classList.remove('changing');
+        
+        // Update stats
+        renderStats(char.stats, 'statsContainer');
+        
+        // Update outfit indicators
+        renderOutfitIndicators();
+        
+        // Update character selector active state
+        document.querySelectorAll('.char-thumb').forEach((thumb, i) => {
+            thumb.classList.toggle('active', i === index);
+        });
+    }, 250);
+}
+
+// ================= OUTFIT MANAGEMENT =================
+function changeOutfit(direction) {
+    const char = CHARACTERS[currentCharacterIndex];
+    const img = document.getElementById('characterImg');
+    
+    img.classList.add('changing');
+    
+    setTimeout(() => {
+        currentOutfitIndex = (currentOutfitIndex + direction + char.outfits.length) % char.outfits.length;
+        img.src = char.outfits[currentOutfitIndex];
+        img.classList.remove('changing');
+        
+        // Update outfit indicators
+        document.querySelectorAll('.outfit-dot').forEach((dot, i) => {
+            dot.classList.toggle('active', i === currentOutfitIndex);
+        });
+    }, 250);
+}
+
+function renderOutfitIndicators() {
+    const char = CHARACTERS[currentCharacterIndex];
+    const container = document.getElementById('outfitIndicator');
+    container.innerHTML = '';
+    
+    if (char.outfits.length > 1) {
+        char.outfits.forEach((_, index) => {
+            const dot = document.createElement('div');
+            dot.className = 'outfit-dot' + (index === 0 ? ' active' : '');
+            dot.onclick = () => {
+                const img = document.getElementById('characterImg');
+                img.classList.add('changing');
+                setTimeout(() => {
+                    currentOutfitIndex = index;
+                    img.src = char.outfits[index];
+                    img.classList.remove('changing');
+                    document.querySelectorAll('.outfit-dot').forEach((d, i) => {
+                        d.classList.toggle('active', i === index);
+                    });
+                }, 250);
+            };
+            container.appendChild(dot);
+        });
+    }
+}
+
+// ================= STATS RENDERING =================
+function renderStats(stats, containerId) {
+    const container = document.getElementById(containerId);
+    container.innerHTML = '';
+    
+    Object.entries(stats).forEach(([label, value]) => {
+        const statItem = document.createElement('div');
+        statItem.className = 'stat-item';
+        statItem.innerHTML = `
+            <span class="stat-label">${label}</span>
+            <span class="stat-value">${value}</span>
+        `;
+        container.appendChild(statItem);
+    });
+}
+
+// ================= FACTION THEME =================
+function applyFactionTheme(faction) {
+    document.documentElement.style.setProperty('--faction-color', faction.color);
+    document.documentElement.style.setProperty('--faction-border', faction.borderColor);
+    document.documentElement.style.setProperty('--faction-glow', faction.glowColor);
+}
+
+// ================= FACTION SELECTOR =================
+function renderFactionSelector() {
+    const selector = document.getElementById('factionSelector');
+    selector.innerHTML = '';
+    
+    Object.entries(FACTIONS).forEach(([key, faction], index) => {
+        const thumb = document.createElement('div');
+        thumb.className = 'char-thumb' + (index === 0 ? ' active' : '');
+        thumb.style.cssText = `
+            background: ${faction.color};
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 14px;
+            letter-spacing: 1px;
+        `;
+        thumb.textContent = faction.logo;
+        thumb.onclick = () => loadFactionView(key);
+        selector.appendChild(thumb);
+    });
+}
+
+// ================= FACTION VIEW =================
+function loadFactionView(factionKey) {
+    currentFactionKey = factionKey;
+    const faction = FACTIONS[factionKey];
+    
+    // Apply faction theme
+    applyFactionTheme(faction);
+    
+    // Animate image transition
+    const img = document.getElementById('factionImg');
+    img.classList.add('changing');
+    
+    setTimeout(() => {
+        document.getElementById('factionLogoFaction').textContent = faction.logo;
+        document.getElementById('factionNameFaction').textContent = faction.name;
+        document.getElementById('factionDisplayName').textContent = faction.name.toUpperCase();
+        document.getElementById('factionDescTitle').textContent = faction.name.toUpperCase();
+        document.getElementById('factionDescText').textContent = faction.description;
+        img.src = faction.image;
+        img.classList.remove('changing');
+        
+        renderStats(faction.stats, 'factionStatsContainer');
+        
+        // Update faction selector active state
+        document.querySelectorAll('#factionSelector .char-thumb').forEach((thumb, i) => {
+            const keys = Object.keys(FACTIONS);
+            thumb.classList.toggle('active', keys[i] === factionKey);
+        });
+    }, 250);
+}
+
+// ================= TAB SWITCHING =================
+function switchTab(tabId, element) {
+    document.querySelectorAll(".content").forEach(c => c.classList.remove("active"));
+    document.getElementById(tabId).classList.add("active");
+
+    document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
+    element.classList.add("active");
+    
+    if (tabId === 'factions') {
+        loadFactionView(currentFactionKey);
+    }
+}
+
+// ================= COMMISSION FORM HANDLING =================
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('commissionForm');
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = {
+                name: document.getElementById('name').value,
+                email: document.getElementById('email').value,
+                commissionType: document.getElementById('commissionType').value,
+                message: document.getElementById('message').value
+            };
+            
+            // Create mailto link
+            const subject = encodeURIComponent(`Commission Inquiry - ${formData.commissionType}`);
+            const body = encodeURIComponent(
+                `Name: ${formData.name}\n` +
+                `Email: ${formData.email}\n` +
+                `Commission Type: ${formData.commissionType}\n\n` +
+                `Message:\n${formData.message}`
+            );
+            
+            // Replace with your actual email
+            const mailtoLink = `mailto:your.email@example.com?subject=${subject}&body=${body}`;
+            
+            window.location.href = mailtoLink;
+            
+            // Optional: Show success message
+            alert('Opening your email client... Please send the email to complete your inquiry!');
+        });
+    }
+});
+
+// ================= START APPLICATION =================
+init();
+</script>
+
+</body>
+</html>

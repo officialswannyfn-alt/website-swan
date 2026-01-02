@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Swan Crew</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    min-height: 100vh;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: white;
+    background:
+        linear-gradient(rgba(0,0,0,0.75), rgba(0,0,0,0.75)),
+        url("images/bg.png") center / cover no-repeat fixed;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px 0;
+}
+
+/* ================= AGE WARNING MODAL ================= */
+.age-warning-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.95);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    animation: fadeIn 0.5s ease;
+}
+
+.age-warning-modal {
+    background: linear-gradient(135deg, rgba(20,20,20,0.98) 0%, rgba(40,40,40,0.98) 100%);
+    padding: 50px;
+    border-radius: 20px;
+    text-align: center;
+    max-width: 600px;
+    border: 3px solid rgba(255,255,255,0.1);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.8);
+    animation: slideUp 0.6s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.warning-icon {
+    font-size: 80px;
+    margin-bottom: 20px;
+    animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+.warning-title {
+    font-size: 36px;
+    font-weight: 700;
+    margin-bottom: 20px;
+    color: #ff4444;
+}
+
+.warning-text {
+    font-size: 18px;
+    line-height: 1.8;
+    margin-bottom: 30px;
+    opacity: 0.9;
+}
+
+.warning-buttons {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+}
+
+.warning-btn {
+    padding: 15px 40px;
+    border: none;
+    border-radius: 12px;
+    font-size: 18px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-enter {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.btn-enter:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+}
+
+.btn-exit {
+    background: rgba(255,255,255,0.1);
+    color: white;
+    border: 2px solid rgba(255,255,255,0.3);
+}
+
+.btn-exit:hover {
+    background: rgba(255,255,255,0.2);
+    transform: translateY(-2px);
+}
+
+/* ================= MAIN CONTENT ================= */
+.main-content {
+    display: none;
+    width: 100%;
+    max-width: 1400px;
+    padding: 40px;
+    animation: fadeIn 0.8s ease;
+    overflow-y: auto;
+}
+
+.main-content.visible {
+    display: block;
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 60px;
+}
+
+.main-title {
+    font-size: 56px;
+    font-weight: 700;
+    margin-bottom: 15px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.subtitle {
+    font-size: 22px;
+    opacity: 0.8;
+    letter-spacing: 2px;
+}
+
+.content-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    margin-bottom: 40px;
+}
+
+/* ================= SOCIAL SECTION ================= */
+.section-card {
+    background: rgba(0,0,0,0.6);
+    padding: 40px;
+    border-radius: 20px;
+    border: 2px solid rgba(255,255,255,0.1);
+    transition: all 0.3s ease;
+}
+
+.section-card:hover {
+    border-color: rgba(255,255,255,0.3);
+    transform: translateY(-5px);
+}
+
+.section-title {
+    font-size: 28px;
+    margin-bottom: 25px;
+    font-weight: 600;
+}
+
+.social-links {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.social-link {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 18px 25px;
+    background: rgba(255,255,255,0.05);
+    border-radius: 12px;
+    text-decoration: none;
+    color: white;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+.social-link:hover {
+    background: rgba(255,255,255,0.1);
+    transform: translateX(10px);
+    border-color: rgba(255,255,255,0.3);
+}
+
+.social-icon {
+    font-size: 28px;
+}
+
+.social-name {
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.social-link.instagram:hover {
+    border-color: #E1306C;
+    box-shadow: 0 0 20px rgba(225, 48, 108, 0.3);
+}
+
+.social-link.twitter:hover {
+    border-color: #1DA1F2;
+    box-shadow: 0 0 20px rgba(29, 161, 242, 0.3);
+}
+
+.social-link.discord:hover {
+    border-color: #5865F2;
+    box-shadow: 0 0 20px rgba(88, 101, 242, 0.3);
+}
+
+/* ================= ART GALLERY PREVIEW ================= */
+.gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+}
+
+.gallery-item {
+    position: relative;
+    aspect-ratio: 1;
+    border-radius: 15px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 2px solid rgba(255,255,255,0.1);
+}
+
+.gallery-item:hover {
+    transform: scale(1.05);
+    border-color: rgba(255,255,255,0.3);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+
+.gallery-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: all 0.3s ease;
+}
+
+.gallery-item:hover img {
+    transform: scale(1.1);
+}
+
+.gallery-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(transparent, rgba(0,0,0,0.8));
+    padding: 15px;
+    transform: translateY(100%);
+    transition: all 0.3s ease;
+}
+
+.gallery-item:hover .gallery-overlay {
+    transform: translateY(0);
+}
+
+.gallery-title {
+    font-size: 14px;
+    font-weight: 600;
+}
+
+/* ================= ENTER BUTTON ================= */
+.enter-portfolio {
+    text-align: center;
+    margin-top: 40px;
+}
+
+.enter-btn {
+    display: inline-block;
+    padding: 20px 60px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    text-decoration: none;
+    border-radius: 15px;
+    font-size: 20px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+.enter-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 15px 40px rgba(102, 126, 234, 0.5);
+    border-color: rgba(255,255,255,0.3);
+}
+
+/* ================= COMMISSION SECTION ================= */
+.commission-description {
+    margin-bottom: 25px;
+    opacity: 0.9;
+    line-height: 1.6;
+}
+
+.commission-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.form-group label {
+    font-weight: 600;
+    font-size: 14px;
+    opacity: 0.9;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    padding: 12px 16px;
+    background: rgba(255,255,255,0.05);
+    border: 2px solid rgba(255,255,255,0.1);
+    border-radius: 10px;
+    color: white;
+    font-size: 16px;
+    font-family: inherit;
+    transition: all 0.3s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: rgba(255,255,255,0.3);
+    background: rgba(255,255,255,0.08);
+}
+
+.form-group textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+.submit-btn {
+    padding: 12px 30px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    border-radius: 10px;
+    color: white;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.submit-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+}
+
+/* ================= RESPONSIVE ================= */
+@media (max-width: 1024px) {
+    .content-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .gallery-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .main-title {
+        font-size: 42px;
+    }
+}
+
+@media (max-width: 768px) {
+    .age-warning-modal {
+        padding: 30px;
+        margin: 20px;
+    }
+    
+    .warning-title {
+        font-size: 28px;
+    }
+    
+    .warning-text {
+        font-size: 16px;
+    }
+    
+    .main-title {
+        font-size: 32px;
+    }
+    
+    .subtitle {
+        font-size: 18px;
+    }
+    
+    .gallery-grid {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<!-- ================= AGE WARNING ================= -->
+<div class="age-warning-overlay" id="ageWarning">
+    <div class="age-warning-modal">
+        <div class="warning-icon">⚠️</div>
+        <h1 class="warning-title">18+ Content Warning</h1>
+        <p class="warning-text">
+            This portfolio contains mature content intended for adults only.<br>
+            By entering, you confirm that you are 18 years of age or older.
+        </p>
+        <div class="warning-buttons">
+            <button class="warning-btn btn-enter" onclick="enterSite()">I am 18+</button>
+            <button class="warning-btn btn-exit" onclick="exitSite()">Exit</button>
+        </div>
+    </div>
+</div>
+
+<!-- ================= MAIN CONTENT ================= -->
+<div class="main-content" id="mainContent">
+    <div class="header">
+        <h1 class="main-title">Welcome to Swan Nsfw!</h1>
+        <p class="subtitle">3D Artist • Comic Artist • Comissions below!</p>
+    </div>
+
+    <div class="content-grid">
+        <!-- Social Media Section -->
+        <div class="section-card">
+            <h2 class="section-title">Connect With Me</h2>
+            <div class="social-links">
+                <a href="https://instagram.com/yourusername" target="_blank" class="social-link instagram">
+                    <span class="social-icon">📷</span>
+                    <span class="social-name">Follow my Instagram</span>
+                </a>
+                <a href="https://twitter.com/yourusername" target="_blank" class="social-link twitter">
+                    <span class="social-icon">🐦</span>
+                    <span class="social-name">My X!</span>
+                </a>
+                <a href="https://discord.gg/mU5UyD93wG" target="_blank" class="social-link discord">
+                    <span class="social-icon">💬</span>
+                    <span class="social-name">Join my Discord server!</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Commission Form Section -->
+        <div class="section-card">
+            <h2 class="section-title">Commission Inquiry</h2>
+            <p class="commission-description">Interested in commissioning artwork? Send me a message!</p>
+            
+            <form class="commission-form" id="commissionForm">
+                <div class="form-group">
+                    <label for="name">Your Name</label>
+                    <input type="text" id="name" name="name" required placeholder="Enter your name">
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" name="email" required placeholder="your.email@example.com">
+                </div>
+                
+                <div class="form-group">
+                    <label for="commissionType">Commission Type</label>
+                    <select id="commissionType" name="commissionType" required>
+                        <option value="">Select a type...</option>
+                        <option value="character">Character Design</option>
+                        <option value="illustration">Illustration</option>
+                        <option value="comic">Comic Page</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="message">Project Details</label>
+                    <textarea id="message" name="message" rows="4" required placeholder="Tell me about your project..."></textarea>
+                </div>
+                
+                <button type="submit" class="submit-btn">Send Inquiry</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Navigation Buttons -->
+    <div class="enter-portfolio">
+        <a href="gallery.html" class="enter-btn" style="margin-right: 20px;">View Art Gallery 🎨</a>
+        <a href="index.html" class="enter-btn">Enter Character Viewer →</a>
+    </div>
+</div>
+
+<script>
+// ================= AGE VERIFICATION =================
+function enterSite() {
+    // Store verification in session storage
+    sessionStorage.setItem('ageVerified', 'true');
+    
+    // Hide warning and show content
+    document.getElementById('ageWarning').style.display = 'none';
+    document.getElementById('mainContent').classList.add('visible');
+}
+
+function exitSite() {
+    // Redirect to a safe page or close window
+    window.location.href = 'https://www.google.com';
+}
+
+// Check if user already verified age in this session
+window.addEventListener('DOMContentLoaded', function() {
+    if (sessionStorage.getItem('ageVerified') === 'true') {
+        document.getElementById('ageWarning').style.display = 'none';
+        document.getElementById('mainContent').classList.add('visible');
+    }
+});
+
+// ================= COMMISSION FORM HANDLING =================
+document.getElementById('commissionForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const formData = {
+        name: document.getElementById('name').value,
+        email: document.getElementById('email').value,
+        commissionType: document.getElementById('commissionType').value,
+        message: document.getElementById('message').value
+    };
+    
+    // Create mailto link
+    const subject = encodeURIComponent(`Commission Inquiry - ${formData.commissionType}`);
+    const body = encodeURIComponent(
+        `Name: ${formData.name}\n` +
+        `Email: ${formData.email}\n` +
+        `Commission Type: ${formData.commissionType}\n\n` +
+        `Message:\n${formData.message}`
+    );
+    
+    // Replace with your actual email
+    const mailtoLink = `mailto:your.email@example.com?subject=${subject}&body=${body}`;
+    
+    window.location.href = mailtoLink;
+    
+    alert('Opening your email client... Pleasee send the email to complete your inquiry!');
+});
+</script>
+
+</body>
+</html>

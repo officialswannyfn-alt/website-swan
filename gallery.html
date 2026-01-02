@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Art Gallery</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    min-height: 100vh;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: white;
+    background:
+        linear-gradient(rgba(0,0,0,0.75), rgba(0,0,0,0.75)),
+        url("images/bg.png") center / cover no-repeat fixed;
+    padding: 20px;
+}
+
+/* ================= SWAN HOME BUTTON ================= */
+.swan-home-button {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    font-size: 48px;
+    cursor: pointer;
+    z-index: 100;
+    transition: all 0.3s ease;
+    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.5));
+    text-decoration: none;
+}
+
+.swan-home-button:hover {
+    transform: scale(1.2) rotate(-10deg);
+    filter: drop-shadow(0 6px 12px rgba(255,255,255,0.3));
+}
+
+/* ================= HEADER ================= */
+.gallery-header {
+    text-align: center;
+    padding: 60px 20px 40px;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.gallery-title {
+    font-size: 56px;
+    font-weight: 700;
+    margin-bottom: 15px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.gallery-subtitle {
+    font-size: 20px;
+    opacity: 0.8;
+    letter-spacing: 2px;
+}
+
+/* ================= GALLERY GRID ================= */
+.gallery-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 30px;
+    margin-bottom: 40px;
+}
+
+.gallery-item {
+    position: relative;
+    aspect-ratio: 1;
+    border-radius: 15px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 2px solid rgba(255,255,255,0.1);
+    background: rgba(0,0,0,0.5);
+}
+
+.gallery-item:hover {
+    transform: translateY(-10px);
+    border-color: rgba(255,255,255,0.3);
+    box-shadow: 0 15px 40px rgba(0,0,0,0.6);
+}
+
+.gallery-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: all 0.3s ease;
+}
+
+.gallery-item:hover img {
+    transform: scale(1.1);
+}
+
+.gallery-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(transparent, rgba(0,0,0,0.9));
+    padding: 20px;
+    transform: translateY(100%);
+    transition: all 0.3s ease;
+}
+
+.gallery-item:hover .gallery-overlay {
+    transform: translateY(0);
+}
+
+.gallery-item-title {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+.gallery-item-desc {
+    font-size: 14px;
+    opacity: 0.8;
+}
+
+/* ================= LIGHTBOX ================= */
+.lightbox {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.95);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.lightbox.active {
+    display: flex;
+}
+
+.lightbox-content {
+    max-width: 90%;
+    max-height: 90%;
+    position: relative;
+}
+
+.lightbox-image {
+    max-width: 100%;
+    max-height: 90vh;
+    object-fit: contain;
+    border-radius: 10px;
+}
+
+.lightbox-close {
+    position: absolute;
+    top: -40px;
+    right: 0;
+    font-size: 36px;
+    color: white;
+    cursor: pointer;
+    background: rgba(0,0,0,0.5);
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.lightbox-close:hover {
+    background: rgba(255,255,255,0.2);
+    transform: rotate(90deg);
+}
+
+/* ================= BACK BUTTON ================= */
+.back-button {
+    text-align: center;
+    padding: 40px 20px;
+}
+
+.back-btn {
+    display: inline-block;
+    padding: 15px 40px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    text-decoration: none;
+    border-radius: 12px;
+    font-size: 18px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+.back-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 30px rgba(102, 126, 234, 0.5);
+    border-color: rgba(255,255,255,0.3);
+}
+
+/* ================= RESPONSIVE ================= */
+@media (max-width: 768px) {
+    .gallery-title {
+        font-size: 36px;
+    }
+    
+    .gallery-subtitle {
+        font-size: 16px;
+    }
+    
+    .gallery-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    
+    .swan-home-button {
+        font-size: 36px;
+        top: 15px;
+        left: 15px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<!-- ================= SWAN HOME BUTTON ================= -->
+<a href="home.html" class="swan-home-button" title="Home">
+    🦢
+</a>
+
+<!-- ================= HEADER ================= -->
+<div class="gallery-header">
+    <h1 class="gallery-title">Art Gallery</h1>
+    <p class="gallery-subtitle">Browse My Artwork Collection</p>
+</div>
+
+<!-- ================= GALLERY ================= -->
+<div class="gallery-container">
+    <div class="gallery-grid" id="galleryGrid">
+        <!-- Gallery items will be dynamically generated -->
+    </div>
+</div>
+
+<!-- ================= BACK BUTTON ================= -->
+<div class="back-button">
+    <a href="home.html" class="back-btn">← Back to Home</a>
+</div>
+
+<!-- ================= LIGHTBOX ================= -->
+<div class="lightbox" id="lightbox">
+    <div class="lightbox-content">
+        <span class="lightbox-close" onclick="closeLightbox()">×</span>
+        <img id="lightboxImage" class="lightbox-image" src="" alt="Artwork">
+    </div>
+</div>
+
+<script>
+// 🎨 EASY TO EDIT: Add your artwork here!
+const ARTWORK = [
+    {
+        image: "images/HELSIE TEST.png",
+        title: "HELSIE Character Design",
+        description: "Main character design"
+    },
+    {
+        image: "images/HELSIE TESTJ.png",
+        title: "Joni Character Design",
+        description: "Band leader character"
+    },
+    {
+        image: "images/HELSIE TESTu.png",
+        title: "Character Variant",
+        description: "Alternative design"
+    },
+    // 🔥 ADD MORE ARTWORK LIKE THIS:
+    // {
+    //     image: "images/your-artwork.png",
+    //     title: "Artwork Title",
+    //     description: "Brief description"
+    // }
+];
+
+// ================= RENDER GALLERY =================
+function renderGallery() {
+    const grid = document.getElementById('galleryGrid');
+    grid.innerHTML = '';
+    
+    ARTWORK.forEach((art, index) => {
+        const item = document.createElement('div');
+        item.className = 'gallery-item';
+        item.onclick = () => openLightbox(art.image);
+        
+        item.innerHTML = `
+            <img src="${art.image}" alt="${art.title}">
+            <div class="gallery-overlay">
+                <div class="gallery-item-title">${art.title}</div>
+                <div class="gallery-item-desc">${art.description}</div>
+            </div>
+        `;
+        
+        grid.appendChild(item);
+    });
+}
+
+// ================= LIGHTBOX FUNCTIONS =================
+function openLightbox(imageSrc) {
+    document.getElementById('lightboxImage').src = imageSrc;
+    document.getElementById('lightbox').classList.add('active');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeLightbox() {
+    document.getElementById('lightbox').classList.remove('active');
+    document.body.style.overflow = 'auto';
+}
+
+// Close lightbox when clicking outside the image
+document.getElementById('lightbox').addEventListener('click', function(e) {
+    if (e.target === this) {
+        closeLightbox();
+    }
+});
+
+// Close lightbox with Escape key
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        closeLightbox();
+    }
+});
+
+// ================= INITIALIZE =================
+renderGallery();
+</script>
+
+</body>
+</html>
