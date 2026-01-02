@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Character Viewer</title>
+<title>Swan Crew</title>
 
 <style>
 * {
@@ -12,165 +12,54 @@
     box-sizing: border-box;
 }
 
-/* ================= BACKGROUND WITH DARK OVERLAY ================= */
 body {
-    height: 100vh;
+    min-height: 100vh;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     color: white;
     background:
-        linear-gradient(rgba(0,0,0,0.65), rgba(0,0,0,0.65)),
-        url("images/bg.png") center / cover no-repeat;
+        linear-gradient(rgba(0,0,0,0.75), rgba(0,0,0,0.75)),
+        url("images/bg.png") center / cover no-repeat fixed;
     display: flex;
-    flex-direction: column;
-    overflow: hidden;
+    align-items: center;
+    justify-content: center;
+    padding: 20px 0;
 }
 
-/* ================= ANIMATED BACKGROUND OVERLAY ================= */
-body::before {
-    content: '';
-    position: absolute;
+/* ================= AGE WARNING MODAL ================= */
+.age-warning-overlay {
+    position: fixed;
     top: 0;
     left: 0;
-    right: 0;
-    bottom: 0;
-    background: radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), 
-                rgba(255,255,255,0.03) 0%, 
-                transparent 50%);
-    pointer-events: none;
-    z-index: 1;
-}
-
-/* ================= SWAN HOME BUTTON ================= */
-.swan-home-button {
-    position: fixed;
-    top: 20px;
-    left: 20px;
-    font-size: 48px;
-    cursor: pointer;
-    z-index: 100;
-    transition: all 0.3s ease;
-    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.5));
-    animation: float 3s ease-in-out infinite;
-}
-
-.swan-home-button:hover {
-    transform: scale(1.2) rotate(-10deg);
-    filter: drop-shadow(0 6px 12px rgba(255,255,255,0.3));
-}
-
-@keyframes float {
-    0%, 100% { transform: translateY(0px); }
-    50% { transform: translateY(-10px); }
-}
-
-/* ================= TOP TABS ================= */
-.tabs {
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.95);
     display: flex;
+    align-items: center;
     justify-content: center;
-    gap: 24px;
-    padding: 25px;
-    z-index: 2;
-    position: relative;
+    z-index: 1000;
+    animation: fadeIn 0.5s ease;
 }
 
-.tab {
-    padding: 12px 36px;
-    border-radius: 40px;
-    background: rgba(0,0,0,0.7);
-    cursor: pointer;
-    font-weight: bold;
-    letter-spacing: 1px;
-    transition: all 0.3s ease;
-    border: 2px solid transparent;
-    position: relative;
-    overflow: hidden;
-}
-
-.tab::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 0;
-    height: 0;
-    border-radius: 50%;
-    background: rgba(255,255,255,0.1);
-    transform: translate(-50%, -50%);
-    transition: width 0.4s, height 0.4s;
-}
-
-.tab:hover::before {
-    width: 300px;
-    height: 300px;
-}
-
-.tab:hover {
-    background: rgba(255,255,255,0.15);
-    border-color: rgba(255,255,255,0.3);
-    transform: translateY(-2px);
-}
-
-.tab.active {
-    background: white;
-    color: black;
-    box-shadow: 0 4px 20px rgba(255,255,255,0.3);
-}
-
-/* ================= MAIN CONTENT ================= */
-.content {
-    flex: 1;
-    min-height: 100vh;
-    display: none;
-    flex-direction: column;
-    padding: 20px 60px 40px;
-    position: relative;
-    z-index: 2;
-    opacity: 0;
-    animation: fadeIn 0.5s ease forwards;
-    overflow-y: auto;
-}
-
-.content.active {
-    display: flex;
+.age-warning-modal {
+    background: linear-gradient(135deg, rgba(20,20,20,0.98) 0%, rgba(40,40,40,0.98) 100%);
+    padding: 50px;
+    border-radius: 20px;
+    text-align: center;
+    max-width: 600px;
+    border: 3px solid rgba(255,255,255,0.1);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.8);
+    animation: slideUp 0.6s ease;
 }
 
 @keyframes fadeIn {
+    from { opacity: 0; }
     to { opacity: 1; }
 }
 
-/* Custom Scrollbar */
-.content::-webkit-scrollbar {
-    width: 10px;
-}
-
-.content::-webkit-scrollbar-track {
-    background: rgba(0,0,0,0.3);
-    border-radius: 10px;
-}
-
-.content::-webkit-scrollbar-thumb {
-    background: var(--faction-color, rgba(107,63,160,0.6));
-    border-radius: 10px;
-}
-
-.content::-webkit-scrollbar-thumb:hover {
-    background: var(--faction-color, rgba(107,63,160,0.9));
-}
-
-/* ================= TOP SECTION (Character Info) ================= */
-.top-section {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    padding: 0 20px;
-    margin-bottom: 20px;
-    animation: slideInTop 0.6s ease;
-}
-
-@keyframes slideInTop {
+@keyframes slideUp {
     from {
         opacity: 0;
-        transform: translateY(-30px);
+        transform: translateY(50px);
     }
     to {
         opacity: 1;
@@ -178,839 +67,510 @@ body::before {
     }
 }
 
-.character-info {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-}
-
-.faction-logo {
-    background: var(--faction-color, black);
-    padding: 8px 16px;
-    border-radius: 8px;
-    font-size: 13px;
-    font-weight: bold;
-    width: fit-content;
-    letter-spacing: 2px;
-    box-shadow: 0 4px 15px var(--faction-glow, rgba(0,0,0,0.5));
-    transition: all 0.3s ease;
-    border: 2px solid var(--faction-border, rgba(255,255,255,0.2));
-}
-
-.faction-logo:hover {
-    transform: scale(1.05);
-    box-shadow: 0 6px 25px var(--faction-glow, rgba(0,0,0,0.7));
-}
-
-.faction-name {
-    font-size: 15px;
-    opacity: 0.9;
-    letter-spacing: 1px;
-    font-weight: 500;
-}
-
-.char-name {
-    background: var(--faction-color, #6b3fa0);
-    padding: 12px 26px;
-    border-radius: 14px;
-    font-weight: bold;
-    letter-spacing: 1px;
-    font-size: 24px;
-    box-shadow: 0 4px 15px var(--faction-glow, rgba(107,63,160,0.5));
-    transition: all 0.3s ease;
-    border: 2px solid var(--faction-border, rgba(255,255,255,0.3));
-}
-
-.char-name:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 25px var(--faction-glow, rgba(107,63,160,0.7));
-}
-
-/* ================= BANNER CHARACTER IMAGE ================= */
-.character-banner-container {
-    position: relative;
-    width: 100%;
-    height: calc(100vh - 260px); /* fills most of screen */
-    min-height: 420px;
-    max-height: 720px;
+.warning-icon {
+    font-size: 80px;
     margin-bottom: 20px;
-    overflow: hidden;
-    border-radius: 24px;
-    box-shadow: 0 15px 60px rgba(0,0,0,0.85);
-    border: 3px solid var(--faction-border, rgba(255,255,255,0.2));
-    background: linear-gradient(
-        135deg,
-        rgba(0,0,0,0.95) 0%,
-        var(--faction-glow, rgba(107,63,160,0.25)) 50%,
-        rgba(0,0,0,0.95) 100%
-    );
+    animation: pulse 2s ease-in-out infinite;
 }
 
-.character-banner-container::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: radial-gradient(
-        ellipse at center,
-        transparent 0%,
-        var(--faction-glow, rgba(107,63,160,0.15)) 100%
-    );
-    z-index: 1;
-    pointer-events: none;
-    animation: bannerPulse 4s ease-in-out infinite;
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
 }
 
-@keyframes bannerPulse {
-    0%, 100% { opacity: 0.3; }
-    50% { opacity: 0.6; }
-}
-
-.character-image {
-     width: 100%;
-    height: 100%;
-    object-fit: cover; /* ⬅️ important */
-    object-position: center top;
-    transform: scale(1.08); /* subtle zoom */
-    transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-    position: relative;
-    z-index: 2;
-    filter:
-        drop-shadow(0 0 25px var(--faction-glow, rgba(107,63,160,0.6)))
-        brightness(1.05);
-}
-
-.character-image.changing {
-    opacity: 0;
-    transform: scale(1.05);
-}
-
-/* ================= NAVIGATION CONTROLS ================= */
-.navigation-controls {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0 20px;
-    margin-bottom: 20px;
-}
-
-.navigation {
-    display: flex;
-    gap: 15px;
-}
-
-.arrow {
-    background: rgba(255,255,255,0.9);
-    color: black;
-    font-size: 24px;
-    padding: 12px 20px;
-    border-radius: 12px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    border: 2px solid transparent;
-    font-weight: bold;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-}
-
-.arrow:hover {
-    background: white;
-    transform: scale(1.1);
-    box-shadow: 0 6px 25px var(--faction-glow, rgba(255,255,255,0.5));
-    border-color: var(--faction-color, white);
-}
-
-.arrow:active {
-    transform: scale(0.95);
-}
-
-/* ================= RIGHT SIDE ================= */
-.right {
-    max-width: 480px;
-    animation: slideInRight 0.6s ease;
-}
-
-@keyframes slideInRight {
-    from {
-        opacity: 0;
-        transform: translateX(50px);
-    }
-    to {
-        opacity: 1;
-        transform: translateX(0);
-    }
-}
-
-.comic-title {
-    font-size: 28px;
-    margin-bottom: 15px;
+.warning-title {
+    font-size: 36px;
     font-weight: 700;
-    text-shadow: 2px 2px 10px rgba(0,0,0,0.5);
-    letter-spacing: 1px;
-}
-
-.desc-box {
-    background: rgba(0,0,0,0.85);
-    padding: 24px;
-    border-radius: 18px;
-    box-shadow: 0 0 40px rgba(0,0,0,0.6);
-    border: 2px solid var(--faction-border, rgba(255,255,255,0.1));
-    transition: all 0.3s ease;
-}
-
-.desc-box:hover {
-    border-color: var(--faction-color, rgba(255,255,255,0.3));
-    box-shadow: 0 0 50px var(--faction-glow, rgba(0,0,0,0.8));
-}
-
-.desc-title {
-    font-weight: bold;
-    margin-bottom: 12px;
-    letter-spacing: 1px;
-    font-size: 18px;
-    color: var(--faction-color, white);
-}
-
-.desc-text {
-    line-height: 1.7;
-    opacity: 0.9;
     margin-bottom: 20px;
+    color: #ff4444;
 }
 
-/* ================= CHARACTER STATS ================= */
-.stats-container {
-    margin-top: 0;
-    padding-top: 0;
-}
-
-.stat-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 12px;
-    padding: 8px 0;
-}
-
-.stat-label {
-    font-weight: 600;
-    font-size: 14px;
-    letter-spacing: 0.5px;
-    color: var(--faction-color, #aaa);
-}
-
-.stat-value {
-    font-weight: bold;
-    font-size: 16px;
-    color: white;
-    padding: 4px 12px;
-    background: var(--faction-color, rgba(107,63,160,0.3));
-    border-radius: 8px;
-    min-width: 60px;
-    text-align: center;
-    box-shadow: 0 2px 10px var(--faction-glow, rgba(0,0,0,0.3));
-}
-
-/* ================= CHARACTER SELECTOR ================= */
-.character-selector {
-    display: flex;
-    gap: 15px;
-    margin-top: 20px;
-    flex-wrap: wrap;
-}
-
-.char-thumb {
-    width: 60px;
-    height: 60px;
-    border-radius: 12px;
-    cursor: pointer;
-    border: 3px solid transparent;
-    transition: all 0.3s ease;
-    object-fit: cover;
-    opacity: 0.6;
-    filter: grayscale(50%);
-}
-
-.char-thumb:hover {
+.warning-text {
+    font-size: 18px;
+    line-height: 1.8;
+    margin-bottom: 30px;
     opacity: 0.9;
-    transform: scale(1.1) translateY(-3px);
-    filter: grayscale(0%);
 }
 
-.char-thumb.active {
-    border-color: var(--faction-color, white);
-    opacity: 1;
-    filter: grayscale(0%);
-    box-shadow: 0 4px 20px var(--faction-glow, rgba(255,255,255,0.5));
-}
-
-/* ================= OUTFIT INDICATOR ================= */
-.outfit-indicator {
+.warning-buttons {
     display: flex;
-    gap: 10px;
-    align-items: center;
+    gap: 20px;
+    justify-content: center;
 }
 
-.outfit-dot {
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    background: rgba(255,255,255,0.4);
+.warning-btn {
+    padding: 15px 40px;
+    border: none;
+    border-radius: 12px;
+    font-size: 18px;
+    font-weight: 600;
     cursor: pointer;
     transition: all 0.3s ease;
-    border: 2px solid transparent;
 }
 
-.outfit-dot:hover {
-    background: rgba(255,255,255,0.7);
-    transform: scale(1.3);
-    border-color: rgba(255,255,255,0.5);
+.btn-enter {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
 }
 
-.outfit-dot.active {
-    background: var(--faction-color, white);
-    box-shadow: 0 0 15px var(--faction-glow, rgba(255,255,255,0.8));
-    transform: scale(1.4);
-    border-color: var(--faction-color, white);
+.btn-enter:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
 }
 
-/* ================= BOTTOM SECTION (Description) ================= */
-.bottom-section {
+.btn-exit {
+    background: rgba(255,255,255,0.1);
+    color: white;
+    border: 2px solid rgba(255,255,255,0.3);
+}
+
+.btn-exit:hover {
+    background: rgba(255,255,255,0.2);
+    transform: translateY(-2px);
+}
+
+/* ================= MAIN CONTENT ================= */
+.main-content {
+    display: none;
+    width: 100%;
+    max-width: 1400px;
+    padding: 40px;
+    animation: fadeIn 0.8s ease;
+    overflow-y: auto;
+}
+
+.main-content.visible {
+    display: block;
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 60px;
+}
+
+.main-title {
+    font-size: 56px;
+    font-weight: 700;
+    margin-bottom: 15px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.subtitle {
+    font-size: 22px;
+    opacity: 0.8;
+    letter-spacing: 2px;
+}
+
+.content-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 30px;
-    padding: 0 20px;
-    margin-bottom: 30px;
+    gap: 40px;
+    margin-bottom: 40px;
 }
 
-.comic-info, .character-details {
-    animation: slideInBottom 0.6s ease;
+/* ================= SOCIAL SECTION ================= */
+.section-card {
+    background: rgba(0,0,0,0.6);
+    padding: 40px;
+    border-radius: 20px;
+    border: 2px solid rgba(255,255,255,0.1);
+    transition: all 0.3s ease;
 }
 
-@keyframes slideInBottom {
-    from {
-        opacity: 0;
-        transform: translateY(30px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+.section-card:hover {
+    border-color: rgba(255,255,255,0.3);
+    transform: translateY(-5px);
+}
+
+.section-title {
+    font-size: 28px;
+    margin-bottom: 25px;
+    font-weight: 600;
+}
+
+.social-links {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.social-link {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 18px 25px;
+    background: rgba(255,255,255,0.05);
+    border-radius: 12px;
+    text-decoration: none;
+    color: white;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+.social-link:hover {
+    background: rgba(255,255,255,0.1);
+    transform: translateX(10px);
+    border-color: rgba(255,255,255,0.3);
+}
+
+.social-icon {
+    font-size: 28px;
+}
+
+.social-name {
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.social-link.instagram:hover {
+    border-color: #E1306C;
+    box-shadow: 0 0 20px rgba(225, 48, 108, 0.3);
+}
+
+.social-link.twitter:hover {
+    border-color: #1DA1F2;
+    box-shadow: 0 0 20px rgba(29, 161, 242, 0.3);
+}
+
+.social-link.discord:hover {
+    border-color: #5865F2;
+    box-shadow: 0 0 20px rgba(88, 101, 242, 0.3);
+}
+
+/* ================= ART GALLERY PREVIEW ================= */
+.gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+}
+
+.gallery-item {
+    position: relative;
+    aspect-ratio: 1;
+    border-radius: 15px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 2px solid rgba(255,255,255,0.1);
+}
+
+.gallery-item:hover {
+    transform: scale(1.05);
+    border-color: rgba(255,255,255,0.3);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+
+.gallery-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: all 0.3s ease;
+}
+
+.gallery-item:hover img {
+    transform: scale(1.1);
+}
+
+.gallery-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(transparent, rgba(0,0,0,0.8));
+    padding: 15px;
+    transform: translateY(100%);
+    transition: all 0.3s ease;
+}
+
+.gallery-item:hover .gallery-overlay {
+    transform: translateY(0);
+}
+
+.gallery-title {
+    font-size: 14px;
+    font-weight: 600;
+}
+
+/* ================= ENTER BUTTON ================= */
+.enter-portfolio {
+    text-align: center;
+    margin-top: 40px;
+}
+
+.enter-btn {
+    display: inline-block;
+    padding: 20px 60px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    text-decoration: none;
+    border-radius: 15px;
+    font-size: 20px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+.enter-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 15px 40px rgba(102, 126, 234, 0.5);
+    border-color: rgba(255,255,255,0.3);
+}
+
+/* ================= COMMISSION SECTION ================= */
+.commission-description {
+    margin-bottom: 25px;
+    opacity: 0.9;
+    line-height: 1.6;
+}
+
+.commission-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.form-group label {
+    font-weight: 600;
+    font-size: 14px;
+    opacity: 0.9;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    padding: 12px 16px;
+    background: rgba(255,255,255,0.05);
+    border: 2px solid rgba(255,255,255,0.1);
+    border-radius: 10px;
+    color: white;
+    font-size: 16px;
+    font-family: inherit;
+    transition: all 0.3s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: rgba(255,255,255,0.3);
+    background: rgba(255,255,255,0.08);
+}
+
+.form-group textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+.submit-btn {
+    padding: 12px 30px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    border-radius: 10px;
+    color: white;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.submit-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
 }
 
 /* ================= RESPONSIVE ================= */
 @media (max-width: 1024px) {
-    .content {
-        padding: 20px 30px;
-    }
-    
-    .top-section {
-        flex-direction: column;
-        gap: 15px;
-    }
-    
-    .character-banner-container {
-        height: 300px;
-    }
-    
-    .bottom-section {
+    .content-grid {
         grid-template-columns: 1fr;
-        gap: 20px;
+    }
+    
+    .gallery-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .main-title {
+        font-size: 42px;
     }
 }
 
 @media (max-width: 768px) {
-    .character-banner-container {
-        height: 55vh;
-        min-height: 300px;
+    .age-warning-modal {
+        padding: 30px;
+        margin: 20px;
     }
     
-    .char-name {
-        font-size: 20px;
-    }
-    .character-image {
-        object-position: center;
-        transform: scale(1);
+    .warning-title {
+        font-size: 28px;
     }
     
-    .swan-home-button {
-        font-size: 36px;
-        top: 15px;
-        left: 15px;
+    .warning-text {
+        font-size: 16px;
+    }
+    
+    .main-title {
+        font-size: 32px;
+    }
+    
+    .subtitle {
+        font-size: 18px;
+    }
+    
+    .gallery-grid {
+        grid-template-columns: 1fr;
     }
 }
-
 </style>
 </head>
 
 <body>
 
-<!-- ================= SWAN ICON (HOME BUTTON) ================= -->
-<a href="home.html" class="swan-home-button" title="Home">
-    🦢
-</a>
-
-<!-- ================= TABS ================= -->
-<div class="tabs">
-    
-    <div class="tab active" onclick="switchTab('comics', this)">Comics</div>
-    <div class="tab" onclick="switchTab('factions', this)">Factions</div>
-</div>
-
-<!-- ================= COMICS TAB ================= -->
-<div class="content active" id="comics">
-    <!-- Top Section: Character Info -->
-    <div class="top-section">
-        <div class="character-info">
-            <div class="faction-logo" id="factionLogo">FACTION LOGO</div>
-            <div class="faction-name" id="factionName">Faction Name</div>
-        </div>
-        <div class="char-name" id="charName">CHAR NAME</div>
-    </div>
-
-    <!-- Banner Character Image -->
-    <div class="character-banner-container">
-        <img id="characterImg" class="character-image" src="images/HELSIE TEST.png" alt="Character">
-    </div>
-
-    <!-- Navigation Controls -->
-    <div class="navigation-controls">
-        <div class="navigation">
-            <div class="arrow" onclick="changeOutfit(-1)">←</div>
-            <div class="arrow" onclick="changeOutfit(1)">→</div>
-        </div>
-        <div class="outfit-indicator" id="outfitIndicator"></div>
-        <div class="character-selector" id="characterSelector"></div>
-    </div>
-
-    <!-- Bottom Section: Description & Stats -->
-    <div class="bottom-section">
-        <div class="comic-info">
-            <div class="comic-title" id="comicTitle">Comic of Debut</div>
-            <div class="desc-box">
-                <div class="desc-title" id="descTitle">CHARACTER DESCRIPTION</div>
-                <div class="desc-text" id="descText">
-                    Character description will appear here.
-                </div>
-            </div>
-        </div>
-        
-        <div class="character-details">
-            <div class="comic-title">Character Stats</div>
-            <div class="desc-box">
-                <div class="stats-container" id="statsContainer">
-                    <!-- Stats will be dynamically generated -->
-                </div>
-            </div>
+<!-- ================= AGE WARNING ================= -->
+<div class="age-warning-overlay" id="ageWarning">
+    <div class="age-warning-modal">
+        <div class="warning-icon">⚠️</div>
+        <h1 class="warning-title">18+ Content Warning</h1>
+        <p class="warning-text">
+            This portfolio contains mature content intended for adults only.<br>
+            By entering, you confirm that you are 18 years of age or older.
+        </p>
+        <div class="warning-buttons">
+            <button class="warning-btn btn-enter" onclick="enterSite()">I am 18+</button>
+            <button class="warning-btn btn-exit" onclick="exitSite()">Exit</button>
         </div>
     </div>
 </div>
 
-<!-- ================= FACTIONS TAB ================= -->
-<div class="content" id="factions">
-    <!-- Top Section: Faction Info -->
-    <div class="top-section">
-        <div class="character-info">
-            <div class="faction-logo" id="factionLogoFaction">FACTION LOGO</div>
-            <div class="faction-name" id="factionNameFaction">Faction Name</div>
-        </div>
-        <div class="char-name" id="factionDisplayName">FACTION</div>
+<!-- ================= MAIN CONTENT ================= -->
+<div class="main-content" id="mainContent">
+    <div class="header">
+        <h1 class="main-title">Welcome to Swan Nsfw!</h1>
+        <p class="subtitle">3D Artist • Comic Artist • Comissions below!</p>
     </div>
 
-    <!-- Banner Faction Image -->
-    <div class="character-banner-container">
-        <img id="factionImg" class="character-image" src="images/HELSIE TEST.png" alt="Faction">
-    </div>
-
-    <!-- Faction Selector -->
-    <div class="navigation-controls">
-        <div class="character-selector" id="factionSelector"></div>
-    </div>
-
-    <!-- Bottom Section: Description & Stats -->
-    <div class="bottom-section">
-        <div class="comic-info">
-            <div class="comic-title">Faction Information</div>
-            <div class="desc-box">
-                <div class="desc-title" id="factionDescTitle">FACTION OVERVIEW</div>
-                <div class="desc-text" id="factionDescText">
-                    Faction description will appear here.
-                </div>
+    <div class="content-grid">
+        <!-- Social Media Section -->
+        <div class="section-card">
+            <h2 class="section-title">Connect With Me</h2>
+            <div class="social-links">
+                <a href="https://instagram.com/yourusername" target="_blank" class="social-link instagram">
+                    <span class="social-icon">📷</span>
+                    <span class="social-name">Follow my Instagram</span>
+                </a>
+                <a href="https://twitter.com/yourusername" target="_blank" class="social-link twitter">
+                    <span class="social-icon">🐦</span>
+                    <span class="social-name">My X!</span>
+                </a>
+                <a href="https://discord.gg/mU5UyD93wG" target="_blank" class="social-link discord">
+                    <span class="social-icon">💬</span>
+                    <span class="social-name">Join my Discord server!</span>
+                </a>
             </div>
         </div>
-        
-        <div class="character-details">
-            <div class="comic-title">Faction Stats</div>
-            <div class="desc-box">
-                <div class="stats-container" id="factionStatsContainer">
-                    <!-- Faction stats will be dynamically generated -->
+
+        <!-- Commission Form Section -->
+        <div class="section-card">
+            <h2 class="section-title">Commission Inquiry</h2>
+            <p class="commission-description">Interested in commissioning artwork? Send me a message!</p>
+            
+            <form class="commission-form" id="commissionForm">
+                <div class="form-group">
+                    <label for="name">Your Name</label>
+                    <input type="text" id="name" name="name" required placeholder="Enter your name">
                 </div>
-            </div>
+                
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" name="email" required placeholder="your.email@example.com">
+                </div>
+                
+                <div class="form-group">
+                    <label for="commissionType">Commission Type</label>
+                    <select id="commissionType" name="commissionType" required>
+                        <option value="">Select a type...</option>
+                        <option value="character">Character Design</option>
+                        <option value="illustration">Illustration</option>
+                        <option value="comic">Comic Page</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="message">Project Details</label>
+                    <textarea id="message" name="message" rows="4" required placeholder="Tell me about your project..."></textarea>
+                </div>
+                
+                <button type="submit" class="submit-btn">Send Inquiry</button>
+            </form>
         </div>
+    </div>
+
+    <!-- Navigation Buttons -->
+    <div class="enter-portfolio">
+        <a href="gallery.html" class="enter-btn" style="margin-right: 20px;">View Art Gallery 🎨</a>
+        <a href="home.html" class="enter-btn">Enter Character Viewer →</a>
     </div>
 </div>
 
 <script>
-// ================= DATA STRUCTURE =================
-// 🎨 EASY TO EDIT: Add new factions here!
-const FACTIONS = {
-    shadow: {
-        name: "High Stakes Club",
-        logo: "HSC",
-        color: "#6b3fa0",
-        borderColor: "rgba(107, 63, 160, 0.5)",
-        glowColor: "rgba(107, 63, 160, 0.6)",
-        description: "Hunts vampires.",
-        image: "images/HELSIE TEST.png",
-        stats: {
-            "Total Members": "5",
-            "First Appearance": "Issue #1",
-            "Territory": "Underground"
-        }
-    },
-    band: {
-        name: "Chors N Chaos",
-        logo: "CNC",
-        color: "#db12ce",
-        borderColor: "rgba(107, 63, 160, 0.5)",
-        glowColor: "rgba(107, 63, 160, 0.6)",
-        description: "Rock Band.",
-        image: "images/HELSIE TEST.png",
-        stats: {
-            "Total Members": "5",
-            "First Appearance": "Issue #1",
-            "Territory": "Underground"
-        }
-    },
-    // 🔥 ADD MORE FACTIONS LIKE THIS:
-    // light: {
-    //     name: "Light Brigade",
-    //     logo: "LIGHT",
-    //     color: "#f4d03f",
-    //     borderColor: "rgba(244, 208, 63, 0.5)",
-    //     glowColor: "rgba(244, 208, 63, 0.6)",
-    //     description: "Defenders of justice and order.",
-    //     image: "images/light-faction.png",
-    //     stats: {
-    //         "Total Members": "50+",
-    //         "First Appearance": "Issue #3",
-    //         "Territory": "City Center"
-    //     }
-    // }
-};
-
-// 🎨 EASY TO EDIT: Add new characters here!
-const CHARACTERS = [
-    {
-        name: "HELSIE",
-        faction: "shadow",
-        thumbnail: "images/Helsie_thumb.png", // 🎨 Character icon for selector
-        outfits: [
-            "images/HELSIE TEST1.png",
-            "images/HELSIE TEST33.png",
-            "images/HELSIE TEST22.png",
-            // Add more outfit images here:
-            // "images/HELSIE TEST_2.png",
-            // "images/HELSIE TEST_3.png"
-        ],
-        debutComic: "High Stakes Club #1",
-        description: "The dumbass of the group, Boba tea artist, skilled vampire hunter",
-        stats: {
-            "Appearances": "1 Issue",
-            "Debut": "Issue #1",
-            "Status": "Active",
-            "Affiliation": "HIGH STAKES CLUB"
-        }
-        
-    },
-    {
-        name: "Joni",
-        faction: "band",
-        thumbnail: "images/HELSIE TESTJ.png", // 🎨 Character icon for selector
-        outfits: [
-            "images/HELSIE TESTJ.png",
-            // Add more outfit images here:
-            // "images/HELSIE TEST_2.png",
-            // "images/HELSIE TEST_3.png"
-        ],
-        debutComic: "Chors N Chaos #1",
-        description: "The Leader",
-        stats: {
-            "Appearances": "1 Issue",
-            "Debut": "Issue #1",
-            "Status": "Active",
-            "Affiliation": "CHORS N CHAOS"
-        }
-        
-    },
-    // 🔥 ADD MORE CHARACTERS LIKE THIS:
-    // {
-    //     name: "NOVA",
-    //     faction: "light",
-    //     outfits: [
-    //         "images/nova-1.png",
-    //         "images/nova-2.png"
-    //     ],
-    //     debutComic: "Dawn of Heroes #3",
-    //     description: "A beacon of hope with incredible light-based powers.",
-    //     stats: {
-    //         "Appearances": "8 Issues",
-    //         "Debut": "Issue #3",
-    //         "Status": "Active",
-    //         "Affiliation": "Light Brigade"
-    //     }
-    // }
-];
-
-// ================= STATE MANAGEMENT =================
-let currentCharacterIndex = 0;
-let currentOutfitIndex = 0;
-let currentFactionKey = 'shadow';
-
-// ================= INITIALIZATION =================
-function init() {
-    renderCharacterSelector();
-    renderFactionSelector();
-    loadCharacter(0);
-    loadFactionView('shadow');
+// ================= AGE VERIFICATION =================
+function enterSite() {
+    // Store verification in session storage
+    sessionStorage.setItem('ageVerified', 'true');
     
-    // Mouse tracking for subtle background effect
-    document.addEventListener('mousemove', (e) => {
-        const x = (e.clientX / window.innerWidth) * 100;
-        const y = (e.clientY / window.innerHeight) * 100;
-        document.body.style.setProperty('--mouse-x', x + '%');
-        document.body.style.setProperty('--mouse-y', y + '%');
-    });
+    // Hide warning and show content
+    document.getElementById('ageWarning').style.display = 'none';
+    document.getElementById('mainContent').classList.add('visible');
 }
 
-// ================= CHARACTER SELECTOR =================
-function renderCharacterSelector() {
-    const selector = document.getElementById('characterSelector');
-    selector.innerHTML = '';
-    
-    CHARACTERS.forEach((char, index) => {
-        const thumb = document.createElement('img');
-        // Use thumbnail if available, otherwise fall back to first outfit
-        thumb.src = char.thumbnail || char.outfits[0];
-        thumb.className = 'char-thumb' + (index === 0 ? ' active' : '');
-        thumb.alt = char.name;
-        thumb.onclick = () => loadCharacter(index);
-        selector.appendChild(thumb);
-    });
+function exitSite() {
+    // Redirect to a safe page or close window
+    window.location.href = 'https://www.google.com';
 }
 
-// ================= LOAD CHARACTER =================
-function loadCharacter(index) {
-    currentCharacterIndex = index;
-    currentOutfitIndex = 0;
-    
-    const char = CHARACTERS[index];
-    const faction = FACTIONS[char.faction];
-    
-    // Apply faction theme
-    applyFactionTheme(faction);
-    
-    // Animate image transition
-    const img = document.getElementById('characterImg');
-    img.classList.add('changing');
-    
-    setTimeout(() => {
-        // Update character info
-        document.getElementById('charName').textContent = char.name;
-        document.getElementById('factionLogo').textContent = faction.logo;
-        document.getElementById('factionName').textContent = faction.name;
-        document.getElementById('comicTitle').textContent = char.debutComic;
-        document.getElementById('descTitle').textContent = char.name + ' - PROFILE';
-        document.getElementById('descText').textContent = char.description;
-        
-        // Update image
-        img.src = char.outfits[0];
-        img.classList.remove('changing');
-        
-        // Update stats
-        renderStats(char.stats, 'statsContainer');
-        
-        // Update outfit indicators
-        renderOutfitIndicators();
-        
-        // Update character selector active state
-        document.querySelectorAll('.char-thumb').forEach((thumb, i) => {
-            thumb.classList.toggle('active', i === index);
-        });
-    }, 250);
-}
-
-// ================= OUTFIT MANAGEMENT =================
-function changeOutfit(direction) {
-    const char = CHARACTERS[currentCharacterIndex];
-    const img = document.getElementById('characterImg');
-    
-    img.classList.add('changing');
-    
-    setTimeout(() => {
-        currentOutfitIndex = (currentOutfitIndex + direction + char.outfits.length) % char.outfits.length;
-        img.src = char.outfits[currentOutfitIndex];
-        img.classList.remove('changing');
-        
-        // Update outfit indicators
-        document.querySelectorAll('.outfit-dot').forEach((dot, i) => {
-            dot.classList.toggle('active', i === currentOutfitIndex);
-        });
-    }, 250);
-}
-
-function renderOutfitIndicators() {
-    const char = CHARACTERS[currentCharacterIndex];
-    const container = document.getElementById('outfitIndicator');
-    container.innerHTML = '';
-    
-    if (char.outfits.length > 1) {
-        char.outfits.forEach((_, index) => {
-            const dot = document.createElement('div');
-            dot.className = 'outfit-dot' + (index === 0 ? ' active' : '');
-            dot.onclick = () => {
-                const img = document.getElementById('characterImg');
-                img.classList.add('changing');
-                setTimeout(() => {
-                    currentOutfitIndex = index;
-                    img.src = char.outfits[index];
-                    img.classList.remove('changing');
-                    document.querySelectorAll('.outfit-dot').forEach((d, i) => {
-                        d.classList.toggle('active', i === index);
-                    });
-                }, 250);
-            };
-            container.appendChild(dot);
-        });
-    }
-}
-
-// ================= STATS RENDERING =================
-function renderStats(stats, containerId) {
-    const container = document.getElementById(containerId);
-    container.innerHTML = '';
-    
-    Object.entries(stats).forEach(([label, value]) => {
-        const statItem = document.createElement('div');
-        statItem.className = 'stat-item';
-        statItem.innerHTML = `
-            <span class="stat-label">${label}</span>
-            <span class="stat-value">${value}</span>
-        `;
-        container.appendChild(statItem);
-    });
-}
-
-// ================= FACTION THEME =================
-function applyFactionTheme(faction) {
-    document.documentElement.style.setProperty('--faction-color', faction.color);
-    document.documentElement.style.setProperty('--faction-border', faction.borderColor);
-    document.documentElement.style.setProperty('--faction-glow', faction.glowColor);
-}
-
-// ================= FACTION SELECTOR =================
-function renderFactionSelector() {
-    const selector = document.getElementById('factionSelector');
-    selector.innerHTML = '';
-    
-    Object.entries(FACTIONS).forEach(([key, faction], index) => {
-        const thumb = document.createElement('div');
-        thumb.className = 'char-thumb' + (index === 0 ? ' active' : '');
-        thumb.style.cssText = `
-            background: ${faction.color};
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            font-size: 14px;
-            letter-spacing: 1px;
-        `;
-        thumb.textContent = faction.logo;
-        thumb.onclick = () => loadFactionView(key);
-        selector.appendChild(thumb);
-    });
-}
-
-// ================= FACTION VIEW =================
-function loadFactionView(factionKey) {
-    currentFactionKey = factionKey;
-    const faction = FACTIONS[factionKey];
-    
-    // Apply faction theme
-    applyFactionTheme(faction);
-    
-    // Animate image transition
-    const img = document.getElementById('factionImg');
-    img.classList.add('changing');
-    
-    setTimeout(() => {
-        document.getElementById('factionLogoFaction').textContent = faction.logo;
-        document.getElementById('factionNameFaction').textContent = faction.name;
-        document.getElementById('factionDisplayName').textContent = faction.name.toUpperCase();
-        document.getElementById('factionDescTitle').textContent = faction.name.toUpperCase();
-        document.getElementById('factionDescText').textContent = faction.description;
-        img.src = faction.image;
-        img.classList.remove('changing');
-        
-        renderStats(faction.stats, 'factionStatsContainer');
-        
-        // Update faction selector active state
-        document.querySelectorAll('#factionSelector .char-thumb').forEach((thumb, i) => {
-            const keys = Object.keys(FACTIONS);
-            thumb.classList.toggle('active', keys[i] === factionKey);
-        });
-    }, 250);
-}
-
-// ================= TAB SWITCHING =================
-function switchTab(tabId, element) {
-    document.querySelectorAll(".content").forEach(c => c.classList.remove("active"));
-    document.getElementById(tabId).classList.add("active");
-
-    document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
-    element.classList.add("active");
-    
-    if (tabId === 'factions') {
-        loadFactionView(currentFactionKey);
-    }
-}
-
-// ================= COMMISSION FORM HANDLING =================
-document.addEventListener('DOMContentLoaded', function() {
-    const form = document.getElementById('commissionForm');
-    if (form) {
-        form.addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const formData = {
-                name: document.getElementById('name').value,
-                email: document.getElementById('email').value,
-                commissionType: document.getElementById('commissionType').value,
-                message: document.getElementById('message').value
-            };
-            
-            // Create mailto link
-            const subject = encodeURIComponent(`Commission Inquiry - ${formData.commissionType}`);
-            const body = encodeURIComponent(
-                `Name: ${formData.name}\n` +
-                `Email: ${formData.email}\n` +
-                `Commission Type: ${formData.commissionType}\n\n` +
-                `Message:\n${formData.message}`
-            );
-            
-            // Replace with your actual email
-            const mailtoLink = `mailto:your.email@example.com?subject=${subject}&body=${body}`;
-            
-            window.location.href = mailtoLink;
-            
-            // Optional: Show success message
-            alert('Opening your email client... Please send the email to complete your inquiry!');
-        });
+// Check if user already verified age in this session
+window.addEventListener('DOMContentLoaded', function() {
+    if (sessionStorage.getItem('ageVerified') === 'true') {
+        document.getElementById('ageWarning').style.display = 'none';
+        document.getElementById('mainContent').classList.add('visible');
     }
 });
 
-// ================= START APPLICATION =================
-init();
+// ================= COMMISSION FORM HANDLING =================
+document.getElementById('commissionForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const formData = {
+        name: document.getElementById('name').value,
+        email: document.getElementById('email').value,
+        commissionType: document.getElementById('commissionType').value,
+        message: document.getElementById('message').value
+    };
+    
+    // Create mailto link
+    const subject = encodeURIComponent(`Commission Inquiry - ${formData.commissionType}`);
+    const body = encodeURIComponent(
+        `Name: ${formData.name}\n` +
+        `Email: ${formData.email}\n` +
+        `Commission Type: ${formData.commissionType}\n\n` +
+        `Message:\n${formData.message}`
+    );
+    
+    // Replace with your actual email
+    const mailtoLink = `mailto:your.email@example.com?subject=${subject}&body=${body}`;
+    
+    window.location.href = mailtoLink;
+    
+    alert('Opening your email client... Pleasee send the email to complete your inquiry!');
+});
 </script>
 
 </body>
