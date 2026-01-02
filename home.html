@@ -446,9 +446,7 @@ body::before {
 
 /* ================= OUTFIT INDICATOR ================= */
 .outfit-indicator {
-    display: flex;
-    gap: 10px;
-    align-items: center;
+    display: none;
 }
 
 .outfit-dot {
@@ -517,9 +515,24 @@ body::before {
         grid-template-columns: 1fr;
         gap: 20px;
     }
+    
+    /* Hide outfit indicator dots on tablet */
+    .outfit-indicator {
+        display: none !important;
+    }
 }
 
 @media (max-width: 768px) {
+    .tabs {
+        gap: 12px;
+        padding: 20px 15px;
+    }
+    
+    .tab {
+        padding: 10px 20px;
+        font-size: 14px;
+    }
+    
     .character-banner-container {
         height: 55vh;
         min-height: 300px;
@@ -528,6 +541,7 @@ body::before {
     .char-name {
         font-size: 20px;
     }
+    
     .character-image {
         object-position: center;
         transform: scale(1);
@@ -537,6 +551,43 @@ body::before {
         font-size: 36px;
         top: 15px;
         left: 15px;
+    }
+    
+    /* Fix navigation controls layout on mobile */
+    .navigation-controls {
+        flex-direction: column;
+        gap: 20px;
+        align-items: stretch;
+    }
+    
+    .navigation {
+        justify-content: center;
+        order: 1;
+    }
+    
+    .character-selector {
+        justify-content: center;
+        order: 2;
+        margin-top: 10px;
+    }
+    
+    /* Make character thumbnails larger and more spaced on mobile */
+    .char-thumb {
+        width: 70px;
+        height: 70px;
+    }
+    
+    /* Adjust bottom section padding */
+    .bottom-section {
+        padding: 0 10px;
+    }
+    
+    .content {
+        padding: 20px 15px;
+    }
+    
+    .top-section {
+        padding: 0 10px;
     }
 }
 
