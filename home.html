@@ -1,1066 +1,850 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Character Viewer</title>
-
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Character Viewer — Modern</title>
 <style>
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
+  :root{
+  --bg: #0e0f14;
+  --panel: rgba(0, 0, 0, 0.6);
+  --panel-soft: rgba(0, 0, 0, 0.4);
 
-/* ================= BACKGROUND WITH DARK OVERLAY ================= */
-body {
-    height: 100vh;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    color: white;
-    background:
-        linear-gradient(rgba(0,0,0,0.65), rgba(0,0,0,0.65)),
-        url("images/bg.png") center / cover no-repeat;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-}
+  --text: #ffffff;
+  --muted: rgba(255, 255, 255, 0.8);
 
-/* ================= ANIMATED BACKGROUND OVERLAY ================= */
-body::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), 
-                rgba(255,255,255,0.03) 0%, 
-                transparent 50%);
-    pointer-events: none;
-    z-index: 1;
-}
+  /* Signature purple matching other views */
+  --accent: #667eea;
+  --accent-soft: #764ba2;
+  --accent-dark: #4b2a7a;
 
-/* ================= SWAN HOME BUTTON ================= */
-.swan-home-button {
+  --border: rgba(255, 255, 255, 0.1);
+  --glass: rgba(0, 0, 0, 0.5);
+  --bg-gradient: linear-gradient(rgba(0,0,0,0.75), rgba(0,0,0,0.75));
+}
+  *{box-sizing:border-box}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+  html,body{height:100%;margin:0;font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color:var(--text); background:var(--bg-gradient), url("images/bg.png") center / cover no-repeat fixed; transition: background 0.5s ease;}
+  /* page layout */
+  .wrap{
+    height:100vh;
+    display:grid;
+    grid-template-columns: 100px 1fr;
+    grid-template-rows: 65vh auto;
+    grid-template-areas: "nav art" "nav info";
+    gap:0;
+    padding:0;
+    position:relative;
+    overflow:hidden;
+    overflow-y:auto;
+  }
+
+  /* VISUAL ENHANCEMENTS FOR EMPTINESS */
+  .grid-overlay {
     position: fixed;
-    top: 20px;
-    left: 20px;
-    font-size: 48px;
-    cursor: pointer;
-    z-index: 100;
-    transition: all 0.3s ease;
-    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.5));
-    animation: float 3s ease-in-out infinite;
-}
-
-.swan-home-button:hover {
-    transform: scale(1.2) rotate(-10deg);
-    filter: drop-shadow(0 6px 12px rgba(255,255,255,0.3));
-}
-
-@keyframes float {
-    0%, 100% { transform: translateY(0px); }
-    50% { transform: translateY(-10px); }
-}
-
-/* ================= TOP TABS ================= */
-.tabs {
-    display: flex;
-    justify-content: center;
-    gap: 24px;
-    padding: 25px;
-    z-index: 2;
-    position: relative;
-}
-
-.tab {
-    padding: 12px 36px;
-    border-radius: 40px;
-    background: rgba(0,0,0,0.7);
-    cursor: pointer;
-    font-weight: bold;
-    letter-spacing: 1px;
-    transition: all 0.3s ease;
-    border: 2px solid transparent;
-    position: relative;
-    overflow: hidden;
-}
-
-.tab::before {
-    content: '';
+    top: 0; left: 0; width: 100%; height: 100%;
+    background-image: 
+      linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+    z-index: 0;
+  }
+  
+  .faction-watermark {
     position: absolute;
     top: 50%;
     left: 50%;
-    width: 0;
-    height: 0;
-    border-radius: 50%;
-    background: rgba(255,255,255,0.1);
-    transform: translate(-50%, -50%);
-    transition: width 0.4s, height 0.4s;
-}
-
-.tab:hover::before {
-    width: 300px;
-    height: 300px;
-}
-
-.tab:hover {
-    background: rgba(255,255,255,0.15);
-    border-color: rgba(255,255,255,0.3);
-    transform: translateY(-2px);
-}
-
-.tab.active {
-    background: white;
-    color: black;
-    box-shadow: 0 4px 20px rgba(255,255,255,0.3);
-}
-
-/* ================= MAIN CONTENT ================= */
-.content {
-    flex: 1;
-    min-height: 100vh;
-    display: none;
-    flex-direction: column;
-    padding: 20px 60px 40px;
-    position: relative;
-    z-index: 2;
-    opacity: 0;
-    animation: fadeIn 0.5s ease forwards;
-    overflow-y: auto;
-}
-
-.content.active {
-    display: flex;
-}
-
-@keyframes fadeIn {
-    to { opacity: 1; }
-}
-
-/* Custom Scrollbar */
-.content::-webkit-scrollbar {
-    width: 10px;
-}
-
-.content::-webkit-scrollbar-track {
-    background: rgba(0,0,0,0.3);
-    border-radius: 10px;
-}
-
-.content::-webkit-scrollbar-thumb {
-    background: var(--faction-color, rgba(107,63,160,0.6));
-    border-radius: 10px;
-}
-
-.content::-webkit-scrollbar-thumb:hover {
-    background: var(--faction-color, rgba(107,63,160,0.9));
-}
-
-/* ================= TOP SECTION (Character Info) ================= */
-.top-section {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    padding: 0 20px;
-    margin-bottom: 20px;
-    animation: slideInTop 0.6s ease;
-}
-
-@keyframes slideInTop {
-    from {
-        opacity: 0;
-        transform: translateY(-30px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-.character-info {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-}
-
-.faction-logo {
-    background: var(--faction-color, black);
-    padding: 8px 16px;
-    border-radius: 8px;
-    font-size: 13px;
-    font-weight: bold;
-    width: fit-content;
-    letter-spacing: 2px;
-    box-shadow: 0 4px 15px var(--faction-glow, rgba(0,0,0,0.5));
-    transition: all 0.3s ease;
-    border: 2px solid var(--faction-border, rgba(255,255,255,0.2));
-}
-
-.faction-logo:hover {
-    transform: scale(1.05);
-    box-shadow: 0 6px 25px var(--faction-glow, rgba(0,0,0,0.7));
-}
-
-.faction-name {
-    font-size: 15px;
-    opacity: 0.9;
-    letter-spacing: 1px;
-    font-weight: 500;
-}
-
-.char-name {
-    background: var(--faction-color, #6b3fa0);
-    padding: 12px 26px;
-    border-radius: 14px;
-    font-weight: bold;
-    letter-spacing: 1px;
-    font-size: 24px;
-    box-shadow: 0 4px 15px var(--faction-glow, rgba(107,63,160,0.5));
-    transition: all 0.3s ease;
-    border: 2px solid var(--faction-border, rgba(255,255,255,0.3));
-}
-
-.char-name:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 25px var(--faction-glow, rgba(107,63,160,0.7));
-}
-
-/* ================= BANNER CHARACTER IMAGE ================= */
-.character-banner-container {
-    position: relative;
-    width: 100%;
-    height: calc(100vh - 260px); /* fills most of screen */
-    min-height: 420px;
-    max-height: 720px;
-    margin-bottom: 20px;
-    overflow: hidden;
-    border-radius: 24px;
-    box-shadow: 0 15px 60px rgba(0,0,0,0.85);
-    border: 3px solid var(--faction-border, rgba(255,255,255,0.2));
-    background: linear-gradient(
-        135deg,
-        rgba(0,0,0,0.95) 0%,
-        var(--faction-glow, rgba(107,63,160,0.25)) 50%,
-        rgba(0,0,0,0.95) 100%
-    );
-}
-
-.character-banner-container::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: radial-gradient(
-        ellipse at center,
-        transparent 0%,
-        var(--faction-glow, rgba(107,63,160,0.15)) 100%
-    );
-    z-index: 1;
+    transform: translate(-50%, -50%) rotate(-15deg);
+    font-size: 20vw;
+    font-weight: 900;
+    color: var(--accent);
+    opacity: 0.04;
     pointer-events: none;
-    animation: bannerPulse 4s ease-in-out infinite;
-}
+    z-index: -1;
+    white-space: nowrap;
+    transition: all 0.5s ease;
+    user-select: none;
+  }
 
-@keyframes bannerPulse {
-    0%, 100% { opacity: 0.3; }
-    50% { opacity: 0.6; }
-}
-
-.character-image {
-     width: 100%;
-    height: 100%;
-    object-fit: cover; /* ⬅️ important */
-    object-position: center top;
-    transform: scale(1.08); /* subtle zoom */
-    transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-    position: relative;
-    z-index: 2;
-    filter:
-        drop-shadow(0 0 25px var(--faction-glow, rgba(107,63,160,0.6)))
-        brightness(1.05);
-}
-
-.character-image.changing {
-    opacity: 0;
-    transform: scale(1.05);
-}
-
-/* ================= NAVIGATION CONTROLS ================= */
-.navigation-controls {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0 20px;
-    margin-bottom: 20px;
-}
-
-.navigation {
-    display: flex;
-    gap: 15px;
-}
-
-.arrow {
-    background: rgba(255,255,255,0.9);
-    color: black;
-    font-size: 24px;
-    padding: 12px 20px;
-    border-radius: 12px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    border: 2px solid transparent;
-    font-weight: bold;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-}
-
-.arrow:hover {
-    background: white;
-    transform: scale(1.1);
-    box-shadow: 0 6px 25px var(--faction-glow, rgba(255,255,255,0.5));
-    border-color: var(--faction-color, white);
-}
-
-.arrow:active {
-    transform: scale(0.95);
-}
-
-/* ================= RIGHT SIDE ================= */
-.right {
-    max-width: 480px;
-    animation: slideInRight 0.6s ease;
-}
-
-@keyframes slideInRight {
-    from {
-        opacity: 0;
-        transform: translateX(50px);
-    }
-    to {
-        opacity: 1;
-        transform: translateX(0);
-    }
-}
-
-.comic-title {
-    font-size: 28px;
-    margin-bottom: 15px;
-    font-weight: 700;
-    text-shadow: 2px 2px 10px rgba(0,0,0,0.5);
-    letter-spacing: 1px;
-}
-
-.desc-box {
-    background: rgba(0,0,0,0.85);
-    padding: 24px;
-    border-radius: 18px;
-    box-shadow: 0 0 40px rgba(0,0,0,0.6);
-    border: 2px solid var(--faction-border, rgba(255,255,255,0.1));
-    transition: all 0.3s ease;
-}
-
-.desc-box:hover {
-    border-color: var(--faction-color, rgba(255,255,255,0.3));
-    box-shadow: 0 0 50px var(--faction-glow, rgba(0,0,0,0.8));
-}
-
-.desc-title {
-    font-weight: bold;
-    margin-bottom: 12px;
-    letter-spacing: 1px;
-    font-size: 18px;
-    color: var(--faction-color, white);
-}
-
-.desc-text {
-    line-height: 1.7;
-    opacity: 0.9;
-    margin-bottom: 20px;
-}
-
-/* ================= CHARACTER STATS ================= */
-.stats-container {
-    margin-top: 0;
-    padding-top: 0;
-}
-
-.stat-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 12px;
-    padding: 8px 0;
-}
-
-.stat-label {
-    font-weight: 600;
-    font-size: 14px;
-    letter-spacing: 0.5px;
-    color: var(--faction-color, #aaa);
-}
-
-.stat-value {
-    font-weight: bold;
-    font-size: 16px;
-    color: white;
-    padding: 4px 12px;
-    background: var(--faction-color, rgba(107,63,160,0.3));
-    border-radius: 8px;
-    min-width: 60px;
-    text-align: center;
-    box-shadow: 0 2px 10px var(--faction-glow, rgba(0,0,0,0.3));
-}
-
-/* ================= CHARACTER SELECTOR ================= */
-.character-selector {
-    display: flex;
-    gap: 15px;
-    margin-top: 20px;
-    flex-wrap: wrap;
-}
-
-.char-thumb {
-    width: 60px;
-    height: 60px;
-    border-radius: 12px;
-    cursor: pointer;
-    border: 3px solid transparent;
-    transition: all 0.3s ease;
-    object-fit: cover;
-    opacity: 0.6;
-    filter: grayscale(50%);
-}
-
-.char-thumb:hover {
-    opacity: 0.9;
-    transform: scale(1.1) translateY(-3px);
-    filter: grayscale(0%);
-}
-
-.char-thumb.active {
-    border-color: var(--faction-color, white);
-    opacity: 1;
-    filter: grayscale(0%);
-    box-shadow: 0 4px 20px var(--faction-glow, rgba(255,255,255,0.5));
-}
-
-/* ================= OUTFIT INDICATOR ================= */
-.outfit-indicator {
-    display: none;
-}
-
-.outfit-dot {
-    width: 12px;
-    height: 12px;
+  .particles {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    pointer-events: none;
+    z-index: 1;
+  }
+  .particle {
+    position: absolute;
+    background: var(--accent);
     border-radius: 50%;
-    background: rgba(255,255,255,0.4);
-    cursor: pointer;
-    transition: all 0.3s ease;
-    border: 2px solid transparent;
+    opacity: 0.3;
+    animation: floatUp linear infinite;
+  }
+  @keyframes floatUp {
+    0% { transform: translateY(100vh) scale(0); opacity: 0; }
+    20% { opacity: 0.4; }
+    80% { opacity: 0.4; }
+    100% { transform: translateY(-10vh) scale(1); opacity: 0; }
+  }
+
+  /* huge faint title behind */
+  .backdrop {
+    position:fixed;
+    left:50%;
+    top:20%;
+    transform: translateX(-50%);
+    font-weight:800;
+    font-size:300px;
+    letter-spacing:5px;
+    color:rgba(102, 126, 234, 0.08);
+    pointer-events:none;
+    user-select:none;
+    z-index:0;
+  }
+
+  /* left vertical thumbnails */
+  .left-bar{
+    grid-area: nav;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    background: rgba(0,0,0,0.3);
+    border-right: 1px solid var(--border);
+    z-index:3;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:18px;
+    padding-top:40px;
+    padding-bottom: 20px;
+  }
+  .logo{
+    width:80px;height:80px;border-radius:14px;background:linear-gradient(135deg, #667eea 0%, #764ba2 100%);display:flex;align-items:center;justify-content:center;font-weight:900;color:#fff;box-shadow:0 6px 18px rgba(102, 126, 234, 0.4);
+    cursor:pointer;transition:transform 0.2s ease;
+  }
+  .logo:hover{transform:scale(1.05);}
+  .thumb{
+    width:80px;height:80px;border-radius:14px;overflow:hidden;border:3px solid rgba(255,255,255,0.1);cursor:pointer;transition:all .24s;filter:grayscale(.2);
+    display:block;object-fit:cover;
+  }
+  .thumb.active{ border-color: #667eea; box-shadow:0 6px 26px rgba(102, 126, 234, 0.6); filter:none; transform:translateY(-4px); }
+
+  /* center panel (info) */
+  .center{
+    grid-area: info;
+    z-index:3;
+    padding:40px;
+    max-width: 1200px;
+    margin: 0 auto;
+    width: 100%;
+    display:flex;
+    flex-direction:column;
+    gap:18px;
+    align-items:center;
+    text-align: center;
+    position: relative;
+    background: transparent;
+    padding-top: 10px;
+  }
+  /* New Split Layout */
+  .info-split {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 40px;
+    width: 100%;
+    max-width: 1200px;
+    margin-top: 10px;
+  }
+  .info-left { flex: 2; display: flex; flex-direction: column; gap: 18px; align-items: center; width: 100%; }
+  .info-right { flex: 1; display: flex; flex-direction: column; align-items: center; min-width: 300px; width: 100%; }
+
+  /* DENSE DATA STYLES */
+  .panel-header {
+    width: 100%; border-bottom: 1px solid var(--border); padding-bottom: 8px; margin-bottom: 12px;
+    font-size: 12px; text-transform: uppercase; letter-spacing: 2px; color: var(--accent); font-weight: 800;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .data-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 8px; width: 100%;
+  }
+  .data-cell {
+    background: rgba(0,0,0,0.3); border: 1px solid var(--border); padding: 8px 10px; border-radius: 6px;
+    display: flex; flex-direction: column; gap: 2px;
+  }
+  .data-label { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
+  .data-value { font-size: 13px; font-weight: 700; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+  /* ATTRIBUTE BARS */
+  .attr-section { width: 100%; background: rgba(0,0,0,0.3); border: 1px solid var(--border); border-radius: 12px; padding: 16px; }
+  .attr-row { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
+  .attr-row:last-child { margin-bottom: 0; }
+  .attr-name { width: 40px; font-size: 11px; font-weight: 800; color: var(--muted); }
+  .attr-track { flex: 1; height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; overflow: hidden; }
+  .attr-fill { height: 100%; background: linear-gradient(90deg, var(--accent) 0%, var(--accent-soft) 100%); width: 0%; transition: width 0.8s cubic-bezier(0.22, 1, 0.36, 1); }
+  .attr-val { width: 30px; text-align: right; font-size: 11px; font-weight: 700; color: #fff; }
+
+  /* RELATIONSHIPS */
+  .rel-grid { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 4px; width: 100%; }
+  .rel-item { min-width: 60px; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+  .rel-avatar { width: 48px; height: 48px; border-radius: 50%; background: #333; border: 2px solid var(--border); object-fit: cover; }
+  .rel-name { font-size: 10px; color: var(--muted); text-align: center; }
+
+  .character-name{
+    display:flex;gap:14px;align-items:center;justify-content:center;width:100%;
+  }
+  .faction-badge {
+  padding: 8px 16px;
+  border-radius: 10px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  background: linear-gradient(135deg, var(--accent) 0%, var(--accent-soft) 100%);
+  color: #fff;
+  /* The Glow Effect */
+  box-shadow: 
+    0 0 15px var(--accent), 
+    0 0 30px rgba(102, 126, 234, 0.3),
+    inset 0 0 8px rgba(255, 255, 255, 0.4);
+  text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+  border: 1px solid rgba(255,255,255,0.2);
+}
+  .title{
+    font-size:36px;font-weight:800;
+    background:linear-gradient(135deg, #667eea 0%, #764ba2 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+  }
+  .meta-row{display:flex;gap:12px;align-items:center;margin-top:6px;font-size:13px;color:var(--muted)}
+  .desc{
+    margin-top:0; background:rgba(0,0,0,0.6); padding:20px; border-radius:12px; box-shadow:0 10px 30px rgba(0,0,0,0.3); border:2px solid rgba(255,255,255,0.1); width:100%; line-height:1.5; color:var(--text); text-align: left; font-size: 14px;
+  }
+  .tags{display:flex;gap:8px;margin-top:12px}
+  .tag{padding:6px 10px;border-radius:8px;background:rgba(255,255,255,0.05);color:var(--text);font-weight:600;border:2px solid rgba(255,255,255,0.1);transition:all 0.3s ease;}
+  .tag:hover{background:rgba(255,255,255,0.1);border-color:rgba(255,255,255,0.3);}
+
+  /* right big art area */
+  .hero{
+    grid-area: art;
+    z-index:2;
+    position:relative;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:20px 40px 0 40px;
+    overflow: visible;
+  }
+  .art-stage{
+    width:100%;
+    height:100%;
+    max-height:none;
+    background:rgba(0,0,0,0.3);
+    border-radius:24px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+    border:1px solid rgba(255,255,255,0.1);
+    position:relative;
+    overflow:hidden;
+    backdrop-filter: blur(10px);
+  }
+
+  /* purple gradient accent behind art */
+ .art-stage::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 60%;
+  height: 60%;
+  /* Creates a soft "aura" that matches the faction color */
+  background: radial-gradient(circle, var(--accent) 0%, transparent 70%);
+  opacity: 0.4;
+  z-index: 1;
+  filter: blur(40px);
+  pointer-events: none;
+}
+.art-stage::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: 
+    linear-gradient(var(--border) 1px, transparent 1px),
+    linear-gradient(90deg, var(--border) 1px, transparent 1px);
+  background-size: 40px 40px; /* Size of the grid squares */
+  mask-image: radial-gradient(circle, black 30%, transparent 80%);
+  -webkit-mask-image: radial-gradient(circle, black 30%, transparent 80%);
+  opacity: 0.15;
+  z-index: 0;
+  pointer-events: none;
 }
 
-.outfit-dot:hover {
-    background: rgba(255,255,255,0.7);
-    transform: scale(1.3);
-    border-color: rgba(255,255,255,0.5);
+  /* character image itself */
+ /* character image itself */
+.character-art{
+  position:absolute;
+  bottom: 0; /* Sits exactly on the bottom edge of the stage */
+  left:50%;
+  transform:translateX(-50%); /* Perfectly centers horizontally */
+  /* SIZING CHANGES FOR BIGGER ART */
+  height: 92%; /* Fills the height of the stage almost completely */
+  width: auto; /* Lets width adjust naturally so it doesn't stretch */
+  max-width: 100%; /* Ensures it doesn't spill out the sides */
+  /* standard properties */
+  z-index:3;
+  object-fit:contain;
+  transition: transform .5s ease, opacity .35s;
+  user-select:none;
+  pointer-events:none;
+  /* Optional: adds a slight drop shadow to separate art from background */
+  filter: drop-shadow(0 10px 20px rgba(0,0,0,0.5));
+}
+.character-art.hidden{
+  opacity:0;
+  /* Match the new translateX(-50%) center point */
+  transform:translateX(-50%) translateY(30px) scale(.95);
 }
 
-.outfit-dot.active {
-    background: var(--faction-color, white);
-    box-shadow: 0 0 15px var(--faction-glow, rgba(255,255,255,0.8));
-    transform: scale(1.4);
-    border-color: var(--faction-color, white);
-}
+  /* small right-side controls / badges */
+  .controls{
+    position:absolute;
+    right:18px;
+    top:28px;
+    transform:none;
+    display:flex;
+    gap:12px;
+    flex-direction:column;
+    z-index:6;
+  }
+  .control-btn{
+    width:48px;height:48px;border-radius:16px;background:rgba(0,0,0,0.6);border:2px solid rgba(255,255,255,0.1);box-shadow:0 8px 22px rgba(0,0,0,0.3);display:flex;align-items:center;justify-content:center;font-weight:700;cursor:pointer;color:var(--text);transition:all 0.3s ease;
+  }
+  .control-btn:hover{background:rgba(255,255,255,0.1);border-color:rgba(255,255,255,0.3);transform:translateY(-2px);}
 
-/* ================= BOTTOM SECTION (Description) ================= */
-.bottom-section {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 30px;
-    padding: 0 20px;
-    margin-bottom: 30px;
-}
+  /* outfit arrows and dots */
+  .outfit-controls{
+    position:absolute;
+    left:50%;
+    transform: translateX(-50%);
+    bottom:24px;
+    display:flex;
+    gap:12px;
+    align-items:center;
+    z-index:4;
+  }
+  .arrow{
+    width:46px;height:46px;border-radius:12px;background:rgba(0,0,0,0.6);border:2px solid rgba(255,255,255,0.1);box-shadow:0 8px 24px rgba(0,0,0,0.3);cursor:pointer;display:flex;align-items:center;justify-content:center;font-weight:800;color:var(--text);transition:all 0.3s ease;
+  }
+  .arrow:hover{background:rgba(255,255,255,0.1);border-color:rgba(255,255,255,0.3);transform:translateY(-2px);}
+  .dots{display:flex;gap:8px;align-items:center}
+  .dot{width:12px;height:12px;border-radius:100%;background:rgba(255,255,255,0.2);border:2px solid rgba(255,255,255,0.1);cursor:pointer;box-shadow:0 6px 12px rgba(0,0,0,0.3);transition:all 0.3s ease;}
+  .dot:hover{background:rgba(255,255,255,0.3);transform:scale(1.1);}
+  .dot.active{ background:linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-color:#667eea; transform:scale(1.15); box-shadow:0 0 15px rgba(102, 126, 234, 0.6); }
 
-.comic-info, .character-details {
-    animation: slideInBottom 0.6s ease;
-}
+  /* stats box bottom */
+  .stats{
+    margin-top:10px; display:flex; gap:10px; flex-wrap:wrap; justify-content: center;
+  }
+  .stat{background:rgba(0,0,0,0.6);padding:10px 12px;border-radius:10px;font-weight:700;min-width:120px;text-align:center;box-shadow:0 8px 22px rgba(0,0,0,0.3);border:2px solid rgba(255,255,255,0.1);transition:all 0.3s ease;}
+  .stat:hover{background:rgba(255,255,255,0.05);border-color:rgba(255,255,255,0.3);transform:translateY(-2px);}
 
-@keyframes slideInBottom {
-    from {
-        opacity: 0;
-        transform: translateY(30px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
+  /* gear / weapons section */
+  .gear-section{ margin-top:0; width:100%; animation:fadeIn 0.5s ease; text-align: left; }
+  .gear-title{ font-size:12px; text-transform:uppercase; letter-spacing:1px; color:var(--muted); font-weight:700; margin-bottom:12px; border-bottom:1px solid var(--border); padding-bottom:8px; }
+  .gear-grid{ display:grid; grid-template-columns:repeat(auto-fill, minmax(200px, 1fr)); gap:16px; }
+  .gear-item{
+    background:rgba(0,0,0,0.4); border:1px solid var(--border); border-radius:12px; padding:14px; display:flex; align-items:center; gap:16px; transition:all 0.2s ease;
+  }
+  .gear-item:hover{ background:rgba(255,255,255,0.1); transform:translateY(-2px); border-color:var(--accent); }
+  .gear-icon{
+    width:54px; height:54px; background:linear-gradient(135deg, var(--accent) 0%, var(--accent-soft) 100%); border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:28px; box-shadow:0 4px 10px rgba(0,0,0,0.3); overflow:hidden; flex-shrink:0;
+  }
+  .gear-icon img { width:100%; height:100%; object-fit:cover; }
+  .gear-info{ display:flex; flex-direction:column; gap:2px; }
+  .gear-name{ font-size:15px; font-weight:700; color:#fff; }
+  .gear-type{ font-size:13px; color:var(--muted); }
 
-/* ================= RESPONSIVE ================= */
-@media (max-width: 1024px) {
-    .content {
-        padding: 20px 30px;
-    }
-    
-    .top-section {
-        flex-direction: column;
-        gap: 15px;
-    }
-    
-    .character-banner-container {
-        height: 300px;
-    }
-    
-    .bottom-section {
-        grid-template-columns: 1fr;
-        gap: 20px;
-    }
-    
-    /* Hide outfit indicator dots on tablet */
-    .outfit-indicator {
-        display: none !important;
-    }
-}
+  /* scroll buttons */
+  .scroll-btn {
+    background: rgba(0,0,0,0.4);
+    border: 1px solid rgba(255,255,255,0.1);
+    color: var(--text);
+    width: 100%; height: 24px; display: flex; align-items: center; justify-content: center;
+    border-radius: 6px; cursor: pointer; transition: all 0.2s; font-size: 10px;
+  }
+  .scroll-btn:hover { background: rgba(255,255,255,0.1); border-color: var(--accent); }
+  .scroll-btn.disabled { opacity: 0.3; pointer-events: none; }
 
-@media (max-width: 768px) {
-    .tabs {
-        gap: 12px;
-        padding: 20px 15px;
-    }
-    
-    .tab {
-        padding: 10px 20px;
-        font-size: 14px;
-    }
-    
-    .character-banner-container {
-        height: 55vh;
-        min-height: 300px;
-    }
-    
-    .char-name {
-        font-size: 20px;
-    }
-    
-    .character-image {
-        object-position: center;
-        transform: scale(1);
-    }
-    
-    .swan-home-button {
-        font-size: 36px;
-        top: 15px;
-        left: 15px;
-    }
-    
-    /* Fix navigation controls layout on mobile */
-    .navigation-controls {
-        flex-direction: column;
-        gap: 20px;
-        align-items: stretch;
-    }
-    
-    .navigation {
-        justify-content: center;
-        order: 1;
-    }
-    
-    .character-selector {
-        justify-content: center;
-        order: 2;
-        margin-top: 10px;
-    }
-    
-    /* Make character thumbnails larger and more spaced on mobile */
-    .char-thumb {
-        width: 70px;
-        height: 70px;
-    }
-    
-    /* Adjust bottom section padding */
-    .bottom-section {
-        padding: 0 10px;
-    }
-    
-    .content {
-        padding: 20px 15px;
-    }
-    
-    .top-section {
-        padding: 0 10px;
-    }
-}
-
+  /* small responsive */
+  @media (max-width:1100px){
+    .wrap{grid-template-columns:100px 1fr; grid-template-rows: 50vh auto;}
+    .backdrop{font-size:200px;}
+    .character-art{height:90%}
+    .info-split { flex-direction: column; align-items: center; }
+    .info-right { width: 100%; max-width: 800px; }
+    .info-left { width: 100%; max-width: 800px; }
+    .gear-grid { grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); }
+  }
+  @media (max-width:860px){
+    .wrap{grid-template-columns:90px 1fr; grid-template-rows: 40vh auto; padding:0}
+    .hero{grid-area: art;}
+    .backdrop{display:none}
+    .character-art{height:95%}
+    .controls{top:10px; right:10px}
+  }
+  @media (max-width:520px){
+    .wrap{grid-template-columns:90px 1fr; grid-template-rows: 35vh auto;}
+    .title{font-size:22px}
+    .faction-badge{font-size:12px;padding:6px 10px}
+    .character-art{height:90%}
+  }
 </style>
 </head>
-
 <body>
 
-<!-- ================= SWAN ICON (HOME BUTTON) ================= -->
-<a href="index.html" class="swan-home-button" title="Home">
-    🦢
-</a>
+<div class="wrap">
 
-<!-- ================= TABS ================= -->
-<div class="tabs">
-    
-    <div class="tab active" onclick="switchTab('comics', this)">Comics</div>
-    <div class="tab" onclick="switchTab('factions', this)">Factions</div>
-</div>
+  <!-- Visual Effects -->
+  <div class="grid-overlay"></div>
+  <div class="particles" id="particles"></div>
 
-<!-- ================= COMICS TAB ================= -->
-<div class="content active" id="comics">
-    <!-- Top Section: Character Info -->
-    <div class="top-section">
-        <div class="character-info">
-            <div class="faction-logo" id="factionLogo">FACTION LOGO</div>
-            <div class="faction-name" id="factionName">Faction Name</div>
-        </div>
-        <div class="char-name" id="charName">CHAR NAME</div>
+  <div class="backdrop">ENDMINISTRATOR</div>
+
+  <!-- LEFT: vertical selector -->
+  <aside class="left-bar">
+    <div class="logo" title="Back to Home" onclick="window.location.href='index.html'">SW</div>
+
+    <!-- thumbnails will be injected -->
+    <div style="display:flex;flex-direction:column;gap:6px;width:80px;margin-top:18px;align-items:center;">
+      <button id="scrollUp" class="scroll-btn">▲</button>
+      <div id="thumbs" style="display:flex;flex-direction:column;gap:18px;"></div>
+      <button id="scrollDown" class="scroll-btn">▼</button>
     </div>
 
-    <!-- Banner Character Image -->
-    <div class="character-banner-container">
-        <img id="characterImg" class="character-image" src="images/HELSIE TEST.png" alt="Character">
+    <div style="flex:1"></div>
+
+    <div style="display:flex;flex-direction:column;gap:12px;transform:translateY(8px)">
+      <button class="control-btn" title="Factions" onclick="alert('Faction Database Access: RESTRICTED')">⚔️</button>
+      <button class="control-btn" title="2D / Show">2D</button>
+    </div>
+  </aside>
+
+  <!-- CENTER: information -->
+  <main class="center">
+    <div class="faction-watermark" id="factionWatermark">SHADOW</div>
+
+    <div class="character-name">
+      <div id="badge" class="faction-badge">d</div>
+      <h1 id="name" class="title">HELSIE</h1>
     </div>
 
-    <!-- Navigation Controls -->
-    <div class="navigation-controls">
-        <div class="navigation">
-            <div class="arrow" onclick="changeOutfit(-1)">←</div>
-            <div class="arrow" onclick="changeOutfit(1)">→</div>
-        </div>
-        <div class="outfit-indicator" id="outfitIndicator"></div>
-        <div class="character-selector" id="characterSelector"></div>
+    <div class="meta-row">
+      <div id="debut">Debut: High Stakes Club #1</div>
+      <div style="width:6px;height:6px;border-radius:6px;background:var(--muted);opacity:.5"></div>
+      <div id="affil">Faction: High Stakes Club</div>
     </div>
 
-    <!-- Bottom Section: Description & Stats -->
-    <div class="bottom-section">
-        <div class="comic-info">
-            <div class="comic-title" id="comicTitle">Comic of Debut</div>
-            <div class="desc-box">
-                <div class="desc-title" id="descTitle">CHARACTER DESCRIPTION</div>
-                <div class="desc-text" id="descText">
-                    Character description will appear here.
-                </div>
-            </div>
-        </div>
-        
-        <div class="character-details">
-            <div class="comic-title">Character Stats</div>
-            <div class="desc-box">
-                <div class="stats-container" id="statsContainer">
-                    <!-- Stats will be dynamically generated -->
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- ================= FACTIONS TAB ================= -->
-<div class="content" id="factions">
-    <!-- Top Section: Faction Info -->
-    <div class="top-section">
-        <div class="character-info">
-            <div class="faction-logo" id="factionLogoFaction">FACTION LOGO</div>
-            <div class="faction-name" id="factionNameFaction">Faction Name</div>
-        </div>
-        <div class="char-name" id="factionDisplayName">FACTION</div>
-    </div>
-
-    <!-- Banner Faction Image -->
-    <div class="character-banner-container">
-        <img id="factionImg" class="character-image" src="images/HELSIE TEST.png" alt="Faction">
-    </div>
-
-    <!-- Faction Selector -->
-    <div class="navigation-controls">
-        <div class="character-selector" id="factionSelector"></div>
-    </div>
-
-    <!-- Bottom Section: Description & Stats -->
-    <div class="bottom-section">
-        <div class="comic-info">
-            <div class="comic-title">Faction Information</div>
-            <div class="desc-box">
-                <div class="desc-title" id="factionDescTitle">FACTION OVERVIEW</div>
-                <div class="desc-text" id="factionDescText">
-                    Faction description will appear here.
-                </div>
-            </div>
+    <div class="info-split">
+      <!-- Left Column: Bio & Stats -->
+      <div class="info-left">
+        <div class="desc">
+          <div class="panel-header">Subject Analysis</div>
+          <div id="desc"></div>
         </div>
         
-        <div class="character-details">
-            <div class="comic-title">Faction Stats</div>
-            <div class="desc-box">
-                <div class="stats-container" id="factionStatsContainer">
-                    <!-- Faction stats will be dynamically generated -->
-                </div>
-            </div>
+        <!-- Dense Data Grid -->
+        <div class="data-grid" id="dataGrid">
+          <!-- injected via JS -->
         </div>
+
+        <!-- Relationships -->
+        <div style="width:100%; background:rgba(0,0,0,0.4); padding:16px; border-radius:12px; border:1px solid var(--border);">
+          <div class="panel-header">Known Associates</div>
+          <div class="rel-grid" id="relGrid"></div>
+        </div>
+      </div>
+
+      <!-- Right Column: Combat Gear & Attributes -->
+      <div class="info-right">
+        <div class="attr-section">
+          <div class="panel-header">Performance Metrics</div>
+          <div id="attrList"></div>
+        </div>
+
+        <div class="gear-section" id="gearSection">
+          <div class="panel-header">Combat Loadout</div>
+          <div class="gear-grid" id="gearGrid"></div>
+        </div>
+      </div>
     </div>
+  </main>
+
+  <!-- RIGHT: hero -->
+  <section class="hero">
+    <div class="art-stage" id="artStage">
+      <img id="artImg" class="character-art" src="images/HELSIE TEST1.png" alt="Character art" draggable="false">
+      <!-- outfit controls -->
+      <div class="outfit-controls">
+        <button class="arrow" id="prev">←</button>
+        <div class="dots" id="dots"></div>
+        <button class="arrow" id="next">→</button>
+      </div>
+
+      <!-- floating controls -->
+      <div class="controls">
+        <button class="control-btn" title="Toggle BG">BG</button>
+        <button class="control-btn" title="Toggle UI">•••</button>
+      </div>
+    </div>
+  </section>
+
 </div>
 
 <script>
-// ================= DATA STRUCTURE =================
-// 🎨 EASY TO EDIT: Add new factions here!
-const FACTIONS = {
-    shadow: {
-        name: "High Stakes Club",
-        logo: "HSC",
-        color: "#6b3fa0",
-        borderColor: "rgba(107, 63, 160, 0.5)",
-        glowColor: "rgba(107, 63, 160, 0.6)",
-        description: "Hunts vampires.",
-        image: "images/HELSIE TEST.png",
-        stats: {
-            "Total Members": "5",
-            "First Appearance": "Issue #1",
-            "Territory": "Underground"
-        }
-    },
-    band: {
-        name: "Chors N Chaos",
-        logo: "CNC",
-        color: "#db12ce",
-        borderColor: "rgba(107, 63, 160, 0.5)",
-        glowColor: "rgba(107, 63, 160, 0.6)",
-        description: "Rock Band.",
-        image: "images/HELSIE TEST.png",
-        stats: {
-            "Total Members": "5",
-            "First Appearance": "Issue #1",
-            "Territory": "Underground"
-        }
-    },
-    // 🔥 ADD MORE FACTIONS LIKE THIS:
-    // light: {
-    //     name: "Light Brigade",
-    //     logo: "LIGHT",
-    //     color: "#f4d03f",
-    //     borderColor: "rgba(244, 208, 63, 0.5)",
-    //     glowColor: "rgba(244, 208, 63, 0.6)",
-    //     description: "Defenders of justice and order.",
-    //     image: "images/light-faction.png",
-    //     stats: {
-    //         "Total Members": "50+",
-    //         "First Appearance": "Issue #3",
-    //         "Territory": "City Center"
-    //     }
-    // }
-};
+/*
+  Character data adapted from your original home.html (keeps filenames),
+  so swapping images and editing text is straightforward.
+  Reference: original file provided by you. :contentReference[oaicite:1]{index=1}
+*/
 
-// 🎨 EASY TO EDIT: Add new characters here!
 const CHARACTERS = [
-    {
-        name: "HELSIE",
-        faction: "shadow",
-        thumbnail: "images/Helsie_thumb.png", // 🎨 Character icon for selector
-        outfits: [
-            "images/HELSIE TEST1.png",
-            "images/HELSIE TEST33.png",
-            "images/HELSIE TEST22.png",
-            // Add more outfit images here:
-            // "images/HELSIE TEST_2.png",
-            // "images/HELSIE TEST_3.png"
-        ],
-        debutComic: "High Stakes Club #1",
-        description: "The dumbass of the group, Boba tea artist, skilled vampire hunter",
-        stats: {
-            "Appearances": "1 Issue",
-            "Debut": "Issue #1",
-            "Status": "Active",
-            "Affiliation": "HIGH STAKES CLUB"
-        }
-        
-    },
-    {
-        name: "Joni",
-        faction: "band",
-        thumbnail: "images/HELSIE TESTJ.png", // 🎨 Character icon for selector
-        outfits: [
-            "images/HELSIE TESTJ.png",
-            // Add more outfit images here:
-            // "images/HELSIE TEST_2.png",
-            // "images/HELSIE TEST_3.png"
-        ],
-        debutComic: "Chors N Chaos #1",
-        description: "The Leader",
-        stats: {
-            "Appearances": "1 Issue",
-            "Debut": "Issue #1",
-            "Status": "Active",
-            "Affiliation": "CHORS N CHAOS"
-        }
-        
-    },
-    // 🔥 ADD MORE CHARACTERS LIKE THIS:
-    // {
-    //     name: "NOVA",
-    //     faction: "light",
-    //     outfits: [
-    //         "images/nova-1.png",
-    //         "images/nova-2.png"
-    //     ],
-    //     debutComic: "Dawn of Heroes #3",
-    //     description: "A beacon of hope with incredible light-based powers.",
-    //     stats: {
-    //         "Appearances": "8 Issues",
-    //         "Debut": "Issue #3",
-    //         "Status": "Active",
-    //         "Affiliation": "Light Brigade"
-    //     }
-    // }
+  {
+    name: "HELSIE",
+    faction: "shadow",
+    factionName: "High Stakes Club",
+    thumbnail: "images/Helsie_thumb.png",
+    outfits: [
+      "images/HELSIE TEST1.png",
+      "images/HELSIE TEST33.png",
+      "images/HELSIE TEST22.png"
+    ],
+    debut: "High Stakes Club #1",
+    description: "The dumbass of the group, Boba tea artist, skilled vampire hunter.",
+    status: "Active",
+    race: "Human",
+    role: "Dumbahh",
+    height: "165 cm",
+    weight: "52 kg",
+    age: "19",
+    attributes: { STR: 65, AGI: 90, INT: 45, VIT: 70 },
+    gear: [
+      { name: "AX", type: "Melee", icon: "images/AX.png" }
+    ],
+    relationships: [
+      { name: "Joni", avatar: "images/HELSIE TESTJ.png" }
+    ]
+  },
+  {
+    name: "Joni",
+    faction: "band",
+    factionName: "Chors N Chaos",
+    thumbnail: "images/HELSIE TESTJ.png",
+    outfits: [
+      "images/HELSIE TESTJ.png"
+    ],
+    debut: "Chors N Chaos #1",
+    description: "The Leader",
+    status: "Active",
+    race: "Human",
+    role: "Leader",
+    height: "172 cm",
+    weight: "60 kg",
+    age: "21",
+    attributes: { STR: 75, AGI: 80, INT: 85, VIT: 60 },
+    gear: [
+      { name: "Bass ", type: "Instrument", icon: "🎸" },
+      
+    ],
+    relationships: [
+      { name: "HELSIE", avatar: "images/Helsie_thumb.png" }
+    ]
+  }
 ];
 
-// ================= STATE MANAGEMENT =================
-let currentCharacterIndex = 0;
-let currentOutfitIndex = 0;
-let currentFactionKey = 'shadow';
+// Faction color schemes
+const FACTION_COLORS = {
+  shadow: {
+    primary: '#667eea',
+    secondary: '#764ba2',
+    dark: '#4b2a7a'
+  },
+  band: {
+    primary: '#f093fb',
+    secondary: '#f5576c',
+    dark: '#c72c5f'
+  },
+  endfield: {
+    primary: '#4facfe',
+    secondary: '#00f2fe',
+    dark: '#0099cc'
+  },
+  neutral: {
+    primary: '#43e97b',
+    secondary: '#38f9d7',
+    dark: '#2a9d8f'
+  }
+};
 
-// ================= INITIALIZATION =================
-function init() {
-    renderCharacterSelector();
-    renderFactionSelector();
-    loadCharacter(0);
-    loadFactionView('shadow');
+let current = 0;
+let outfit = 0;
+let scrollOffset = 0;
+const VISIBLE_COUNT = 4;
+const artImg = document.getElementById('artImg');
+const nameEl = document.getElementById('name');
+const badgeEl = document.getElementById('badge');
+const descEl = document.getElementById('desc');
+const debutEl = document.getElementById('debut');
+const affilEl = document.getElementById('affil');
+const dataGrid = document.getElementById('dataGrid');
+const attrList = document.getElementById('attrList');
+const relGrid = document.getElementById('relGrid');
+const gearGrid = document.getElementById('gearGrid');
+const thumbsEl = document.getElementById('thumbs');
+const dotsEl = document.getElementById('dots');
+const prevBtn = document.getElementById('prev');
+const nextBtn = document.getElementById('next');
+const scrollUpBtn = document.getElementById('scrollUp');
+const scrollDownBtn = document.getElementById('scrollDown');
+
+function init(){
+  createParticles();
+  renderThumbs();
+  loadCharacter(0);
+  prevBtn.addEventListener('click',()=>changeOutfit(-1));
+  nextBtn.addEventListener('click',()=>changeOutfit(1));
+  scrollUpBtn.addEventListener('click', ()=> scrollThumbs(-1));
+  scrollDownBtn.addEventListener('click', ()=> scrollThumbs(1));
+
+  const stage = document.querySelector('.art-stage');
+  
+  stage.addEventListener('mousemove',(e)=>{
+    const rect = stage.getBoundingClientRect();
     
-    // Mouse tracking for subtle background effect
-    document.addEventListener('mousemove', (e) => {
-        const x = (e.clientX / window.innerWidth) * 100;
-        const y = (e.clientY / window.innerHeight) * 100;
-        document.body.style.setProperty('--mouse-x', x + '%');
-        document.body.style.setProperty('--mouse-y', y + '%');
+    // Calculate mouse position relative to center (ranges from -0.5 to 0.5)
+    const cx = (e.clientX - rect.left) / rect.width - 0.5;
+    const cy = (e.clientY - rect.top) / rect.height - 0.5;
+    
+    // SETTINGS: Change these numbers to adjust intensity
+    // Lower numbers = more subtle movement
+    const intensityX = 15; 
+    const intensityY = 10;
+
+    // We MUST keep the translateX(-50%) here so it stays centered!
+    artImg.style.transform = `translateX(-50%) translate(${cx * intensityX}px, ${cy * intensityY}px)`;
+  });
+
+  stage.addEventListener('mouseleave',()=>{
+    // Reset to perfect center when mouse leaves
+    artImg.style.transform = `translateX(-50%) translateY(0)`;
+  });
+}
+
+function renderThumbs(){
+  thumbsEl.innerHTML='';
+  const visibleChars = CHARACTERS.slice(scrollOffset, scrollOffset + VISIBLE_COUNT);
+  
+  visibleChars.forEach((c, index)=>{
+    const realIndex = scrollOffset + index;
+    const img = document.createElement('img');
+    img.src = c.thumbnail || c.outfits[0];
+    img.alt = c.name;
+    img.className = 'thumb' + (realIndex===current ? ' active' : '');
+    img.addEventListener('click', ()=> loadCharacter(realIndex));
+    thumbsEl.appendChild(img);
+  });
+  updateScrollButtons();
+}
+
+function scrollThumbs(direction) {
+  const maxOffset = Math.max(0, CHARACTERS.length - VISIBLE_COUNT);
+  scrollOffset += direction;
+  if (scrollOffset < 0) scrollOffset = 0;
+  if (scrollOffset > maxOffset) scrollOffset = maxOffset;
+  renderThumbs();
+}
+
+function updateScrollButtons() {
+  const maxOffset = Math.max(0, CHARACTERS.length - VISIBLE_COUNT);
+  scrollUpBtn.classList.toggle('disabled', scrollOffset <= 0);
+  scrollDownBtn.classList.toggle('disabled', scrollOffset >= maxOffset);
+}
+
+function updateThumbsActive(){
+  document.querySelectorAll('.thumb').forEach((t, i)=> {
+    const realIndex = scrollOffset + i;
+    t.classList.toggle('active', realIndex === current);
+  });
+}
+
+function loadCharacter(index){
+  current = index;
+  outfit = 0;
+  const c = CHARACTERS[current];
+
+  // Update faction colors
+  updateFactionColors(c.faction);
+
+  // fade transition
+  artImg.classList.add('hidden');
+  setTimeout(()=>{
+    artImg.src = c.outfits[outfit];
+    nameEl.textContent = c.name;
+    badgeEl.textContent = c.factionName || c.faction;
+    descEl.textContent = c.description;
+    document.getElementById('factionWatermark').textContent = (c.factionName || c.faction).split(' ')[0].toUpperCase();
+    debutEl.textContent = 'Debut: ' + (c.debut || '—');
+    affilEl.textContent = 'Faction: ' + (c.factionName || c.faction);
+    renderDenseData();
+    renderAttributes();
+    renderRelationships();
+    renderDots();
+    renderGear();
+    updateThumbsActive();
+    artImg.classList.remove('hidden');
+  }, 200);
+}
+
+function changeOutfit(dir){
+  const c = CHARACTERS[current];
+  if(!c.outfits || c.outfits.length<=1) return;
+  outfit = (outfit + dir + c.outfits.length) % c.outfits.length;
+  // small fade
+  artImg.classList.add('hidden');
+  setTimeout(()=> {
+    artImg.src = c.outfits[outfit];
+    highlightDot(outfit);
+    artImg.classList.remove('hidden');
+  }, 160);
+}
+
+function renderDots(){
+  dotsEl.innerHTML='';
+  const c = CHARACTERS[current];
+  if(!c.outfits || c.outfits.length<=1) return;
+  c.outfits.forEach((o, idx)=>{
+    const d = document.createElement('div');
+    d.className = 'dot' + (idx===outfit ? ' active' : '');
+    d.addEventListener('click', ()=> {
+      outfit = idx;
+      artImg.classList.add('hidden');
+      setTimeout(()=>{ artImg.src = c.outfits[outfit]; artImg.classList.remove('hidden'); highlightDot(outfit); }, 160);
     });
+    dotsEl.appendChild(d);
+  });
 }
 
-// ================= CHARACTER SELECTOR =================
-function renderCharacterSelector() {
-    const selector = document.getElementById('characterSelector');
-    selector.innerHTML = '';
-    
-    CHARACTERS.forEach((char, index) => {
-        const thumb = document.createElement('img');
-        // Use thumbnail if available, otherwise fall back to first outfit
-        thumb.src = char.thumbnail || char.outfits[0];
-        thumb.className = 'char-thumb' + (index === 0 ? ' active' : '');
-        thumb.alt = char.name;
-        thumb.onclick = () => loadCharacter(index);
-        selector.appendChild(thumb);
-    });
+function highlightDot(i){
+  document.querySelectorAll('.dot').forEach((d, idx)=> d.classList.toggle('active', idx===i));
 }
 
-// ================= LOAD CHARACTER =================
-function loadCharacter(index) {
-    currentCharacterIndex = index;
-    currentOutfitIndex = 0;
-    
-    const char = CHARACTERS[index];
-    const faction = FACTIONS[char.faction];
-    
-    // Apply faction theme
-    applyFactionTheme(faction);
-    
-    // Animate image transition
-    const img = document.getElementById('characterImg');
-    img.classList.add('changing');
-    
-    setTimeout(() => {
-        // Update character info
-        document.getElementById('charName').textContent = char.name;
-        document.getElementById('factionLogo').textContent = faction.logo;
-        document.getElementById('factionName').textContent = faction.name;
-        document.getElementById('comicTitle').textContent = char.debutComic;
-        document.getElementById('descTitle').textContent = char.name + ' - PROFILE';
-        document.getElementById('descText').textContent = char.description;
-        
-        // Update image
-        img.src = char.outfits[0];
-        img.classList.remove('changing');
-        
-        // Update stats
-        renderStats(char.stats, 'statsContainer');
-        
-        // Update outfit indicators
-        renderOutfitIndicators();
-        
-        // Update character selector active state
-        document.querySelectorAll('.char-thumb').forEach((thumb, i) => {
-            thumb.classList.toggle('active', i === index);
-        });
-    }, 250);
+function renderDenseData(){
+  const c = CHARACTERS[current];
+  dataGrid.innerHTML = '';
+  
+  const fields = [
+    {k: 'Race', v: c.race},
+    {k: 'Status', v: c.status},
+    {k: 'Role', v: c.role},
+    {k: 'Height', v: c.height || '???'},
+    {k: 'Weight', v: c.weight || '???'},
+    {k: 'Age', v: c.age || '???'}
+  ];
+  
+  fields.forEach(f => {
+    const el = document.createElement('div');
+    el.className = 'data-cell';
+    el.innerHTML = `<div class="data-label">${f.k}</div><div class="data-value">${f.v}</div>`;
+    dataGrid.appendChild(el);
+  });
 }
 
-// ================= OUTFIT MANAGEMENT =================
-function changeOutfit(direction) {
-    const char = CHARACTERS[currentCharacterIndex];
-    const img = document.getElementById('characterImg');
-    
-    img.classList.add('changing');
-    
-    setTimeout(() => {
-        currentOutfitIndex = (currentOutfitIndex + direction + char.outfits.length) % char.outfits.length;
-        img.src = char.outfits[currentOutfitIndex];
-        img.classList.remove('changing');
-        
-        // Update outfit indicators
-        document.querySelectorAll('.outfit-dot').forEach((dot, i) => {
-            dot.classList.toggle('active', i === currentOutfitIndex);
-        });
-    }, 250);
+function renderAttributes(){
+  const c = CHARACTERS[current];
+  attrList.innerHTML = '';
+  if(!c.attributes) return;
+  
+  Object.entries(c.attributes).forEach(([key, val]) => {
+    const row = document.createElement('div');
+    row.className = 'attr-row';
+    row.innerHTML = `
+      <div class="attr-name">${key}</div>
+      <div class="attr-track"><div class="attr-fill" style="width:${val}%"></div></div>
+      <div class="attr-val">${val}</div>
+    `;
+    attrList.appendChild(row);
+  });
 }
 
-function renderOutfitIndicators() {
-    const char = CHARACTERS[currentCharacterIndex];
-    const container = document.getElementById('outfitIndicator');
-    container.innerHTML = '';
-    
-    if (char.outfits.length > 1) {
-        char.outfits.forEach((_, index) => {
-            const dot = document.createElement('div');
-            dot.className = 'outfit-dot' + (index === 0 ? ' active' : '');
-            dot.onclick = () => {
-                const img = document.getElementById('characterImg');
-                img.classList.add('changing');
-                setTimeout(() => {
-                    currentOutfitIndex = index;
-                    img.src = char.outfits[index];
-                    img.classList.remove('changing');
-                    document.querySelectorAll('.outfit-dot').forEach((d, i) => {
-                        d.classList.toggle('active', i === index);
-                    });
-                }, 250);
-            };
-            container.appendChild(dot);
-        });
-    }
+function renderRelationships(){
+  const c = CHARACTERS[current];
+  relGrid.innerHTML = '';
+  if(!c.relationships) return;
+  
+  c.relationships.forEach(r => {
+    const el = document.createElement('div');
+    el.className = 'rel-item';
+    el.innerHTML = `<img src="${r.avatar}" class="rel-avatar"><div class="rel-name">${r.name}</div>`;
+    relGrid.appendChild(el);
+  });
 }
 
-// ================= STATS RENDERING =================
-function renderStats(stats, containerId) {
-    const container = document.getElementById(containerId);
-    container.innerHTML = '';
-    
-    Object.entries(stats).forEach(([label, value]) => {
-        const statItem = document.createElement('div');
-        statItem.className = 'stat-item';
-        statItem.innerHTML = `
-            <span class="stat-label">${label}</span>
-            <span class="stat-value">${value}</span>
-        `;
-        container.appendChild(statItem);
-    });
+function updateFactionColors(faction){
+  const colors = FACTION_COLORS[faction] || FACTION_COLORS.shadow;
+  const root = document.documentElement;
+  
+  root.style.setProperty('--accent', colors.primary);
+  root.style.setProperty('--accent-soft', colors.secondary);
+  root.style.setProperty('--accent-dark', colors.dark);
+
+  // Dynamic background tint based on faction
+  // Uses the dark faction color with transparency to tint the background image
+  root.style.setProperty('--bg-gradient', `linear-gradient(to bottom, ${colors.dark}CC, #050505F2)`);
 }
 
-// ================= FACTION THEME =================
-function applyFactionTheme(faction) {
-    document.documentElement.style.setProperty('--faction-color', faction.color);
-    document.documentElement.style.setProperty('--faction-border', faction.borderColor);
-    document.documentElement.style.setProperty('--faction-glow', faction.glowColor);
+function renderGear(){
+  gearGrid.innerHTML = '';
+  const c = CHARACTERS[current];
+  if(!c.gear || c.gear.length === 0) {
+    document.getElementById('gearSection').style.display = 'none';
+    return;
+  }
+  document.getElementById('gearSection').style.display = 'block';
+  
+  c.gear.forEach(item => {
+    // Check if icon is an image path (contains . or /) or just an emoji
+    const isImage = item.icon && (item.icon.includes('.') || item.icon.includes('/'));
+    const iconContent = isImage 
+      ? `<img src="${item.icon}" alt="${item.name}">` 
+      : item.icon;
+
+    const el = document.createElement('div');
+    el.className = 'gear-item';
+    el.innerHTML = `
+      <div class="gear-icon">${iconContent}</div>
+      <div class="gear-info">
+        <div class="gear-name">${item.name}</div>
+        <div class="gear-type">${item.type}</div>
+      </div>
+    `;
+    gearGrid.appendChild(el);
+  });
 }
 
-// ================= FACTION SELECTOR =================
-function renderFactionSelector() {
-    const selector = document.getElementById('factionSelector');
-    selector.innerHTML = '';
-    
-    Object.entries(FACTIONS).forEach(([key, faction], index) => {
-        const thumb = document.createElement('div');
-        thumb.className = 'char-thumb' + (index === 0 ? ' active' : '');
-        thumb.style.cssText = `
-            background: ${faction.color};
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            font-size: 14px;
-            letter-spacing: 1px;
-        `;
-        thumb.textContent = faction.logo;
-        thumb.onclick = () => loadFactionView(key);
-        selector.appendChild(thumb);
-    });
+function createParticles() {
+  const container = document.getElementById('particles');
+  const particleCount = 25;
+  
+  for(let i=0; i<particleCount; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    const size = Math.random() * 4 + 2;
+    p.style.width = size + 'px';
+    p.style.height = size + 'px';
+    p.style.left = Math.random() * 100 + '%';
+    p.style.animationDuration = (Math.random() * 10 + 10) + 's';
+    p.style.animationDelay = (Math.random() * 10) * -1 + 's';
+    container.appendChild(p);
+  }
 }
 
-// ================= FACTION VIEW =================
-function loadFactionView(factionKey) {
-    currentFactionKey = factionKey;
-    const faction = FACTIONS[factionKey];
-    
-    // Apply faction theme
-    applyFactionTheme(faction);
-    
-    // Animate image transition
-    const img = document.getElementById('factionImg');
-    img.classList.add('changing');
-    
-    setTimeout(() => {
-        document.getElementById('factionLogoFaction').textContent = faction.logo;
-        document.getElementById('factionNameFaction').textContent = faction.name;
-        document.getElementById('factionDisplayName').textContent = faction.name.toUpperCase();
-        document.getElementById('factionDescTitle').textContent = faction.name.toUpperCase();
-        document.getElementById('factionDescText').textContent = faction.description;
-        img.src = faction.image;
-        img.classList.remove('changing');
-        
-        renderStats(faction.stats, 'factionStatsContainer');
-        
-        // Update faction selector active state
-        document.querySelectorAll('#factionSelector .char-thumb').forEach((thumb, i) => {
-            const keys = Object.keys(FACTIONS);
-            thumb.classList.toggle('active', keys[i] === factionKey);
-        });
-    }, 250);
-}
-
-// ================= TAB SWITCHING =================
-function switchTab(tabId, element) {
-    document.querySelectorAll(".content").forEach(c => c.classList.remove("active"));
-    document.getElementById(tabId).classList.add("active");
-
-    document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
-    element.classList.add("active");
-    
-    if (tabId === 'factions') {
-        loadFactionView(currentFactionKey);
-    }
-}
-
-// ================= COMMISSION FORM HANDLING =================
-document.addEventListener('DOMContentLoaded', function() {
-    const form = document.getElementById('commissionForm');
-    if (form) {
-        form.addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const formData = {
-                name: document.getElementById('name').value,
-                email: document.getElementById('email').value,
-                commissionType: document.getElementById('commissionType').value,
-                message: document.getElementById('message').value
-            };
-            
-            // Create mailto link
-            const subject = encodeURIComponent(`Commission Inquiry - ${formData.commissionType}`);
-            const body = encodeURIComponent(
-                `Name: ${formData.name}\n` +
-                `Email: ${formData.email}\n` +
-                `Commission Type: ${formData.commissionType}\n\n` +
-                `Message:\n${formData.message}`
-            );
-            
-            // Replace with your actual email
-            const mailtoLink = `mailto:your.email@example.com?subject=${subject}&body=${body}`;
-            
-            window.location.href = mailtoLink;
-            
-            // Optional: Show success message
-            alert('Opening your email client... Please send the email to complete your inquiry!');
-        });
-    }
-});
-
-// ================= START APPLICATION =================
 init();
 </script>
 

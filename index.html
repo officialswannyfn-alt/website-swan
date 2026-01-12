@@ -173,16 +173,30 @@ body {
 
 /* ================= SOCIAL SECTION ================= */
 .section-card {
-    background: rgba(0,0,0,0.6);
+    background: rgba(20, 20, 25, 0.7);
+    backdrop-filter: blur(16px);
     padding: 40px;
-    border-radius: 20px;
-    border: 2px solid rgba(255,255,255,0.1);
+    border-radius: 24px;
+    border: 1px solid rgba(255,255,255,0.08);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.4), inset 0 0 0 1px rgba(255,255,255,0.05);
     transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.section-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 3px;
+    background: linear-gradient(90deg, #667eea, #764ba2);
+    opacity: 1;
+    box-shadow: 0 2px 10px rgba(102, 126, 234, 0.5);
 }
 
 .section-card:hover {
-    border-color: rgba(255,255,255,0.3);
-    transform: translateY(-5px);
+    transform: translateY(-4px);
+    box-shadow: 0 25px 60px rgba(0,0,0,0.5);
+    border-color: rgba(255,255,255,0.15);
 }
 
 .section-title {
@@ -206,13 +220,12 @@ body {
     border-radius: 12px;
     text-decoration: none;
     color: white;
-    transition: all 0.3s ease;
+    transition: transform 0.1s ease, background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
     border: 2px solid transparent;
 }
 
 .social-link:hover {
     background: rgba(255,255,255,0.1);
-    transform: translateX(10px);
     border-color: rgba(255,255,255,0.3);
 }
 
@@ -335,34 +348,47 @@ body {
 .form-group {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 10px;
 }
 
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+@media(max-width:600px){ .form-row{grid-template-columns:1fr; gap:0;} }
+
 .form-group label {
-    font-weight: 600;
-    font-size: 14px;
-    opacity: 0.9;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: rgba(255,255,255,0.7);
+    font-weight: 700;
 }
 
 .form-group input,
 .form-group select,
 .form-group textarea {
-    padding: 12px 16px;
-    background: rgba(255,255,255,0.05);
-    border: 2px solid rgba(255,255,255,0.1);
-    border-radius: 10px;
+    padding: 16px;
+    background: rgba(0,0,0,0.4);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-left: 3px solid rgba(255,255,255,0.15);
+    border-radius: 6px;
     color: white;
-    font-size: 16px;
+    font-size: 15px;
     font-family: inherit;
-    transition: all 0.3s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .form-group input:focus,
 .form-group select:focus,
 .form-group textarea:focus {
     outline: none;
-    border-color: rgba(255,255,255,0.3);
-    background: rgba(255,255,255,0.08);
+    border-color: rgba(102, 126, 234, 0.5);
+    border-left-color: #667eea;
+    background: rgba(102, 126, 234, 0.08);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    transform: translateX(4px);
 }
 
 .form-group textarea {
@@ -371,20 +397,38 @@ body {
 }
 
 .submit-btn {
-    padding: 12px 30px;
+    padding: 16px 32px;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     border: none;
-    border-radius: 10px;
+    border-radius: 8px;
     color: white;
     font-size: 16px;
-    font-weight: 600;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
     cursor: pointer;
     transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(118, 75, 162, 0.4);
 }
 
 .submit-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 8px 25px rgba(118, 75, 162, 0.6);
+    filter: brightness(1.1);
+}
+
+.status-badge {
+    float: right;
+    background: rgba(76, 175, 80, 0.1);
+    color: #4caf50;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    border: 1px solid rgba(76, 175, 80, 0.4);
+    margin-top: 5px;
+    box-shadow: 0 0 10px rgba(76, 175, 80, 0.2);
 }
 
 /* ================= RESPONSIVE ================= */
@@ -428,6 +472,68 @@ body {
         grid-template-columns: 1fr;
     }
 }
+
+/* ================= SUCCESS ANIMATION ================= */
+.success-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.85);
+    backdrop-filter: blur(8px);
+    z-index: 2000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+.success-overlay.visible {
+    opacity: 1;
+    pointer-events: auto;
+}
+.success-card {
+    background: rgba(30, 30, 35, 0.95);
+    border: 1px solid rgba(102, 126, 234, 0.3);
+    padding: 40px;
+    border-radius: 24px;
+    text-align: center;
+    transform: translateY(30px) scale(0.9);
+    transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+    box-shadow: 0 25px 80px rgba(0,0,0,0.7);
+    max-width: 90%;
+    width: 380px;
+}
+.success-overlay.visible .success-card {
+    transform: translateY(0) scale(1);
+}
+.success-icon-box {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 24px;
+    box-shadow: 0 10px 30px rgba(102, 126, 234, 0.5);
+}
+.check-svg {
+    width: 40px;
+    height: 40px;
+    fill: none;
+    stroke: white;
+    stroke-width: 4;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-dasharray: 100;
+    stroke-dashoffset: 100;
+}
+.success-overlay.visible .check-svg {
+    animation: drawCheck 0.8s cubic-bezier(0.65, 0, 0.45, 1) 0.2s forwards;
+}
+@keyframes drawCheck {
+    to { stroke-dashoffset: 0; }
+}
 </style>
 </head>
 
@@ -446,6 +552,20 @@ body {
             <button class="warning-btn btn-enter" onclick="enterSite()">I am 18+</button>
             <button class="warning-btn btn-exit" onclick="exitSite()">Exit</button>
         </div>
+    </div>
+</div>
+
+<!-- ================= SUCCESS MODAL ================= -->
+<div class="success-overlay" id="successOverlay">
+    <div class="success-card">
+        <div class="success-icon-box">
+            <svg class="check-svg" viewBox="0 0 52 52">
+                <path d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+            </svg>
+        </div>
+        <h2 class="section-title" style="margin-bottom:10px;font-size:24px">Inquiry Ready!</h2>
+        <p style="color:rgba(255,255,255,0.7);margin-bottom:25px;line-height:1.5">Opening your email client to finalize the request...</p>
+        <button class="submit-btn" onclick="closeSuccess()" style="width:100%;padding:12px">Okay, Got it!</button>
     </div>
 </div>
 
@@ -478,37 +598,43 @@ body {
 
         <!-- Commission Form Section -->
         <div class="section-card">
-            <h2 class="section-title">Commission Inquiry</h2>
-            <p class="commission-description">Interested in commissioning artwork? Send me a message!</p>
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+                <h2 class="section-title">Commission Inquiry</h2>
+                <span class="status-badge">● OPEN</span>
+            </div>
+            <p class="commission-description">Ready to bring your ideas to life? Fill out the form below for a quote.</p>
             
             <form class="commission-form" id="commissionForm">
-                <div class="form-group">
-                    <label for="name">Your Name</label>
-                    <input type="text" id="name" name="name" required placeholder="Enter your name">
-                </div>
-                
-                <div class="form-group">
-                    <label for="email">Email Address</label>
-                    <input type="email" id="email" name="email" required placeholder="your.email@example.com">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="name">Name / Handle</label>
+                        <input type="text" id="name" name="name" required placeholder="Your name">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email">Contact Email</label>
+                        <input type="email" id="email" name="email" required placeholder="name@example.com">
+                    </div>
                 </div>
                 
                 <div class="form-group">
                     <label for="commissionType">Commission Type</label>
                     <select id="commissionType" name="commissionType" required>
-                        <option value="">Select a type...</option>
-                        <option value="character">Character Design</option>
-                        <option value="illustration">Illustration</option>
-                        <option value="comic">Comic Page</option>
-                        <option value="other">Other</option>
+                        <option value="" disabled selected>Select Service Type...</option>
+                        <optgroup label="Character Art">
+                            <option value="full_render">Full Render Character</option>
+                            <option value="emtoe_anim">Emote Animation</option>
+                            <option value="Animation">Animation</option>
+                        </optgroup>
                     </select>
                 </div>
                 
                 <div class="form-group">
                     <label for="message">Project Details</label>
-                    <textarea id="message" name="message" rows="4" required placeholder="Tell me about your project..."></textarea>
+                    <textarea id="message" name="message" rows="5" required placeholder="Describe your character, pose, setting, and any references..."></textarea>
                 </div>
                 
-                <button type="submit" class="submit-btn">Send Inquiry</button>
+                <button type="submit" class="submit-btn">Send Request ➤</button>
             </form>
         </div>
     </div>
@@ -567,9 +693,40 @@ document.getElementById('commissionForm').addEventListener('submit', function(e)
     // Replace with your actual email
     const mailtoLink = `mailto:officialswannyfn@gmail.com?subject=${subject}&body=${body}`;
     
-    window.location.href = mailtoLink;
-    
-    alert('Opening your email client... Pleasee send the email to complete your inquiry!');
+    // Show success animation
+    const overlay = document.getElementById('successOverlay');
+    overlay.classList.add('visible');
+
+    // Delay the mailto slightly so the user sees the animation start
+    setTimeout(() => {
+        window.location.href = mailtoLink;
+    }, 1500);
+});
+
+function closeSuccess() {
+    document.getElementById('successOverlay').classList.remove('visible');
+}
+
+// ================= 3D TILT EFFECT FOR SOCIAL CARDS =================
+document.querySelectorAll('.social-link').forEach(card => {
+    card.addEventListener('mousemove', (e) => {
+        const rect = card.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        
+        const centerX = rect.width / 2;
+        const centerY = rect.height / 2;
+        
+        // Calculate rotation (max 15 degrees)
+        const rotateX = ((y - centerY) / centerY) * -15;
+        const rotateY = ((x - centerX) / centerX) * 15;
+
+        card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.05, 1.05, 1.05)`;
+    });
+
+    card.addEventListener('mouseleave', () => {
+        card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) scale3d(1, 1, 1)';
+    });
 });
 </script>
 
