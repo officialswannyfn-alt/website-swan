@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <title>Commissions — SwanNsfw</title>
+    <meta name="description"
+        content="Commission SwanNsfw for original character art, emote animations, and full animations. Starting at $20." />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;600;700&family=Bebas+Neue&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* ─── COMMISSIONS-SPECIFIC STYLES ───────────────── */
+
+        /* Status banner */
+        .status-wrap {
+            display: flex;
+            justify-content: center;
+            padding: 140px 24px 0;
+            position: relative;
+            z-index: 2;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 36px;
+            border-radius: 50px;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 22px;
+            letter-spacing: 4px;
+            border: 1.5px solid var(--border);
+            background: var(--glass);
+            backdrop-filter: blur(16px);
+            animation: fU 0.8s 0.2s both;
+        }
+
+        .status-badge.open {
+            border-color: rgba(52, 211, 153, 0.6);
+            box-shadow: 0 0 40px rgba(52, 211, 153, 0.2), 0 0 80px rgba(52, 211, 153, 0.08);
+            color: #34d399;
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #34d399;
+            box-shadow: 0 0 10px #34d399;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+
+            50% {
+                opacity: 0.6;
+                transform: scale(1.3);
+            }
+        }
+
+        /* Page hero */
+        .cm-hero {
+            text-align: center;
+            padding: 32px 24px 0;
+            position: relative;
+            z-index: 2;
+            animation: fU 0.8s 0.35s both;
+        }
+
+        .cm-eyebrow {
+            font-size: 11px;
+            letter-spacing: 6px;
+            text-transform: uppercase;
+            color: var(--a1);
+            margin-bottom: 16px;
+        }
+
+        .cm-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-style: italic;
+            font-weight: 300;
+            font-size: clamp(56px, 10vw, 120px);
+            line-height: 0.9;
+            letter-spacing: 5px;
+            background: linear-gradient(135deg, #fff 0%, var(--a3) 40%, var(--a1) 80%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .cm-sub {
+            margin-top: 18px;
+            font-size: 15px;
+            color: var(--muted);
+            max-width: 520px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.75;
+        }
+
+        /* ─── SECTION WRAPPER ───────────────────────────── */
+        .cm-section {
+            position: relative;
+            z-index: 2;
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 80px 32px 0;
+        }
+
+        .cm-sh {
+            text-align: center;
+            margin-bottom: 48px;
+        }
+
+        .cm-sl {
+            display: block;
+            font-size: 10px;
+            letter-spacing: 5px;
+            text-transform: uppercase;
+            color: var(--a1);
+            margin-bottom: 10px;
+        }
+
+        .cm-st {
+            font-family: 'Cormorant Garamond', serif;
+            font-style: italic;
+            font-weight: 300;
+            font-size: clamp(38px, 5vw, 64px);
+            letter-spacing: 2px;
+            background: linear-gradient(135deg, var(--text) 0%, var(--a3) 55%, var(--a1) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1.05;
+        }
+
+        .cm-sline {
+            width: 56px;
+            height: 2px;
+            background: linear-gradient(90deg, var(--a1), var(--a2));
+            margin: 14px auto 0;
+            border-radius: 2px;
+        }
+
+        /* ─── TIER CARDS ────────────────────────────────── */
+        .tiers {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .tier-card {
+            background: var(--glass);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 32px 28px;
+            backdrop-filter: blur(16px);
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.4s, border-color 0.4s;
+        }
+
+        .tier-card::before {
+            content: '';
+            position: absolute;
+            inset: -1px;
+            border-radius: 21px;
+            background: linear-gradient(135deg, var(--a1), var(--a2), var(--a3));
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.4s;
+        }
+
+        .tier-card:hover {
+            transform: translateY(-8px);
+            border-color: transparent;
+        }
+
+        .tier-card:hover::before {
+            opacity: 1;
+        }
+
+        .tier-card:hover {
+            box-shadow: 0 24px 70px rgba(0, 0, 0, 0.55), 0 0 50px rgba(212, 184, 150, 0.35);
+        }
+
+        .tier-card.featured {
+            border-color: rgba(212, 184, 150, 0.5);
+            box-shadow: 0 0 50px rgba(212, 184, 150, 0.2);
+        }
+
+        .tier-card.featured::after {
+            content: '✦ POPULAR';
+            position: absolute;
+            top: 18px;
+            right: 18px;
+            font-size: 9px;
+            letter-spacing: 2px;
+            font-weight: 700;
+            color: var(--a3);
+            background: rgba(232, 180, 204, 0.15);
+            border: 1px solid rgba(232, 180, 204, 0.4);
+            padding: 4px 10px;
+            border-radius: 50px;
+        }
+
+        .tier-icon {
+            width: 52px;
+            height: 52px;
+            border-radius: 14px;
+            background: linear-gradient(135deg, var(--a1), var(--a2));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            box-shadow: 0 6px 22px rgba(212, 184, 150, 0.4);
+        }
+
+        .tier-name {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 28px;
+            letter-spacing: 2px;
+            color: var(--text);
+        }
+
+        .tier-price {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 44px;
+            letter-spacing: 1px;
+            background: linear-gradient(135deg, #fff, var(--a3));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1;
+        }
+
+        .tier-price span {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 16px;
+            font-weight: 400;
+            color: var(--muted);
+            -webkit-text-fill-color: var(--muted);
+        }
+
+        .tier-desc {
+            color: var(--muted);
+            font-size: 14px;
+            line-height: 1.7;
+            flex: 1;
+        }
+
+        .tier-features {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .tier-features li {
+            font-size: 13px;
+            color: var(--muted);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .tier-features li::before {
+            content: '✦';
+            color: var(--a1);
+            font-size: 10px;
+            flex-shrink: 0;
+        }
+
+        .tier-btn {
+            display: block;
+            text-align: center;
+            padding: 13px 24px;
+            border-radius: 50px;
+            background: linear-gradient(135deg, var(--a1), var(--a2));
+            color: #fff;
+            text-decoration: none;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            transition: transform 0.3s, box-shadow 0.3s;
+            box-shadow: 0 0 28px rgba(212, 184, 150, 0.35);
+            cursor: none;
+        }
+
+        .tier-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 0 50px rgba(212, 184, 150, 0.65), 0 0 100px rgba(168, 137, 92, 0.3);
+        }
+
+        /* ─── PROCESS STEPS ─────────────────────────────── */
+        .process-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 0;
+            position: relative;
+        }
+
+        .process-grid::before {
+            content: '';
+            position: absolute;
+            top: 36px;
+            left: 10%;
+            right: 10%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--a1), var(--a2), var(--a3), transparent);
+            opacity: 0.4;
+            z-index: 0;
+        }
+
+        .step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: 16px;
+            padding: 0 16px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .step-num {
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            background: var(--glass);
+            border: 1.5px solid var(--border);
+            backdrop-filter: blur(12px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 28px;
+            letter-spacing: 1px;
+            background: linear-gradient(135deg, var(--a1), var(--a2));
+            box-shadow: 0 0 30px rgba(212, 184, 150, 0.4);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .step:hover .step-num {
+            transform: scale(1.1);
+            box-shadow: 0 0 50px rgba(212, 184, 150, 0.7);
+        }
+
+        .step-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 20px;
+            letter-spacing: 2px;
+            color: var(--text);
+        }
+
+        .step-desc {
+            font-size: 13px;
+            color: var(--muted);
+            line-height: 1.65;
+        }
+
+        /* ─── WILL / WON'T ──────────────────────────────── */
+        .tos-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .tos-box {
+            background: var(--glass);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            padding: 28px;
+            backdrop-filter: blur(14px);
+        }
+
+        .tos-box.will {
+            border-color: rgba(52, 211, 153, 0.35);
+        }
+
+        .tos-box.wont {
+            border-color: rgba(239, 68, 68, 0.35);
+        }
+
+        .tos-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 26px;
+            letter-spacing: 3px;
+            margin-bottom: 18px;
+        }
+
+        .tos-box.will .tos-title {
+            color: #34d399;
+        }
+
+        .tos-box.wont .tos-title {
+            color: #f87171;
+        }
+
+        .tos-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .tos-list li {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            font-size: 14px;
+            color: var(--muted);
+            line-height: 1.5;
+        }
+
+        .tos-list li .ic {
+            flex-shrink: 0;
+            font-size: 14px;
+            margin-top: 1px;
+        }
+
+        /* ─── CTA BLOCK ─────────────────────────────────── */
+        .cta-block {
+            position: relative;
+            z-index: 2;
+            max-width: 720px;
+            margin: 0 auto;
+            padding: 80px 32px 120px;
+            text-align: center;
+        }
+
+        .cta-inner {
+            background: var(--glass);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 52px 40px;
+            backdrop-filter: blur(16px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-inner::before {
+            content: '';
+            position: absolute;
+            inset: -1px;
+            border-radius: 25px;
+            background: linear-gradient(135deg, var(--a1), var(--a2), var(--a3));
+            z-index: -1;
+            opacity: 0.3;
+        }
+
+        .cta-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-style: italic;
+            font-weight: 300;
+            font-size: clamp(36px, 5vw, 58px);
+            letter-spacing: 3px;
+            background: linear-gradient(135deg, #fff, var(--a3));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 12px;
+        }
+
+        .cta-sub {
+            color: var(--muted);
+            font-size: 15px;
+            line-height: 1.7;
+            margin-bottom: 32px;
+        }
+
+        .cta-btns {
+            display: flex;
+            gap: 14px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-tw {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 14px 32px;
+            border-radius: 50px;
+            background: #000;
+            color: #fff;
+            text-decoration: none;
+            border: 1.5px solid rgba(255, 255, 255, 0.2);
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            cursor: none;
+            transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s;
+        }
+
+        .btn-tw:hover {
+            transform: translateY(-4px);
+            border-color: rgba(255, 255, 255, 0.5);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        .btn-tw svg {
+            flex-shrink: 0;
+        }
+
+        /* ─── FOOTER ────────────────────────────────────── */
+        footer {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            padding: 32px 24px;
+            border-top: 1px solid var(--border);
+            color: var(--muted);
+            font-size: 12px;
+            letter-spacing: 1px;
+        }
+
+        footer span {
+            color: var(--a1);
+        }
+
+        @keyframes fU {
+            from {
+                opacity: 0;
+                transform: translateY(28px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* responsive */
+        @media (max-width: 700px) {
+            .tos-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .process-grid::before {
+                display: none;
+            }
+
+            .cta-inner {
+                padding: 36px 24px;
+            }
+        }
+
+        @media (max-width: 900px) {
+            nav {
+                padding: 16px 24px;
+            }
+
+            .nav-links {
+                gap: 20px;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .nav-links {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="cur"></div>
+    <div id="cur-r"></div>
+
+    <div class="orbs">
+        <div class="orb o1"></div>
+        <div class="orb o2"></div>
+        <div class="orb o3"></div>
+    </div>
+    <div class="grid-ov"></div>
+    <div id="ptcl"></div>
+
+    <!-- NAV -->
+    <nav id="nav">
+        <a href="index.html" class="nav-logo">
+            <svg class="nav-swan" width="22" height="22" viewBox="0 0 80 70" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <linearGradient id="swanGradC" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="#f7f0e3" />
+                        <stop offset="50%" stop-color="#d4b896" />
+                        <stop offset="100%" stop-color="#a8895c" />
+                    </linearGradient>
+                </defs>
+                <ellipse cx="48" cy="52" rx="28" ry="14" fill="url(#swanGradC)" opacity="0.95" />
+                <path d="M24 48 Q14 34 18 20 Q22 8 30 6" stroke="url(#swanGradC)" stroke-width="7"
+                    stroke-linecap="round" fill="none" />
+                <circle cx="32" cy="4" r="7" fill="url(#swanGradC)" />
+                <path d="M38 3 L50 1 L47 8 Z" fill="url(#swanGradC)" opacity="0.85" />
+                <path d="M22 44 Q42 32 66 44 Q68 56 52 60 Q36 63 22 44Z" fill="url(#swanGradC)" opacity="0.55" />
+                <path d="M72 42 Q80 34 78 48 Q76 56 70 53 Q64 50 72 42Z" fill="url(#swanGradC)" opacity="0.7" />
+            </svg>
+            SwanNsfw
+        </a>
+        <ul class="nav-links">
+            <li><a href="index.html">Gallery</a></li>
+            <li><a href="home.html">Characters</a></li>
+            <li><a href="commissions.html" style="color:var(--a3)">Commissions</a></li>
+            <li><a href="index.html#about">About</a></li>
+            <li><a href="index.html#contact">Contact</a></li>
+        </ul>
+    </nav>
+
+    <!-- STATUS BANNER -->
+    <div class="status-wrap">
+        <div class="status-badge open">
+            <div class="status-dot"></div>
+            Commissions Open
+        </div>
+    </div>
+
+    <!-- HERO -->
+    <div class="cm-hero">
+        <p class="cm-eyebrow">✦ Original Art · Animation · Character Design ✦</p>
+        <h1 class="cm-title">Commission<br>Me</h1>
+        <p class="cm-sub">Dark, expressive character art crafted with care. Pick a tier below, reach out, and let's make
+            something you'll love.</p>
+    </div>
+
+    <!-- TIER CARDS -->
+    <section class="cm-section">
+        <div class="cm-sh reveal">
+            <span class="cm-sl">✦ Pricing</span>
+            <h2 class="cm-st">Pick Your Tier</h2>
+            <div class="cm-sline"></div>
+        </div>
+
+        <div class="tiers">
+
+            <div class="tier-card reveal">
+                <div class="tier-icon">🎨</div>
+                <div class="tier-name">Simple Illustration</div>
+                <div class="tier-price">$20 <span>starting at</span></div>
+                <p class="tier-desc">Character portraits and illustrations in multiple styles. Perfect for OC
+                    references, profile pictures, and personal pieces.</p>
+                <ul class="tier-features">
+                    <li>Full character or bust</li>
+                    <li>Multiple style options</li>
+                    <li>Simple or no background</li>
+                    <li>1 round of revisions</li>
+                </ul>
+                <a href="https://x.com/Swan_Nsfw" target="_blank" class="tier-btn">Request →</a>
+            </div>
+
+            <div class="tier-card featured reveal">
+                <div class="tier-icon">✨</div>
+                <div class="tier-name">Emote Animation</div>
+                <div class="tier-price">$35 <span>flat</span></div>
+                <p class="tier-desc">Animated emotes for Twitch, Discord, or wherever you stream. Lively, expressive,
+                    and ready to use.</p>
+                <ul class="tier-features">
+                    <li>Looping animation</li>
+                    <li>Emote-ready sizing</li>
+                    <li>Transparent background</li>
+                    <li>Delivered as GIF / APNG</li>
+                </ul>
+                <a href="https://x.com/Swan_Nsfw" target="_blank" class="tier-btn">Request →</a>
+            </div>
+
+            <div class="tier-card reveal">
+                <div class="tier-icon">🎬</div>
+                <div class="tier-name">Full Animation</div>
+                <div class="tier-price">$50+ <span>starting at</span></div>
+                <p class="tier-desc">Complex animations of any kind — VTuber assets, animated scenes, action sequences,
+                    and more. Price scales with complexity.</p>
+                <ul class="tier-features">
+                    <li>Custom length & complexity</li>
+                    <li>Full character animation</li>
+                    <li>Background included</li>
+                    <li>Quote provided upfront</li>
+                </ul>
+                <a href="https://x.com/Swan_Nsfw" target="_blank" class="tier-btn">Request →</a>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- PROCESS STEPS -->
+    <section class="cm-section">
+        <div class="cm-sh reveal">
+            <span class="cm-sl">✦ How it works</span>
+            <h2 class="cm-st">The Process</h2>
+            <div class="cm-sline"></div>
+        </div>
+
+        <div class="process-grid">
+            <div class="step reveal">
+                <div class="step-num">1</div>
+                <div class="step-title">Contact Me</div>
+                <p class="step-desc">DM me on Twitter with your idea, reference images, and which tier you want.</p>
+            </div>
+            <div class="step reveal">
+                <div class="step-num">2</div>
+                <div class="step-title">Quote & Payment</div>
+                <p class="step-desc">I'll confirm the scope, send a quote, and collect a 50% upfront deposit before
+                    starting.</p>
+            </div>
+            <div class="step reveal">
+                <div class="step-num">3</div>
+                <div class="step-title">Sketch Approval</div>
+                <p class="step-desc">I share a rough sketch for your feedback before moving to final lineart and color.
+                </p>
+            </div>
+            <div class="step reveal">
+                <div class="step-num">4</div>
+                <div class="step-title">Final Delivery</div>
+                <p class="step-desc">After final payment, you receive the high-res file ready to use however you like.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- WILL / WON'T -->
+    <section class="cm-section">
+        <div class="cm-sh reveal">
+            <span class="cm-sl">✦ Terms of Service</span>
+            <h2 class="cm-st">Will &amp; Won't Render</h2>
+            <div class="cm-sline"></div>
+        </div>
+
+        <div class="tos-grid">
+            <div class="tos-box will reveal">
+                <div class="tos-title">✦ Will Render</div>
+                <ul class="tos-list">
+                    <li><span class="ic">✅</span> Original characters (Ask First)</li>
+                    <li><span class="ic">✅</span> Fan art of existing characters</li>
+                    <li><span class="ic">✅</span> Furry / anthro characters</li>
+                    <li><span class="ic">✅</span> NSFW content (18+ only)</li>
+                    <li><span class="ic">✅</span> Gore / dark themes</li>
+                    <li><span class="ic">✅</span> VTuber &amp; streamer assets</li>
+                    <li><span class="ic">✅</span> Couples &amp; group shots</li>
+                </ul>
+            </div>
+            <div class="tos-box wont reveal">
+                <div class="tos-title">✦ Won't Render</div>
+                <ul class="tos-list">
+                    <li><span class="ic">❌</span> Minor characters in NSFW context</li>
+                    <li><span class="ic">❌</span> Hate symbols or discriminatory content</li>
+                    <li><span class="ic">❌</span> Traced or plagiarised references</li>
+                    <li><span class="ic">❌</span> Heavily complex mechs / armor (ask first)</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <div class="cta-block">
+        <div class="cta-inner reveal">
+            <div class="cta-title">Ready to Order?</div>
+            <p class="cta-sub">Slots are limited. Send me a DM on Twitter to claim your spot — I reply fast and love
+                hearing your ideas!</p>
+            <div class="cta-btns">
+                <a href="https://x.com/Swan_Nsfw" target="_blank" class="btn-tw">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+                        fill="currentColor">
+                        <path
+                            d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.73-8.835L1.254 2.25H8.08l4.262 5.636 5.902-5.636Zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+                    </svg>
+                    DM on Twitter / X
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer>
+        © 2024 SwanNsfw. All Rights Reserved. Designed with <span>♥</span>.
+    </footer>
+
+    <script>
+        // ─── CURSOR
+        const cur = document.getElementById('cur');
+        const curR = document.getElementById('cur-r');
+        document.addEventListener('mousemove', e => {
+            cur.style.left = e.clientX + 'px';
+            cur.style.top = e.clientY + 'px';
+            curR.style.left = e.clientX + 'px';
+            curR.style.top = e.clientY + 'px';
+        });
+        document.querySelectorAll('a, button, .tier-card, .step').forEach(el => {
+            el.addEventListener('mouseenter', () => document.body.classList.add('cg'));
+            el.addEventListener('mouseleave', () => document.body.classList.remove('cg'));
+        });
+
+        // ─── PARTICLES
+        const ptcl = document.getElementById('ptcl');
+        for (let i = 0; i < 30; i++) {
+            let p = document.createElement('div');
+            p.className = 'p';
+            p.style.left = Math.random() * 100 + 'vw';
+            p.style.top = Math.random() * 100 + 'vh';
+            p.style.width = Math.random() * 2 + 1 + 'px';
+            p.style.height = Math.random() * 18 + 10 + 'px';
+            p.style.animationDuration = Math.random() * 15 + 10 + 's';
+            p.style.animationDelay = Math.random() * -25 + 's';
+            p.style.transform = `rotate(${(Math.random() - 0.5) * 30}deg)`;
+            ptcl.appendChild(p);
+        }
+
+        // ─── NAV SCROLL
+        const nav = document.getElementById('nav');
+        window.addEventListener('scroll', () => {
+            nav.classList.toggle('sc', window.scrollY > 50);
+        }, { passive: true });
+
+        // ─── REVEAL ON SCROLL
+        const observer = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) entry.target.classList.add('vis');
+            });
+        }, { threshold: 0.08 });
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+        // Fallback reveal
+        setTimeout(() => {
+            document.querySelectorAll('.reveal:not(.vis)').forEach(el => el.classList.add('vis'));
+        }, 1200);
+    </script>
+</body>
+
+</html>

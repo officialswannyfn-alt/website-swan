@@ -1,852 +1,1430 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Character Viewer — Modern</title>
-<style>
-  :root{
-  --bg: #0e0f14;
-  --panel: rgba(0, 0, 0, 0.6);
-  --panel-soft: rgba(0, 0, 0, 0.4);
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <title>Characters — SwanNsfw</title>
+  <meta name="description" content="SwanNsfw character viewer — explore character profiles, outfits, stats and lore." />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;600;700&family=Bebas+Neue&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&display=swap"
+    rel="stylesheet">
+  <style>
+    /* ─── RESET & VARIABLES ─────────────────────────── */
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-  --text: #ffffff;
-  --muted: rgba(255, 255, 255, 0.8);
+    :root {
+      --bg: #0e090c;
+      --bg2: #1c1410;
+      --a1: #d4b896;
+      --a2: #a8895c;
+      --a3: #f0e2cc;
+      --text: #f7f0e3;
+      --muted: rgba(247, 240, 227, 0.55);
+      --border: rgba(212, 184, 150, 0.22);
+      --glass: rgba(20, 12, 10, 0.78);
+      --glow: 0 0 40px rgba(212, 184, 150, 0.22), 0 0 80px rgba(168, 137, 92, 0.12);
+      --accent: #d4b896;
+      --accent-soft: #a8895c;
+      --accent-dark: #6b4f2a;
+    }
 
-  /* Signature purple matching other views */
-  --accent: #667eea;
-  --accent-soft: #764ba2;
-  --accent-dark: #4b2a7a;
+    html {
+      scroll-behavior: smooth;
+    }
 
-  --border: rgba(255, 255, 255, 0.1);
-  --glass: rgba(0, 0, 0, 0.5);
-  --bg-gradient: linear-gradient(rgba(0,0,0,0.75), rgba(0,0,0,0.75));
-}
-  *{box-sizing:border-box}
-  @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
-  html,body{height:100%;margin:0;font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color:var(--text); background:var(--bg-gradient), url("images/bg.png") center / cover no-repeat fixed; transition: background 0.5s ease;}
-  /* page layout */
-  .wrap{
-    height:100vh;
-    display:grid;
-    grid-template-columns: 100px 1fr;
-    grid-template-rows: 65vh auto;
-    grid-template-areas: "nav art" "nav info";
-    gap:0;
-    padding:0;
-    position:relative;
-    overflow:hidden;
-    overflow-y:auto;
-  }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Space Grotesk', sans-serif;
+      overflow-x: hidden;
+      cursor: none;
+      min-height: 100vh;
+    }
 
-  /* VISUAL ENHANCEMENTS FOR EMPTINESS */
-  .grid-overlay {
-    position: fixed;
-    top: 0; left: 0; width: 100%; height: 100%;
-    background-image: 
-      linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
-    background-size: 60px 60px;
-    pointer-events: none;
-    z-index: 0;
-  }
-  
-  .faction-watermark {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%) rotate(-15deg);
-    font-size: 20vw;
-    font-weight: 900;
-    color: var(--accent);
-    opacity: 0.04;
-    pointer-events: none;
-    z-index: -1;
-    white-space: nowrap;
-    transition: all 0.5s ease;
-    user-select: none;
-  }
+    /* ─── SCROLLBAR ─────────────────────────────────── */
+    ::-webkit-scrollbar {
+      width: 5px;
+    }
 
-  .particles {
-    position: fixed;
-    top: 0; left: 0; width: 100%; height: 100%;
-    pointer-events: none;
-    z-index: 1;
-  }
-  .particle {
-    position: absolute;
-    background: var(--accent);
-    border-radius: 50%;
-    opacity: 0.3;
-    animation: floatUp linear infinite;
-  }
-  @keyframes floatUp {
-    0% { transform: translateY(100vh) scale(0); opacity: 0; }
-    20% { opacity: 0.4; }
-    80% { opacity: 0.4; }
-    100% { transform: translateY(-10vh) scale(1); opacity: 0; }
-  }
+    ::-webkit-scrollbar-track {
+      background: var(--bg);
+    }
 
-  /* huge faint title behind */
-  .backdrop {
-    position:fixed;
-    left:50%;
-    top:20%;
-    transform: translateX(-50%);
-    font-weight:800;
-    font-size:300px;
-    letter-spacing:5px;
-    color:rgba(102, 126, 234, 0.08);
-    pointer-events:none;
-    user-select:none;
-    z-index:0;
-  }
+    ::-webkit-scrollbar-thumb {
+      background: linear-gradient(var(--accent-soft), var(--accent));
+      border-radius: 3px;
+    }
 
-  /* left vertical thumbnails */
-  .left-bar{
-    grid-area: nav;
-    position: sticky;
-    top: 0;
-    height: 100vh;
-    background: rgba(0,0,0,0.3);
-    border-right: 1px solid var(--border);
-    z-index:3;
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    gap:18px;
-    padding-top:40px;
-    padding-bottom: 20px;
-  }
-  .logo{
-    width:80px;height:80px;border-radius:14px;background:linear-gradient(135deg, #667eea 0%, #764ba2 100%);display:flex;align-items:center;justify-content:center;font-weight:900;color:#fff;box-shadow:0 6px 18px rgba(102, 126, 234, 0.4);
-    cursor:pointer;transition:transform 0.2s ease;
-  }
-  .logo:hover{transform:scale(1.05);}
-  .thumb{
-    width:80px;height:80px;border-radius:14px;overflow:hidden;border:3px solid rgba(255,255,255,0.1);cursor:pointer;transition:all .24s;filter:grayscale(.2);
-    display:block;object-fit:cover;
-  }
-  .thumb.active{ border-color: #667eea; box-shadow:0 6px 26px rgba(102, 126, 234, 0.6); filter:none; transform:translateY(-4px); }
+    /* ─── CUSTOM CURSOR ─────────────────────────────── */
+    #cur {
+      position: fixed;
+      width: 10px;
+      height: 10px;
+      background: var(--accent);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9999;
+      transform: translate(-50%, -50%);
+      transition: width 0.2s, height 0.2s, background 0.2s;
+      mix-blend-mode: screen;
+    }
 
-  /* center panel (info) */
-  .center{
-    grid-area: info;
-    z-index:3;
-    padding:40px;
-    max-width: 1200px;
-    margin: 0 auto;
-    width: 100%;
-    display:flex;
-    flex-direction:column;
-    gap:18px;
-    align-items:center;
-    text-align: center;
-    position: relative;
-    background: transparent;
-    padding-top: 10px;
-  }
-  /* New Split Layout */
-  .info-split {
-    display: flex;
-    flex-direction: row;
-    align-items: flex-start;
-    justify-content: center;
-    gap: 40px;
-    width: 100%;
-    max-width: 1200px;
-    margin-top: 10px;
-  }
-  .info-left { flex: 2; display: flex; flex-direction: column; gap: 18px; align-items: center; width: 100%; }
-  .info-right { flex: 1; display: flex; flex-direction: column; align-items: center; min-width: 300px; width: 100%; }
+    #cur-r {
+      position: fixed;
+      width: 34px;
+      height: 34px;
+      border: 1.5px solid var(--border);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9998;
+      transform: translate(-50%, -50%);
+      transition: width 0.25s, height 0.25s, border-color 0.2s;
+    }
 
-  /* DENSE DATA STYLES */
-  .panel-header {
-    width: 100%; border-bottom: 1px solid var(--border); padding-bottom: 8px; margin-bottom: 12px;
-    font-size: 12px; text-transform: uppercase; letter-spacing: 2px; color: var(--accent); font-weight: 800;
-    display: flex; justify-content: space-between; align-items: center;
-  }
-  .data-grid {
-    display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 8px; width: 100%;
-  }
-  .data-cell {
-    background: rgba(0,0,0,0.3); border: 1px solid var(--border); padding: 8px 10px; border-radius: 6px;
-    display: flex; flex-direction: column; gap: 2px;
-  }
-  .data-label { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
-  .data-value { font-size: 13px; font-weight: 700; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .cg #cur {
+      width: 20px;
+      height: 20px;
+      background: var(--a3);
+    }
 
-  /* ATTRIBUTE BARS */
-  .attr-section { width: 100%; background: rgba(0,0,0,0.3); border: 1px solid var(--border); border-radius: 12px; padding: 16px; }
-  .attr-row { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
-  .attr-row:last-child { margin-bottom: 0; }
-  .attr-name { width: 40px; font-size: 11px; font-weight: 800; color: var(--muted); }
-  .attr-track { flex: 1; height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; overflow: hidden; }
-  .attr-fill { height: 100%; background: linear-gradient(90deg, var(--accent) 0%, var(--accent-soft) 100%); width: 0%; transition: width 0.8s cubic-bezier(0.22, 1, 0.36, 1); }
-  .attr-val { width: 30px; text-align: right; font-size: 11px; font-weight: 700; color: #fff; }
+    .cg #cur-r {
+      width: 56px;
+      height: 56px;
+      border-color: var(--a3);
+    }
 
-  /* RELATIONSHIPS */
-  .rel-grid { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 4px; width: 100%; }
-  .rel-item { min-width: 60px; display: flex; flex-direction: column; align-items: center; gap: 4px; }
-  .rel-avatar { width: 48px; height: 48px; border-radius: 50%; background: #333; border: 2px solid var(--border); object-fit: cover; }
-  .rel-name { font-size: 10px; color: var(--muted); text-align: center; }
+    /* ─── BG ORBS ───────────────────────────────────── */
+    .orbs {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
 
-  .character-name{
-    display:flex;gap:14px;align-items:center;justify-content:center;width:100%;
-  }
-  .faction-badge {
-  padding: 8px 16px;
-  border-radius: 10px;
-  font-weight: 700;
-  letter-spacing: 1.5px;
-  text-transform: uppercase;
-  background: linear-gradient(135deg, var(--accent) 0%, var(--accent-soft) 100%);
-  color: #fff;
-  /* The Glow Effect */
-  box-shadow: 
-    0 0 15px var(--accent), 
-    0 0 30px rgba(102, 126, 234, 0.3),
-    inset 0 0 8px rgba(255, 255, 255, 0.4);
-  text-shadow: 0 2px 4px rgba(0,0,0,0.3);
-  border: 1px solid rgba(255,255,255,0.2);
-}
-  .title{
-    font-size:36px;font-weight:800;
-    background:linear-gradient(135deg, #667eea 0%, #764ba2 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
-  }
-  .meta-row{display:flex;gap:12px;align-items:center;margin-top:6px;font-size:13px;color:var(--muted)}
-  .desc{
-    margin-top:0; background:rgba(0,0,0,0.6); padding:20px; border-radius:12px; box-shadow:0 10px 30px rgba(0,0,0,0.3); border:2px solid rgba(255,255,255,0.1); width:100%; line-height:1.5; color:var(--text); text-align: left; font-size: 14px;
-  }
-  .tags{display:flex;gap:8px;margin-top:12px}
-  .tag{padding:6px 10px;border-radius:8px;background:rgba(255,255,255,0.05);color:var(--text);font-weight:600;border:2px solid rgba(255,255,255,0.1);transition:all 0.3s ease;}
-  .tag:hover{background:rgba(255,255,255,0.1);border-color:rgba(255,255,255,0.3);}
+    .orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(90px);
+      opacity: 0.14;
+      animation: orbF linear infinite;
+    }
 
-  /* right big art area */
-  .hero{
-    grid-area: art;
-    z-index:2;
-    position:relative;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    padding:20px 40px 0 40px;
-    overflow: visible;
-  }
-  .art-stage{
-    width:100%;
-    height:100%;
-    max-height:none;
-    background:rgba(0,0,0,0.3);
-    border-radius:24px;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.4);
-    border:1px solid rgba(255,255,255,0.1);
-    position:relative;
-    overflow:hidden;
-    backdrop-filter: blur(10px);
-  }
+    .o1 {
+      width: 700px;
+      height: 700px;
+      background: var(--a2);
+      top: -250px;
+      left: -250px;
+      animation-duration: 24s;
+    }
 
-  /* purple gradient accent behind art */
- .art-stage::before {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 60%;
-  height: 60%;
-  /* Creates a soft "aura" that matches the faction color */
-  background: radial-gradient(circle, var(--accent) 0%, transparent 70%);
-  opacity: 0.4;
-  z-index: 1;
-  filter: blur(40px);
-  pointer-events: none;
-}
-.art-stage::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background-image: 
-    linear-gradient(var(--border) 1px, transparent 1px),
-    linear-gradient(90deg, var(--border) 1px, transparent 1px);
-  background-size: 40px 40px; /* Size of the grid squares */
-  mask-image: radial-gradient(circle, black 30%, transparent 80%);
-  -webkit-mask-image: radial-gradient(circle, black 30%, transparent 80%);
-  opacity: 0.15;
-  z-index: 0;
-  pointer-events: none;
-}
+    .o2 {
+      width: 550px;
+      height: 550px;
+      background: var(--a1);
+      bottom: -200px;
+      right: -200px;
+      animation-duration: 30s;
+      animation-direction: reverse;
+    }
 
-  /* character image itself */
- /* character image itself */
-.character-art{
-  position:absolute;
-  bottom: 0; /* Sits exactly on the bottom edge of the stage */
-  left:50%;
-  transform:translateX(-50%); /* Perfectly centers horizontally */
-  /* SIZING CHANGES FOR BIGGER ART */
-  height: 92%; /* Fills the height of the stage almost completely */
-  width: auto; /* Lets width adjust naturally so it doesn't stretch */
-  max-width: 100%; /* Ensures it doesn't spill out the sides */
-  /* standard properties */
-  z-index:3;
-  object-fit:contain;
-  transition: transform .5s ease, opacity .35s;
-  user-select:none;
-  pointer-events:none;
-  /* Optional: adds a slight drop shadow to separate art from background */
-  filter: drop-shadow(0 10px 20px rgba(0,0,0,0.5));
-}
-.character-art.hidden{
-  opacity:0;
-  /* Match the new translateX(-50%) center point */
-  transform:translateX(-50%) translateY(30px) scale(.95);
-}
+    .o3 {
+      width: 400px;
+      height: 400px;
+      background: var(--a3);
+      top: 35%;
+      left: 45%;
+      animation-duration: 20s;
+      animation-delay: -10s;
+    }
 
-  /* small right-side controls / badges */
-  .controls{
-    position:absolute;
-    right:18px;
-    top:28px;
-    transform:none;
-    display:flex;
-    gap:12px;
-    flex-direction:column;
-    z-index:6;
-  }
-  .control-btn{
-    width:48px;height:48px;border-radius:16px;background:rgba(0,0,0,0.6);border:2px solid rgba(255,255,255,0.1);box-shadow:0 8px 22px rgba(0,0,0,0.3);display:flex;align-items:center;justify-content:center;font-weight:700;cursor:pointer;color:var(--text);transition:all 0.3s ease;
-  }
-  .control-btn:hover{background:rgba(255,255,255,0.1);border-color:rgba(255,255,255,0.3);transform:translateY(-2px);}
+    @keyframes orbF {
+      0% {
+        transform: translate(0, 0) scale(1);
+      }
 
-  /* outfit arrows and dots */
-  .outfit-controls{
-    position:absolute;
-    left:50%;
-    transform: translateX(-50%);
-    bottom:24px;
-    display:flex;
-    gap:12px;
-    align-items:center;
-    z-index:4;
-  }
-  .arrow{
-    width:46px;height:46px;border-radius:12px;background:rgba(0,0,0,0.6);border:2px solid rgba(255,255,255,0.1);box-shadow:0 8px 24px rgba(0,0,0,0.3);cursor:pointer;display:flex;align-items:center;justify-content:center;font-weight:800;color:var(--text);transition:all 0.3s ease;
-  }
-  .arrow:hover{background:rgba(255,255,255,0.1);border-color:rgba(255,255,255,0.3);transform:translateY(-2px);}
-  .dots{display:flex;gap:8px;align-items:center}
-  .dot{width:12px;height:12px;border-radius:100%;background:rgba(255,255,255,0.2);border:2px solid rgba(255,255,255,0.1);cursor:pointer;box-shadow:0 6px 12px rgba(0,0,0,0.3);transition:all 0.3s ease;}
-  .dot:hover{background:rgba(255,255,255,0.3);transform:scale(1.1);}
-  .dot.active{ background:linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-color:#667eea; transform:scale(1.15); box-shadow:0 0 15px rgba(102, 126, 234, 0.6); }
+      33% {
+        transform: translate(70px, -50px) scale(1.1);
+      }
 
-  /* stats box bottom */
-  .stats{
-    margin-top:10px; display:flex; gap:10px; flex-wrap:wrap; justify-content: center;
-  }
-  .stat{background:rgba(0,0,0,0.6);padding:10px 12px;border-radius:10px;font-weight:700;min-width:120px;text-align:center;box-shadow:0 8px 22px rgba(0,0,0,0.3);border:2px solid rgba(255,255,255,0.1);transition:all 0.3s ease;}
-  .stat:hover{background:rgba(255,255,255,0.05);border-color:rgba(255,255,255,0.3);transform:translateY(-2px);}
+      66% {
+        transform: translate(-50px, 70px) scale(0.93);
+      }
 
-  /* gear / weapons section */
-  .gear-section{ margin-top:0; width:100%; animation:fadeIn 0.5s ease; text-align: left; }
-  .gear-title{ font-size:12px; text-transform:uppercase; letter-spacing:1px; color:var(--muted); font-weight:700; margin-bottom:12px; border-bottom:1px solid var(--border); padding-bottom:8px; }
-  .gear-grid{ display:grid; grid-template-columns:repeat(auto-fill, minmax(200px, 1fr)); gap:16px; }
-  .gear-item{
-    background:rgba(0,0,0,0.4); border:1px solid var(--border); border-radius:12px; padding:14px; display:flex; align-items:center; gap:16px; transition:all 0.2s ease;
-  }
-  .gear-item:hover{ background:rgba(255,255,255,0.1); transform:translateY(-2px); border-color:var(--accent); }
-  .gear-icon{
-    width:54px; height:54px; background:linear-gradient(135deg, var(--accent) 0%, var(--accent-soft) 100%); border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:28px; box-shadow:0 4px 10px rgba(0,0,0,0.3); overflow:hidden; flex-shrink:0;
-  }
-  .gear-icon img { width:100%; height:100%; object-fit:cover; }
-  .gear-info{ display:flex; flex-direction:column; gap:2px; }
-  .gear-name{ font-size:15px; font-weight:700; color:#fff; }
-  .gear-type{ font-size:13px; color:var(--muted); }
+      100% {
+        transform: translate(0, 0) scale(1);
+      }
+    }
 
-  /* scroll buttons */
-  .scroll-btn {
-    background: rgba(0,0,0,0.4);
-    border: 1px solid rgba(255,255,255,0.1);
-    color: var(--text);
-    width: 100%; height: 24px; display: flex; align-items: center; justify-content: center;
-    border-radius: 6px; cursor: pointer; transition: all 0.2s; font-size: 10px;
-  }
-  .scroll-btn:hover { background: rgba(255,255,255,0.1); border-color: var(--accent); }
-  .scroll-btn.disabled { opacity: 0.3; pointer-events: none; }
+    /* ─── GRID OVERLAY ──────────────────────────────── */
+    .grid-ov {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      background-image:
+        linear-gradient(var(--border) 1px, transparent 1px),
+        linear-gradient(90deg, var(--border) 1px, transparent 1px);
+      background-size: 60px 60px;
+    }
 
-  /* small responsive */
-  @media (max-width:1100px){
-    .wrap{grid-template-columns:100px 1fr; grid-template-rows: 50vh auto;}
-    .backdrop{font-size:200px;}
-    .character-art{height:90%}
-    .info-split { flex-direction: column; align-items: center; }
-    .info-right { width: 100%; max-width: 800px; }
-    .info-left { width: 100%; max-width: 800px; }
-    .gear-grid { grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); }
-  }
-  @media (max-width:860px){
-    .wrap{grid-template-columns:90px 1fr; grid-template-rows: 40vh auto; padding:0}
-    .hero{grid-area: art;}
-    .backdrop{display:none}
-    .character-art{height:95%}
-    .controls{top:10px; right:10px}
-  }
-  @media (max-width:520px){
-    .wrap{grid-template-columns:90px 1fr; grid-template-rows: 35vh auto;}
-    .title{font-size:22px}
-    .faction-badge{font-size:12px;padding:6px 10px}
-    .character-art{height:90%}
-  }
-</style>
+    /* ─── PARTICLES ─────────────────────────────────── */
+    #ptcl {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .p {
+      position: absolute;
+      border-radius: 50%;
+      animation: pRise linear infinite;
+    }
+
+    @keyframes pRise {
+      0% {
+        transform: translateY(100vh) scale(0);
+        opacity: 0;
+      }
+
+      15% {
+        opacity: 1;
+      }
+
+      85% {
+        opacity: 0.5;
+      }
+
+      100% {
+        transform: translateY(-10vh) scale(1.2);
+        opacity: 0;
+      }
+    }
+
+    /* ─── NAVBAR ────────────────────────────────────── */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      padding: 20px 48px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: background 0.4s, backdrop-filter 0.4s;
+    }
+
+    nav.sc {
+      background: rgba(7, 7, 15, 0.88);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 28px;
+      letter-spacing: 3px;
+      background: linear-gradient(135deg, #fff, var(--a3), var(--a1));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-decoration: none;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 32px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      transition: color 0.3s;
+      cursor: none;
+    }
+
+    .nav-links a:hover {
+      color: var(--a3);
+    }
+
+    .nav-links a.active {
+      color: var(--a1);
+    }
+
+    /* ─── PAGE LAYOUT ───────────────────────────────── */
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px)
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0)
+      }
+    }
+
+    .wrap {
+      height: 100vh;
+      display: grid;
+      grid-template-columns: 96px 1fr;
+      grid-template-rows: 63vh auto;
+      grid-template-areas: "sidebar art" "sidebar info";
+      gap: 0;
+      padding-top: 72px;
+      position: relative;
+      overflow: hidden;
+      overflow-y: auto;
+      z-index: 2;
+    }
+
+    /* ─── LEFT SIDEBAR ──────────────────────────────── */
+    .left-bar {
+      grid-area: sidebar;
+      position: sticky;
+      top: 0;
+      height: calc(100vh - 72px);
+      background: rgba(7, 7, 15, 0.65);
+      border-right: 1px solid var(--border);
+      backdrop-filter: blur(20px);
+      z-index: 3;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+      padding-top: 24px;
+      padding-bottom: 20px;
+    }
+
+    .logo {
+      width: 58px;
+      height: 58px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, var(--a1) 0%, var(--a2) 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 20px;
+      letter-spacing: 2px;
+      color: #fff;
+      box-shadow: 0 6px 22px rgba(212, 184, 150, 0.5);
+      cursor: none;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .logo:hover {
+      transform: scale(1.06);
+      box-shadow: 0 0 36px rgba(212, 184, 150, 0.8);
+    }
+
+    .thumb {
+      width: 68px;
+      height: 68px;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 2px solid var(--border);
+      cursor: none;
+      transition: all 0.3s;
+      filter: grayscale(0.4) brightness(0.8);
+      display: block;
+      object-fit: cover;
+    }
+
+    .thumb.active {
+      border-color: var(--a1);
+      box-shadow: 0 0 22px rgba(212, 184, 150, 0.65);
+      filter: none;
+      transform: translateY(-4px) scale(1.05);
+    }
+
+    .thumb:hover:not(.active) {
+      filter: grayscale(0) brightness(1);
+      border-color: rgba(212, 184, 150, 0.5);
+      transform: translateY(-2px);
+    }
+
+    .control-btn {
+      width: 42px;
+      height: 42px;
+      border-radius: 13px;
+      background: var(--glass);
+      border: 1.5px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      cursor: none;
+      color: var(--text);
+      transition: all 0.3s;
+      font-size: 12px;
+      backdrop-filter: blur(10px);
+    }
+
+    .control-btn:hover {
+      background: rgba(212, 184, 150, 0.2);
+      border-color: var(--a1);
+      transform: translateY(-2px);
+      box-shadow: 0 0 20px rgba(212, 184, 150, 0.35);
+    }
+
+    .scroll-btn {
+      background: var(--glass);
+      border: 1px solid var(--border);
+      color: var(--text);
+      width: 64px;
+      height: 22px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 6px;
+      cursor: none;
+      transition: all 0.2s;
+      font-size: 9px;
+      backdrop-filter: blur(8px);
+    }
+
+    .scroll-btn:hover {
+      background: rgba(212, 184, 150, 0.2);
+      border-color: var(--a1);
+    }
+
+    .scroll-btn.disabled {
+      opacity: 0.25;
+      pointer-events: none;
+    }
+
+    /* ─── HERO / ART STAGE ──────────────────────────── */
+    .hero {
+      grid-area: art;
+      z-index: 2;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px 32px 0 24px;
+      overflow: visible;
+    }
+
+    .art-stage {
+      width: 100%;
+      height: 100%;
+      background: var(--glass);
+      border-radius: 22px;
+      box-shadow: var(--glow);
+      border: 1px solid var(--border);
+      position: relative;
+      overflow: hidden;
+      backdrop-filter: blur(10px);
+    }
+
+    .art-stage::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 65%;
+      height: 65%;
+      background: radial-gradient(circle, var(--accent) 0%, transparent 70%);
+      opacity: 0.06;
+      z-index: 1;
+      filter: blur(55px);
+      pointer-events: none;
+      transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1), background 0.5s;
+    }
+
+    .art-stage:hover::before {
+      opacity: 0.35;
+    }
+
+    .art-stage::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(var(--border) 1px, transparent 1px),
+        linear-gradient(90deg, var(--border) 1px, transparent 1px);
+      background-size: 40px 40px;
+      mask-image: radial-gradient(circle, black 25%, transparent 78%);
+      -webkit-mask-image: radial-gradient(circle, black 25%, transparent 78%);
+      opacity: 0.18;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .character-art {
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      height: 92%;
+      width: auto;
+      max-width: 100%;
+      z-index: 3;
+      object-fit: contain;
+      transition: transform .5s ease, opacity .35s;
+      user-select: none;
+      pointer-events: none;
+      filter: drop-shadow(0 10px 30px rgba(212, 184, 150, 0.35));
+    }
+
+    .character-art.hidden {
+      opacity: 0;
+      transform: translateX(-50%) translateY(30px) scale(.95);
+    }
+
+    /* ─── OUTFIT CONTROLS ───────────────────────────── */
+    .outfit-controls {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      bottom: 20px;
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      z-index: 4;
+    }
+
+    .arrow {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: var(--glass);
+      border: 1.5px solid var(--border);
+      box-shadow: var(--glow);
+      cursor: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      color: var(--text);
+      font-size: 16px;
+      transition: all 0.3s;
+      backdrop-filter: blur(10px);
+    }
+
+    .arrow:hover {
+      background: rgba(212, 184, 150, 0.25);
+      border-color: var(--a1);
+      transform: scale(1.1);
+    }
+
+    .dots {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: rgba(240, 240, 255, 0.18);
+      border: 1.5px solid var(--border);
+      cursor: none;
+      transition: all 0.3s;
+    }
+
+    .dot:hover {
+      background: rgba(212, 184, 150, 0.45);
+      transform: scale(1.1);
+    }
+
+    .dot.active {
+      background: linear-gradient(135deg, var(--a1), var(--a2));
+      border-color: var(--a1);
+      transform: scale(1.25);
+      box-shadow: 0 0 14px rgba(212, 184, 150, 0.65);
+    }
+
+    /* ─── FLOATING CONTROLS ─────────────────────────── */
+    .controls {
+      position: absolute;
+      right: 16px;
+      top: 16px;
+      display: flex;
+      gap: 10px;
+      flex-direction: column;
+      z-index: 6;
+    }
+
+    /* ─── INFO PANEL ────────────────────────────────── */
+    .center {
+      grid-area: info;
+      z-index: 3;
+      padding: 28px 40px 48px;
+      max-width: 1300px;
+      margin: 0 auto;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      align-items: center;
+      text-align: center;
+    }
+
+    .faction-watermark {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) rotate(-12deg);
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 18vw;
+      color: var(--accent);
+      opacity: 0.04;
+      pointer-events: none;
+      z-index: 0;
+      white-space: nowrap;
+      user-select: none;
+      transition: all 0.5s;
+      letter-spacing: 8px;
+    }
+
+    .character-name {
+      display: flex;
+      gap: 14px;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+    }
+
+    .faction-badge {
+      padding: 7px 18px;
+      border-radius: 50px;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent-soft) 100%);
+      color: #fff;
+      box-shadow: 0 0 22px rgba(212, 184, 150, 0.45);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      transition: box-shadow 0.4s;
+    }
+
+    .title {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-weight: 300;
+      font-size: clamp(32px, 4.5vw, 62px);
+      letter-spacing: 3px;
+      background: linear-gradient(135deg, #fff 0%, var(--a3) 40%, var(--a1) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .meta-row {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      margin-top: 2px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    /* ─── INFO SPLIT ────────────────────────────────── */
+    .info-split {
+      display: flex;
+      flex-direction: row;
+      align-items: flex-start;
+      justify-content: center;
+      gap: 20px;
+      width: 100%;
+      max-width: 1200px;
+      margin-top: 4px;
+    }
+
+    .info-left {
+      flex: 2;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      align-items: center;
+      width: 100%;
+    }
+
+    .info-right {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      align-items: center;
+      min-width: 270px;
+      width: 100%;
+    }
+
+    /* ─── PANEL HEADER ──────────────────────────────── */
+    .panel-header {
+      width: 100%;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 8px;
+      margin-bottom: 12px;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      color: var(--a1);
+      font-weight: 700;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    /* ─── DESC ──────────────────────────────────────── */
+    .desc {
+      background: var(--glass);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 20px;
+      width: 100%;
+      line-height: 1.8;
+      color: var(--muted);
+      text-align: left;
+      font-size: 14px;
+      backdrop-filter: blur(12px);
+    }
+
+    /* ─── DATA GRID ─────────────────────────────────── */
+    .data-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+      gap: 8px;
+      width: 100%;
+    }
+
+    .data-cell {
+      background: var(--glass);
+      border: 1px solid var(--border);
+      padding: 10px 12px;
+      border-radius: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      backdrop-filter: blur(10px);
+      transition: border-color 0.3s, transform 0.3s;
+    }
+
+    .data-cell:hover {
+      border-color: var(--a1);
+      transform: translateY(-2px);
+    }
+
+    .data-label {
+      font-size: 9px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .data-value {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    /* ─── RELATIONSHIPS ─────────────────────────────── */
+    .rel-panel {
+      width: 100%;
+      background: var(--glass);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 18px;
+      backdrop-filter: blur(12px);
+    }
+
+    .rel-grid {
+      display: flex;
+      gap: 14px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+      width: 100%;
+    }
+
+    .rel-item {
+      min-width: 60px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      cursor: none;
+    }
+
+    .rel-avatar {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      background: var(--glass);
+      border: 2px solid var(--border);
+      object-fit: cover;
+      transition: border-color 0.3s, box-shadow 0.3s;
+    }
+
+    .rel-item:hover .rel-avatar {
+      border-color: var(--a1);
+      box-shadow: 0 0 18px rgba(212, 184, 150, 0.5);
+    }
+
+    .rel-name {
+      font-size: 10px;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    /* ─── ATTRIBUTE BARS ────────────────────────────── */
+    .attr-section {
+      width: 100%;
+      background: var(--glass);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 18px;
+      backdrop-filter: blur(12px);
+    }
+
+    .attr-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+
+    .attr-row:last-child {
+      margin-bottom: 0;
+    }
+
+    .attr-name {
+      width: 40px;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--muted);
+    }
+
+    .attr-track {
+      flex: 1;
+      height: 6px;
+      background: rgba(240, 240, 255, 0.08);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .attr-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent) 0%, var(--accent-soft) 100%);
+      width: 0%;
+      transition: width 0.85s cubic-bezier(0.22, 1, 0.36, 1);
+      border-radius: 3px;
+    }
+
+    .attr-val {
+      width: 30px;
+      text-align: right;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    /* ─── GEAR / WEAPONS ────────────────────────────── */
+    .gear-section {
+      width: 100%;
+      animation: fadeIn 0.5s ease;
+      text-align: left;
+    }
+
+    .gear-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(185px, 1fr));
+      gap: 12px;
+    }
+
+    .gear-item {
+      background: var(--glass);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      transition: all 0.3s;
+      backdrop-filter: blur(12px);
+    }
+
+    .gear-item:hover {
+      background: rgba(212, 184, 150, 0.1);
+      transform: translateY(-3px);
+      border-color: var(--a1);
+      box-shadow: 0 8px 28px rgba(212, 184, 150, 0.25);
+    }
+
+    .gear-icon {
+      width: 50px;
+      height: 50px;
+      background: linear-gradient(135deg, var(--a1) 0%, var(--a2) 100%);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      box-shadow: 0 4px 14px rgba(212, 184, 150, 0.4);
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+
+    .gear-icon img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .gear-info {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .gear-name {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .gear-type {
+      font-size: 10px;
+      letter-spacing: 1.5px;
+      color: var(--a3);
+      text-transform: uppercase;
+    }
+
+    /* ─── RESPONSIVE ────────────────────────────────── */
+    @media (max-width: 1100px) {
+      .wrap {
+        grid-template-rows: 50vh auto;
+      }
+
+      .info-split {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .info-right,
+      .info-left {
+        width: 100%;
+        max-width: 800px;
+      }
+
+      .gear-grid {
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      }
+    }
+
+    @media (max-width: 860px) {
+      .wrap {
+        grid-template-columns: 80px 1fr;
+        grid-template-rows: 40vh auto;
+      }
+
+      .logo {
+        width: 50px;
+        height: 50px;
+        font-size: 16px;
+      }
+
+      .thumb {
+        width: 58px;
+        height: 58px;
+      }
+
+      .scroll-btn {
+        width: 56px;
+      }
+
+      .controls {
+        top: 10px;
+        right: 10px;
+      }
+
+      nav {
+        padding: 16px 24px;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .wrap {
+        grid-template-columns: 68px 1fr;
+        grid-template-rows: 35vh auto;
+      }
+
+      .nav-links {
+        display: none;
+      }
+
+      .title {
+        font-size: 26px;
+      }
+
+      .faction-badge {
+        font-size: 9px;
+        padding: 6px 12px;
+      }
+
+      .center {
+        padding: 16px 14px 36px;
+      }
+
+      .hero {
+        padding: 8px 12px 0 6px;
+      }
+    }
+  </style>
 </head>
+
 <body>
 
-<div class="wrap">
+  <div id="cur"></div>
+  <div id="cur-r"></div>
 
-  <!-- Visual Effects -->
-  <div class="grid-overlay"></div>
-  <div class="particles" id="particles"></div>
+  <div class="orbs">
+    <div class="orb o1"></div>
+    <div class="orb o2"></div>
+    <div class="orb o3"></div>
+  </div>
+  <div class="grid-ov"></div>
+  <div id="ptcl"></div>
 
-  <div class="backdrop">ENDMINISTRATOR</div>
+  <!-- NAV -->
+  <nav id="nav">
+    <a href="index.html" class="nav-logo">
+      <svg class="nav-swan" width="22" height="22" viewBox="0 0 80 70" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="swanGradH" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#f7f0e3" />
+            <stop offset="50%" stop-color="#d4b896" />
+            <stop offset="100%" stop-color="#a8895c" />
+          </linearGradient>
+        </defs>
+        <ellipse cx="48" cy="52" rx="28" ry="14" fill="url(#swanGradH)" opacity="0.95" />
+        <path d="M24 48 Q14 34 18 20 Q22 8 30 6" stroke="url(#swanGradH)" stroke-width="7" stroke-linecap="round"
+          fill="none" />
+        <circle cx="32" cy="4" r="7" fill="url(#swanGradH)" />
+        <path d="M38 3 L50 1 L47 8 Z" fill="url(#swanGradH)" opacity="0.85" />
+        <path d="M22 44 Q42 32 66 44 Q68 56 52 60 Q36 63 22 44Z" fill="url(#swanGradH)" opacity="0.55" />
+        <path d="M72 42 Q80 34 78 48 Q76 56 70 53 Q64 50 72 42Z" fill="url(#swanGradH)" opacity="0.7" />
+      </svg>
+      SwanNsfw
+    </a>
+    <ul class="nav-links">
+      <li><a href="index.html">Gallery</a></li>
+      <li><a href="home.html" class="active">Characters</a></li>
+      <li><a href="commissions.html">Commissions</a></li>
+      <li><a href="index.html#about">About</a></li>
+      <li><a href="index.html#contact">Contact</a></li>
+    </ul>
+  </nav>
 
-  <!-- LEFT: vertical selector -->
-  <aside class="left-bar">
-    <div class="logo" title="Back to Home" onclick="window.location.href='index.html'">SW</div>
+  <div class="wrap">
 
-    <!-- thumbnails will be injected -->
-    <div style="display:flex;flex-direction:column;gap:6px;width:80px;margin-top:18px;align-items:center;">
-      <button id="scrollUp" class="scroll-btn">▲</button>
-      <div id="thumbs" style="display:flex;flex-direction:column;gap:18px;"></div>
-      <button id="scrollDown" class="scroll-btn">▼</button>
-    </div>
+    <!-- LEFT: vertical selector -->
+    <aside class="left-bar">
+      <div class="logo" title="Art Gallery" onclick="window.location.href='index.html'">SW</div>
 
-    <div style="flex:1"></div>
-
-    <div style="display:flex;flex-direction:column;gap:12px;transform:translateY(8px)">
-      <button class="control-btn" title="Factions" onclick="alert('Faction Database Access: RESTRICTED')">⚔️</button>
-      <button class="control-btn" title="2D / Show">2D</button>
-    </div>
-  </aside>
-
-  <!-- CENTER: information -->
-  <main class="center">
-    <div class="faction-watermark" id="factionWatermark">SHADOW</div>
-
-    <div class="character-name">
-      <div id="badge" class="faction-badge">d</div>
-      <h1 id="name" class="title">HELSIE</h1>
-    </div>
-
-    <div class="meta-row">
-      <div id="debut">Debut: High Stakes Club #1</div>
-      <div style="width:6px;height:6px;border-radius:6px;background:var(--muted);opacity:.5"></div>
-      <div id="affil">Faction: High Stakes Club</div>
-    </div>
-
-    <div class="info-split">
-      <!-- Left Column: Bio & Stats -->
-      <div class="info-left">
-        <div class="desc">
-          <div class="panel-header">Subject Analysis</div>
-          <div id="desc"></div>
-        </div>
-        
-        <!-- Dense Data Grid -->
-        <div class="data-grid" id="dataGrid">
-          <!-- injected via JS -->
-        </div>
-
-        <!-- Relationships -->
-        <div style="width:100%; background:rgba(0,0,0,0.4); padding:16px; border-radius:12px; border:1px solid var(--border);">
-          <div class="panel-header">Known Associates</div>
-          <div class="rel-grid" id="relGrid"></div>
-        </div>
+      <div style="display:flex;flex-direction:column;gap:6px;width:70px;margin-top:10px;align-items:center;">
+        <button id="scrollUp" class="scroll-btn">▲</button>
+        <div id="thumbs" style="display:flex;flex-direction:column;gap:12px;"></div>
+        <button id="scrollDown" class="scroll-btn">▼</button>
       </div>
 
-      <!-- Right Column: Combat Gear & Attributes -->
-      <div class="info-right">
-        <div class="attr-section">
-          <div class="panel-header">Performance Metrics</div>
-          <div id="attrList"></div>
+      <div style="flex:1"></div>
+
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <button class="control-btn" title="Factions" onclick="alert('Faction Database Access: RESTRICTED')">⚔️</button>
+      </div>
+    </aside>
+
+    <!-- CENTER: information -->
+    <main class="center">
+      <div class="faction-watermark" id="factionWatermark">SHADOW</div>
+
+      <div class="character-name">
+        <div id="badge" class="faction-badge">High Stakes Club</div>
+        <h1 id="name" class="title">HELSIE</h1>
+      </div>
+
+      <div class="meta-row">
+        <div id="debut">Debut: High Stakes Club #1</div>
+        <div style="width:5px;height:5px;border-radius:50%;background:var(--muted);opacity:.5"></div>
+        <div id="affil">Faction: High Stakes Club</div>
+      </div>
+
+      <div class="info-split">
+        <!-- Left Column -->
+        <div class="info-left">
+          <div class="desc">
+            <div class="panel-header">Subject Analysis</div>
+            <div id="desc"></div>
+          </div>
+
+          <div class="data-grid" id="dataGrid"></div>
+
+          <div class="rel-panel">
+            <div class="panel-header">Known Associates</div>
+            <div class="rel-grid" id="relGrid"></div>
+          </div>
         </div>
 
-        <div class="gear-section" id="gearSection">
-          <div class="panel-header">Combat Loadout</div>
-          <div class="gear-grid" id="gearGrid"></div>
+        <!-- Right Column -->
+        <div class="info-right">
+          <div class="attr-section">
+            <div class="panel-header">Performance Metrics</div>
+            <div id="attrList"></div>
+          </div>
+
+          <div class="gear-section" id="gearSection">
+            <div class="panel-header">Combat Loadout</div>
+            <div class="gear-grid" id="gearGrid"></div>
+          </div>
         </div>
       </div>
-    </div>
-  </main>
+    </main>
 
-  <!-- RIGHT: hero -->
-  <section class="hero">
-    <div class="art-stage" id="artStage">
-      <img id="artImg" class="character-art" src="images/HELSIE TEST1.png" alt="Character art" draggable="false">
-      <!-- outfit controls -->
-      <div class="outfit-controls">
-        <button class="arrow" id="prev">←</button>
-        <div class="dots" id="dots"></div>
-        <button class="arrow" id="next">→</button>
+    <!-- RIGHT: hero art -->
+    <section class="hero">
+      <div class="art-stage" id="artStage">
+        <img id="artImg" class="character-art" src="images/HELSIE TEST1.png" alt="Character art" draggable="false">
+        <div class="outfit-controls">
+          <button class="arrow" id="prev">←</button>
+          <div class="dots" id="dots"></div>
+          <button class="arrow" id="next">→</button>
+        </div>
+        <div class="controls">
+          <button class="control-btn" title="Options">•••</button>
+        </div>
       </div>
+    </section>
 
-      <!-- floating controls -->
-      <div class="controls">
-        <button class="control-btn" title="Toggle BG">BG</button>
-        <button class="control-btn" title="Toggle UI">•••</button>
-      </div>
-    </div>
-  </section>
+  </div>
 
-</div>
-
-<script>
-/*
-  Character data adapted from your original home.html (keeps filenames),
-  so swapping images and editing text is straightforward.
-  Reference: original file provided by you. :contentReference[oaicite:1]{index=1}
-*/
-
-const CHARACTERS = [
-  {
-    name: "HELSIE",
-    faction: "shadow",
-    factionName: "High Stakes Club",
-    thumbnail: "images/Helsie_thumb.png",
-    outfits: [
-      "images/HELSIE TEST1.png",
-      "images/HELSIE TEST33.png",
-      "images/HELSIE TEST22.png"
-    ],
-    debut: "High Stakes Club #1",
-    description: "The dumbass of the group, Boba tea artist, skilled vampire hunter.",
-    status: "Active",
-    race: "Human",
-    role: "Dumbahh",
-    height: "165 cm",
-    weight: "52 kg",
-    age: "19",
-    attributes: { STR: 65, AGI: 90, INT: 45, VIT: 70 },
-    gear: [
-      { name: "AX", type: "Melee", icon: "images/AX.png" }
-    ],
-    relationships: [
-      { name: "Joni", avatar: "images/HELSIE TESTJ.png" }
-    ]
-  },
-  {
-    name: "Joni",
-    faction: "band",
-    factionName: "Chors N Chaos",
-    thumbnail: "images/HELSIE TESTJ.png",
-    outfits: [
-      "images/HELSIE TESTJ.png"
-    ],
-    debut: "Chors N Chaos #1",
-    description: "The Leader",
-    status: "Active",
-    race: "Human",
-    role: "Leader",
-    height: "172 cm",
-    weight: "60 kg",
-    age: "21",
-    attributes: { STR: 75, AGI: 80, INT: 85, VIT: 60 },
-    gear: [
-      { name: "Bass ", type: "Instrument", icon: "🎸" },
-      
-    ],
-    relationships: [
-      { name: "HELSIE", avatar: "images/Helsie_thumb.png" }
-    ]
-  }
-];
-
-// Faction color schemes
-const FACTION_COLORS = {
-  shadow: {
-    primary: '#667eea',
-    secondary: '#764ba2',
-    dark: '#4b2a7a'
-  },
-  band: {
-    primary: '#f093fb',
-    secondary: '#f5576c',
-    dark: '#c72c5f'
-  },
-  endfield: {
-    primary: '#4facfe',
-    secondary: '#00f2fe',
-    dark: '#0099cc'
-  },
-  neutral: {
-    primary: '#43e97b',
-    secondary: '#38f9d7',
-    dark: '#2a9d8f'
-  }
-};
-
-let current = 0;
-let outfit = 0;
-let scrollOffset = 0;
-const VISIBLE_COUNT = 4;
-const artImg = document.getElementById('artImg');
-const nameEl = document.getElementById('name');
-const badgeEl = document.getElementById('badge');
-const descEl = document.getElementById('desc');
-const debutEl = document.getElementById('debut');
-const affilEl = document.getElementById('affil');
-const dataGrid = document.getElementById('dataGrid');
-const attrList = document.getElementById('attrList');
-const relGrid = document.getElementById('relGrid');
-const gearGrid = document.getElementById('gearGrid');
-const thumbsEl = document.getElementById('thumbs');
-const dotsEl = document.getElementById('dots');
-const prevBtn = document.getElementById('prev');
-const nextBtn = document.getElementById('next');
-const scrollUpBtn = document.getElementById('scrollUp');
-const scrollDownBtn = document.getElementById('scrollDown');
-
-function init(){
-  createParticles();
-  renderThumbs();
-  loadCharacter(0);
-  prevBtn.addEventListener('click',()=>changeOutfit(-1));
-  nextBtn.addEventListener('click',()=>changeOutfit(1));
-  scrollUpBtn.addEventListener('click', ()=> scrollThumbs(-1));
-  scrollDownBtn.addEventListener('click', ()=> scrollThumbs(1));
-
-  const stage = document.querySelector('.art-stage');
-  
-  stage.addEventListener('mousemove',(e)=>{
-    const rect = stage.getBoundingClientRect();
-    
-    // Calculate mouse position relative to center (ranges from -0.5 to 0.5)
-    const cx = (e.clientX - rect.left) / rect.width - 0.5;
-    const cy = (e.clientY - rect.top) / rect.height - 0.5;
-    
-    // SETTINGS: Change these numbers to adjust intensity
-    // Lower numbers = more subtle movement
-    const intensityX = 15; 
-    const intensityY = 10;
-
-    // We MUST keep the translateX(-50%) here so it stays centered!
-    artImg.style.transform = `translateX(-50%) translate(${cx * intensityX}px, ${cy * intensityY}px)`;
-  });
-
-  stage.addEventListener('mouseleave',()=>{
-    // Reset to perfect center when mouse leaves
-    artImg.style.transform = `translateX(-50%) translateY(0)`;
-  });
-}
-
-function renderThumbs(){
-  thumbsEl.innerHTML='';
-  const visibleChars = CHARACTERS.slice(scrollOffset, scrollOffset + VISIBLE_COUNT);
-  
-  visibleChars.forEach((c, index)=>{
-    const realIndex = scrollOffset + index;
-    const img = document.createElement('img');
-    img.src = c.thumbnail || c.outfits[0];
-    img.alt = c.name;
-    img.className = 'thumb' + (realIndex===current ? ' active' : '');
-    img.addEventListener('click', ()=> loadCharacter(realIndex));
-    thumbsEl.appendChild(img);
-  });
-  updateScrollButtons();
-}
-
-function scrollThumbs(direction) {
-  const maxOffset = Math.max(0, CHARACTERS.length - VISIBLE_COUNT);
-  scrollOffset += direction;
-  if (scrollOffset < 0) scrollOffset = 0;
-  if (scrollOffset > maxOffset) scrollOffset = maxOffset;
-  renderThumbs();
-}
-
-function updateScrollButtons() {
-  const maxOffset = Math.max(0, CHARACTERS.length - VISIBLE_COUNT);
-  scrollUpBtn.classList.toggle('disabled', scrollOffset <= 0);
-  scrollDownBtn.classList.toggle('disabled', scrollOffset >= maxOffset);
-}
-
-function updateThumbsActive(){
-  document.querySelectorAll('.thumb').forEach((t, i)=> {
-    const realIndex = scrollOffset + i;
-    t.classList.toggle('active', realIndex === current);
-  });
-}
-
-function loadCharacter(index){
-  current = index;
-  outfit = 0;
-  const c = CHARACTERS[current];
-
-  // Update faction colors
-  updateFactionColors(c.faction);
-
-  // fade transition
-  artImg.classList.add('hidden');
-  setTimeout(()=>{
-    artImg.src = c.outfits[outfit];
-    nameEl.textContent = c.name;
-    badgeEl.textContent = c.factionName || c.faction;
-    descEl.textContent = c.description;
-    document.getElementById('factionWatermark').textContent = (c.factionName || c.faction).split(' ')[0].toUpperCase();
-    debutEl.textContent = 'Debut: ' + (c.debut || '—');
-    affilEl.textContent = 'Faction: ' + (c.factionName || c.faction);
-    renderDenseData();
-    renderAttributes();
-    renderRelationships();
-    renderDots();
-    renderGear();
-    updateThumbsActive();
-    artImg.classList.remove('hidden');
-  }, 200);
-}
-
-function changeOutfit(dir){
-  const c = CHARACTERS[current];
-  if(!c.outfits || c.outfits.length<=1) return;
-  outfit = (outfit + dir + c.outfits.length) % c.outfits.length;
-  // small fade
-  artImg.classList.add('hidden');
-  setTimeout(()=> {
-    artImg.src = c.outfits[outfit];
-    highlightDot(outfit);
-    artImg.classList.remove('hidden');
-  }, 160);
-}
-
-function renderDots(){
-  dotsEl.innerHTML='';
-  const c = CHARACTERS[current];
-  if(!c.outfits || c.outfits.length<=1) return;
-  c.outfits.forEach((o, idx)=>{
-    const d = document.createElement('div');
-    d.className = 'dot' + (idx===outfit ? ' active' : '');
-    d.addEventListener('click', ()=> {
-      outfit = idx;
-      artImg.classList.add('hidden');
-      setTimeout(()=>{ artImg.src = c.outfits[outfit]; artImg.classList.remove('hidden'); highlightDot(outfit); }, 160);
+  <script>
+    // ─── CURSOR ───────────────────────────────────────
+    const cur = document.getElementById('cur');
+    const curR = document.getElementById('cur-r');
+    document.addEventListener('mousemove', e => {
+      cur.style.left = e.clientX + 'px';
+      cur.style.top = e.clientY + 'px';
+      curR.style.left = e.clientX + 'px';
+      curR.style.top = e.clientY + 'px';
     });
-    dotsEl.appendChild(d);
-  });
-}
+    document.querySelectorAll('a, button, .thumb, .rel-item, .data-cell, .gear-item').forEach(el => {
+      el.addEventListener('mouseenter', () => document.body.classList.add('cg'));
+      el.addEventListener('mouseleave', () => document.body.classList.remove('cg'));
+    });
 
-function highlightDot(i){
-  document.querySelectorAll('.dot').forEach((d, idx)=> d.classList.toggle('active', idx===i));
-}
+    // ─── NAV SCROLL ───────────────────────────────────
+    const nav = document.getElementById('nav');
+    window.addEventListener('scroll', () => {
+      nav.classList.toggle('sc', window.scrollY > 50);
+    }, { passive: true });
 
-function renderDenseData(){
-  const c = CHARACTERS[current];
-  dataGrid.innerHTML = '';
-  
-  const fields = [
-    {k: 'Race', v: c.race},
-    {k: 'Status', v: c.status},
-    {k: 'Role', v: c.role},
-    {k: 'Height', v: c.height || '???'},
-    {k: 'Weight', v: c.weight || '???'},
-    {k: 'Age', v: c.age || '???'}
-  ];
-  
-  fields.forEach(f => {
-    const el = document.createElement('div');
-    el.className = 'data-cell';
-    el.innerHTML = `<div class="data-label">${f.k}</div><div class="data-value">${f.v}</div>`;
-    dataGrid.appendChild(el);
-  });
-}
+    // ─── PARTICLES ────────────────────────────────────
+    const ptclContainer = document.getElementById('ptcl');
+    for (let i = 0; i < 30; i++) {
+      let p = document.createElement('div');
+      p.className = 'p';
+      p.style.left = Math.random() * 100 + 'vw';
+      p.style.top = Math.random() * 20 + 80 + 'vh';
+      p.style.width = Math.random() * 2 + 1 + 'px';
+      p.style.height = p.style.width;
+      p.style.animationDuration = Math.random() * 15 + 10 + 's';
+      p.style.animationDelay = Math.random() * -25 + 's';
+      p.style.background = 'rgba(212, 184, 150, 0.6)';
+      ptclContainer.appendChild(p);
+    }
 
-function renderAttributes(){
-  const c = CHARACTERS[current];
-  attrList.innerHTML = '';
-  if(!c.attributes) return;
-  
-  Object.entries(c.attributes).forEach(([key, val]) => {
-    const row = document.createElement('div');
-    row.className = 'attr-row';
-    row.innerHTML = `
+    // ─── CHARACTER DATA ────────────────────────────────
+    const CHARACTERS = [
+      {
+        name: "HELSIE",
+        faction: "High Stakes Club",
+        factionName: ".",
+        thumbnail: "images/Helsie_thumb.png",
+        outfits: [
+          "images/HELSIE TEST1.png",
+          "images/HELSIE TEST33.png",
+          "images/HELSIE TEST22.png"
+        ],
+        debut: "High Stakes Club #1",
+        description: "The dumbass of the group, Boba tea artist, skilled vampire hunter.",
+        status: "Active",
+        race: "Human",
+        role: "Dumbahh",
+        height: "165 cm",
+        weight: "52 kg",
+        age: "19",
+        attributes: { STR: 65, AGI: 90, INT: 45, VIT: 70 },
+        gear: [
+          { name: "AX", type: "Melee", icon: "images/AX.png" }
+        ],
+        relationships: [
+          { name: "Joni", avatar: "images/HELSIE TESTJ.png" }
+        ]
+      },
+      {
+        name: "Joni",
+        faction: "band",
+        factionName: "Chors N Chaos",
+        thumbnail: "images/HELSIE TESTJ.png",
+        outfits: [
+          "images/HELSIE TESTJ.png"
+        ],
+        debut: "Chors N Chaos #1",
+        description: "The Leader",
+        status: "Active",
+        race: "Human",
+        role: "Leader",
+        height: "172 cm",
+        weight: "60 kg",
+        age: "21",
+        attributes: { STR: 75, AGI: 80, INT: 85, VIT: 60 },
+        gear: [
+          { name: "Bass", type: "Instrument", icon: "🎸" }
+        ],
+        relationships: [
+          { name: "HELSIE", avatar: "images/Helsie_thumb.png" }
+        ]
+      }
+    ];
+
+    const FACTION_COLORS = {
+      shadow: { primary: '#d4b896', secondary: '#a8895c', dark: '#6b4f2a' },
+      band: { primary: '#c8b08a', secondary: '#967050', dark: '#5c4228' },
+      endfield: { primary: '#bca888', secondary: '#8a7050', dark: '#4e3820' },
+      neutral: { primary: '#d0bc9a', secondary: '#a08060', dark: '#604830' }
+    };
+
+    let current = 0, outfit = 0, scrollOffset = 0;
+    const VISIBLE_COUNT = 4;
+
+    const artImg = document.getElementById('artImg');
+    const nameEl = document.getElementById('name');
+    const badgeEl = document.getElementById('badge');
+    const descEl = document.getElementById('desc');
+    const debutEl = document.getElementById('debut');
+    const affilEl = document.getElementById('affil');
+    const dataGrid = document.getElementById('dataGrid');
+    const attrList = document.getElementById('attrList');
+    const relGrid = document.getElementById('relGrid');
+    const gearGrid = document.getElementById('gearGrid');
+    const thumbsEl = document.getElementById('thumbs');
+    const dotsEl = document.getElementById('dots');
+    const prevBtn = document.getElementById('prev');
+    const nextBtn = document.getElementById('next');
+    const scrollUpBtn = document.getElementById('scrollUp');
+    const scrollDownBtn = document.getElementById('scrollDown');
+
+    function init() {
+      renderThumbs();
+      loadCharacter(0);
+      prevBtn.addEventListener('click', () => changeOutfit(-1));
+      nextBtn.addEventListener('click', () => changeOutfit(1));
+      scrollUpBtn.addEventListener('click', () => scrollThumbs(-1));
+      scrollDownBtn.addEventListener('click', () => scrollThumbs(1));
+
+      const stage = document.querySelector('.art-stage');
+      stage.addEventListener('mousemove', e => {
+        const rect = stage.getBoundingClientRect();
+        const cx = (e.clientX - rect.left) / rect.width - 0.5;
+        const cy = (e.clientY - rect.top) / rect.height - 0.5;
+        artImg.style.transform = `translateX(-50%) translate(${cx * 14}px, ${cy * 9}px)`;
+      });
+      stage.addEventListener('mouseleave', () => {
+        artImg.style.transform = `translateX(-50%) translateY(0)`;
+      });
+    }
+
+    function renderThumbs() {
+      thumbsEl.innerHTML = '';
+      CHARACTERS.slice(scrollOffset, scrollOffset + VISIBLE_COUNT).forEach((c, i) => {
+        const realIndex = scrollOffset + i;
+        const img = document.createElement('img');
+        img.src = c.thumbnail || c.outfits[0];
+        img.alt = c.name;
+        img.className = 'thumb' + (realIndex === current ? ' active' : '');
+        img.addEventListener('click', () => loadCharacter(realIndex));
+        img.addEventListener('mouseenter', () => document.body.classList.add('cg'));
+        img.addEventListener('mouseleave', () => document.body.classList.remove('cg'));
+        thumbsEl.appendChild(img);
+      });
+      updateScrollButtons();
+    }
+
+    function scrollThumbs(dir) {
+      const maxOffset = Math.max(0, CHARACTERS.length - VISIBLE_COUNT);
+      scrollOffset = Math.max(0, Math.min(scrollOffset + dir, maxOffset));
+      renderThumbs();
+    }
+
+    function updateScrollButtons() {
+      const maxOffset = Math.max(0, CHARACTERS.length - VISIBLE_COUNT);
+      scrollUpBtn.classList.toggle('disabled', scrollOffset <= 0);
+      scrollDownBtn.classList.toggle('disabled', scrollOffset >= maxOffset);
+    }
+
+    function updateThumbsActive() {
+      document.querySelectorAll('.thumb').forEach((t, i) => {
+        t.classList.toggle('active', scrollOffset + i === current);
+      });
+    }
+
+    function loadCharacter(index) {
+      current = index;
+      outfit = 0;
+      const c = CHARACTERS[current];
+      updateFactionColors(c.faction);
+      artImg.classList.add('hidden');
+      setTimeout(() => {
+        artImg.src = c.outfits[outfit];
+        nameEl.textContent = c.name;
+        badgeEl.textContent = c.factionName || c.faction;
+        descEl.textContent = c.description;
+        document.getElementById('factionWatermark').textContent =
+          (c.factionName || c.faction).split(' ')[0].toUpperCase();
+        debutEl.textContent = 'Debut: ' + (c.debut || '—');
+        affilEl.textContent = 'Faction: ' + (c.factionName || c.faction);
+        renderDenseData();
+        renderAttributes();
+        renderRelationships();
+        renderDots();
+        renderGear();
+        updateThumbsActive();
+        artImg.classList.remove('hidden');
+      }, 200);
+    }
+
+    function changeOutfit(dir) {
+      const c = CHARACTERS[current];
+      if (!c.outfits || c.outfits.length <= 1) return;
+      outfit = (outfit + dir + c.outfits.length) % c.outfits.length;
+      artImg.classList.add('hidden');
+      setTimeout(() => {
+        artImg.src = c.outfits[outfit];
+        highlightDot(outfit);
+        artImg.classList.remove('hidden');
+      }, 160);
+    }
+
+    function renderDots() {
+      dotsEl.innerHTML = '';
+      const c = CHARACTERS[current];
+      if (!c.outfits || c.outfits.length <= 1) return;
+      c.outfits.forEach((o, idx) => {
+        const d = document.createElement('div');
+        d.className = 'dot' + (idx === outfit ? ' active' : '');
+        d.addEventListener('click', () => {
+          outfit = idx;
+          artImg.classList.add('hidden');
+          setTimeout(() => { artImg.src = c.outfits[outfit]; artImg.classList.remove('hidden'); highlightDot(outfit); }, 160);
+        });
+        dotsEl.appendChild(d);
+      });
+    }
+
+    function highlightDot(i) {
+      document.querySelectorAll('.dot').forEach((d, idx) => d.classList.toggle('active', idx === i));
+    }
+
+    function renderDenseData() {
+      const c = CHARACTERS[current];
+      dataGrid.innerHTML = '';
+      [
+        { k: 'Race', v: c.race },
+        { k: 'Status', v: c.status },
+        { k: 'Role', v: c.role },
+        { k: 'Height', v: c.height || '???' },
+        { k: 'Weight', v: c.weight || '???' },
+        { k: 'Age', v: c.age || '???' }
+      ].forEach(f => {
+        const el = document.createElement('div');
+        el.className = 'data-cell';
+        el.innerHTML = `<div class="data-label">${f.k}</div><div class="data-value">${f.v}</div>`;
+        dataGrid.appendChild(el);
+      });
+    }
+
+    function renderAttributes() {
+      const c = CHARACTERS[current];
+      attrList.innerHTML = '';
+      if (!c.attributes) return;
+      Object.entries(c.attributes).forEach(([key, val]) => {
+        const row = document.createElement('div');
+        row.className = 'attr-row';
+        row.innerHTML = `
       <div class="attr-name">${key}</div>
       <div class="attr-track"><div class="attr-fill" style="width:${val}%"></div></div>
       <div class="attr-val">${val}</div>
     `;
-    attrList.appendChild(row);
-  });
-}
+        attrList.appendChild(row);
+      });
+    }
 
-function renderRelationships(){
-  const c = CHARACTERS[current];
-  relGrid.innerHTML = '';
-  if(!c.relationships) return;
-  
-  c.relationships.forEach(r => {
-    const el = document.createElement('div');
-    el.className = 'rel-item';
-    el.innerHTML = `<img src="${r.avatar}" class="rel-avatar"><div class="rel-name">${r.name}</div>`;
-    relGrid.appendChild(el);
-  });
-}
+    function renderRelationships() {
+      const c = CHARACTERS[current];
+      relGrid.innerHTML = '';
+      if (!c.relationships) return;
+      c.relationships.forEach(r => {
+        const el = document.createElement('div');
+        el.className = 'rel-item';
+        el.innerHTML = `<img src="${r.avatar}" class="rel-avatar"><div class="rel-name">${r.name}</div>`;
+        relGrid.appendChild(el);
+      });
+    }
 
-function updateFactionColors(faction){
-  const colors = FACTION_COLORS[faction] || FACTION_COLORS.shadow;
-  const root = document.documentElement;
-  
-  root.style.setProperty('--accent', colors.primary);
-  root.style.setProperty('--accent-soft', colors.secondary);
-  root.style.setProperty('--accent-dark', colors.dark);
+    function updateFactionColors(faction) {
+      const colors = FACTION_COLORS[faction] || FACTION_COLORS.shadow;
+      const root = document.documentElement;
+      root.style.setProperty('--accent', colors.primary);
+      root.style.setProperty('--accent-soft', colors.secondary);
+      root.style.setProperty('--accent-dark', colors.dark);
+    }
 
-  // Dynamic background tint based on faction
-  // Uses the dark faction color with transparency to tint the background image
-  root.style.setProperty('--bg-gradient', `linear-gradient(to bottom, ${colors.dark}CC, #050505F2)`);
-}
-
-function renderGear(){
-  gearGrid.innerHTML = '';
-  const c = CHARACTERS[current];
-  if(!c.gear || c.gear.length === 0) {
-    document.getElementById('gearSection').style.display = 'none';
-    return;
-  }
-  document.getElementById('gearSection').style.display = 'block';
-  
-  c.gear.forEach(item => {
-    // Check if icon is an image path (contains . or /) or just an emoji
-    const isImage = item.icon && (item.icon.includes('.') || item.icon.includes('/'));
-    const iconContent = isImage 
-      ? `<img src="${item.icon}" alt="${item.name}">` 
-      : item.icon;
-
-    const el = document.createElement('div');
-    el.className = 'gear-item';
-    el.innerHTML = `
+    function renderGear() {
+      gearGrid.innerHTML = '';
+      const c = CHARACTERS[current];
+      if (!c.gear || c.gear.length === 0) {
+        document.getElementById('gearSection').style.display = 'none';
+        return;
+      }
+      document.getElementById('gearSection').style.display = 'block';
+      c.gear.forEach(item => {
+        const isImage = item.icon && (item.icon.includes('.') || item.icon.includes('/'));
+        const iconContent = isImage ? `<img src="${item.icon}" alt="${item.name}">` : item.icon;
+        const el = document.createElement('div');
+        el.className = 'gear-item';
+        el.innerHTML = `
       <div class="gear-icon">${iconContent}</div>
       <div class="gear-info">
         <div class="gear-name">${item.name}</div>
         <div class="gear-type">${item.type}</div>
       </div>
     `;
-    gearGrid.appendChild(el);
-  });
-}
+        gearGrid.appendChild(el);
+      });
+    }
 
-function createParticles() {
-  const container = document.getElementById('particles');
-  const particleCount = 25;
-  
-  for(let i=0; i<particleCount; i++) {
-    const p = document.createElement('div');
-    p.className = 'particle';
-    const size = Math.random() * 4 + 2;
-    p.style.width = size + 'px';
-    p.style.height = size + 'px';
-    p.style.left = Math.random() * 100 + '%';
-    p.style.animationDuration = (Math.random() * 10 + 10) + 's';
-    p.style.animationDelay = (Math.random() * 10) * -1 + 's';
-    container.appendChild(p);
-  }
-}
-
-init();
-</script>
-
+    init();
+  </script>
 </body>
+
 </html>

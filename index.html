@@ -1,734 +1,507 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Swan Crew</title>
-
-<style>
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-body {
-    min-height: 100vh;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    color: white;
-    background:
-        linear-gradient(rgba(0,0,0,0.75), rgba(0,0,0,0.75)),
-        url("images/bg.png") center / cover no-repeat fixed;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 20px 0;
-}
-
-/* ================= AGE WARNING MODAL ================= */
-.age-warning-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0,0,0,0.95);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 1000;
-    animation: fadeIn 0.5s ease;
-}
-
-.age-warning-modal {
-    background: linear-gradient(135deg, rgba(20,20,20,0.98) 0%, rgba(40,40,40,0.98) 100%);
-    padding: 50px;
-    border-radius: 20px;
-    text-align: center;
-    max-width: 600px;
-    border: 3px solid rgba(255,255,255,0.1);
-    box-shadow: 0 20px 60px rgba(0,0,0,0.8);
-    animation: slideUp 0.6s ease;
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-}
-
-@keyframes slideUp {
-    from {
-        opacity: 0;
-        transform: translateY(50px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-.warning-icon {
-    font-size: 80px;
-    margin-bottom: 20px;
-    animation: pulse 2s ease-in-out infinite;
-}
-
-@keyframes pulse {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.1); }
-}
-
-.warning-title {
-    font-size: 36px;
-    font-weight: 700;
-    margin-bottom: 20px;
-    color: #ff4444;
-}
-
-.warning-text {
-    font-size: 18px;
-    line-height: 1.8;
-    margin-bottom: 30px;
-    opacity: 0.9;
-}
-
-.warning-buttons {
-    display: flex;
-    gap: 20px;
-    justify-content: center;
-}
-
-.warning-btn {
-    padding: 15px 40px;
-    border: none;
-    border-radius: 12px;
-    font-size: 18px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.btn-enter {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-}
-
-.btn-enter:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
-}
-
-.btn-exit {
-    background: rgba(255,255,255,0.1);
-    color: white;
-    border: 2px solid rgba(255,255,255,0.3);
-}
-
-.btn-exit:hover {
-    background: rgba(255,255,255,0.2);
-    transform: translateY(-2px);
-}
-
-/* ================= MAIN CONTENT ================= */
-.main-content {
-    display: none;
-    width: 100%;
-    max-width: 1400px;
-    padding: 40px;
-    animation: fadeIn 0.8s ease;
-    overflow-y: auto;
-}
-
-.main-content.visible {
-    display: block;
-}
-
-.header {
-    text-align: center;
-    margin-bottom: 60px;
-}
-
-.main-title {
-    font-size: 56px;
-    font-weight: 700;
-    margin-bottom: 15px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-}
-
-.subtitle {
-    font-size: 22px;
-    opacity: 0.8;
-    letter-spacing: 2px;
-}
-
-.content-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 40px;
-    margin-bottom: 40px;
-}
-
-/* ================= SOCIAL SECTION ================= */
-.section-card {
-    background: rgba(20, 20, 25, 0.7);
-    backdrop-filter: blur(16px);
-    padding: 40px;
-    border-radius: 24px;
-    border: 1px solid rgba(255,255,255,0.08);
-    box-shadow: 0 20px 50px rgba(0,0,0,0.4), inset 0 0 0 1px rgba(255,255,255,0.05);
-    transition: all 0.3s ease;
-    position: relative;
-    overflow: hidden;
-}
-
-.section-card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; width: 100%; height: 3px;
-    background: linear-gradient(90deg, #667eea, #764ba2);
-    opacity: 1;
-    box-shadow: 0 2px 10px rgba(102, 126, 234, 0.5);
-}
-
-.section-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 25px 60px rgba(0,0,0,0.5);
-    border-color: rgba(255,255,255,0.15);
-}
-
-.section-title {
-    font-size: 28px;
-    margin-bottom: 25px;
-    font-weight: 600;
-}
-
-.social-links {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-}
-
-.social-link {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    padding: 18px 25px;
-    background: rgba(255,255,255,0.05);
-    border-radius: 12px;
-    text-decoration: none;
-    color: white;
-    transition: transform 0.1s ease, background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
-    border: 2px solid transparent;
-}
-
-.social-link:hover {
-    background: rgba(255,255,255,0.1);
-    border-color: rgba(255,255,255,0.3);
-}
-
-.social-icon {
-    font-size: 28px;
-}
-
-.social-name {
-    font-size: 18px;
-    font-weight: 600;
-}
-
-.social-link.instagram:hover {
-    border-color: #E1306C;
-    box-shadow: 0 0 20px rgba(225, 48, 108, 0.3);
-}
-
-.social-link.twitter:hover {
-    border-color: #1DA1F2;
-    box-shadow: 0 0 20px rgba(29, 161, 242, 0.3);
-}
-
-.social-link.discord:hover {
-    border-color: #5865F2;
-    box-shadow: 0 0 20px rgba(88, 101, 242, 0.3);
-}
-
-/* ================= ART GALLERY PREVIEW ================= */
-.gallery-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 20px;
-}
-
-.gallery-item {
-    position: relative;
-    aspect-ratio: 1;
-    border-radius: 15px;
-    overflow: hidden;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    border: 2px solid rgba(255,255,255,0.1);
-}
-
-.gallery-item:hover {
-    transform: scale(1.05);
-    border-color: rgba(255,255,255,0.3);
-    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-}
-
-.gallery-item img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: all 0.3s ease;
-}
-
-.gallery-item:hover img {
-    transform: scale(1.1);
-}
-
-.gallery-overlay {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: linear-gradient(transparent, rgba(0,0,0,0.8));
-    padding: 15px;
-    transform: translateY(100%);
-    transition: all 0.3s ease;
-}
-
-.gallery-item:hover .gallery-overlay {
-    transform: translateY(0);
-}
-
-.gallery-title {
-    font-size: 14px;
-    font-weight: 600;
-}
-
-/* ================= ENTER BUTTON ================= */
-.enter-portfolio {
-    text-align: center;
-    margin-top: 40px;
-}
-
-.enter-btn {
-    display: inline-block;
-    padding: 20px 60px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    text-decoration: none;
-    border-radius: 15px;
-    font-size: 20px;
-    font-weight: 600;
-    transition: all 0.3s ease;
-    border: 2px solid transparent;
-}
-
-.enter-btn:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 15px 40px rgba(102, 126, 234, 0.5);
-    border-color: rgba(255,255,255,0.3);
-}
-
-/* ================= COMMISSION SECTION ================= */
-.commission-description {
-    margin-bottom: 25px;
-    opacity: 0.9;
-    line-height: 1.6;
-}
-
-.commission-form {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-}
-
-.form-group {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-.form-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
-}
-@media(max-width:600px){ .form-row{grid-template-columns:1fr; gap:0;} }
-
-.form-group label {
-    font-size: 12px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    color: rgba(255,255,255,0.7);
-    font-weight: 700;
-}
-
-.form-group input,
-.form-group select,
-.form-group textarea {
-    padding: 16px;
-    background: rgba(0,0,0,0.4);
-    border: 1px solid rgba(255,255,255,0.1);
-    border-left: 3px solid rgba(255,255,255,0.15);
-    border-radius: 6px;
-    color: white;
-    font-size: 15px;
-    font-family: inherit;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.form-group input:focus,
-.form-group select:focus,
-.form-group textarea:focus {
-    outline: none;
-    border-color: rgba(102, 126, 234, 0.5);
-    border-left-color: #667eea;
-    background: rgba(102, 126, 234, 0.08);
-    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-    transform: translateX(4px);
-}
-
-.form-group textarea {
-    resize: vertical;
-    min-height: 100px;
-}
-
-.submit-btn {
-    padding: 16px 32px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    border: none;
-    border-radius: 8px;
-    color: white;
-    font-size: 16px;
-    font-weight: 700;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(118, 75, 162, 0.4);
-}
-
-.submit-btn:hover {
-    transform: translateY(-2px) scale(1.02);
-    box-shadow: 0 8px 25px rgba(118, 75, 162, 0.6);
-    filter: brightness(1.1);
-}
-
-.status-badge {
-    float: right;
-    background: rgba(76, 175, 80, 0.1);
-    color: #4caf50;
-    padding: 6px 12px;
-    border-radius: 20px;
-    font-size: 11px;
-    font-weight: 800;
-    letter-spacing: 1px;
-    border: 1px solid rgba(76, 175, 80, 0.4);
-    margin-top: 5px;
-    box-shadow: 0 0 10px rgba(76, 175, 80, 0.2);
-}
-
-/* ================= RESPONSIVE ================= */
-@media (max-width: 1024px) {
-    .content-grid {
-        grid-template-columns: 1fr;
-    }
-    
-    .gallery-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
-    
-    .main-title {
-        font-size: 42px;
-    }
-}
-
-@media (max-width: 768px) {
-    .age-warning-modal {
-        padding: 30px;
-        margin: 20px;
-    }
-    
-    .warning-title {
-        font-size: 28px;
-    }
-    
-    .warning-text {
-        font-size: 16px;
-    }
-    
-    .main-title {
-        font-size: 32px;
-    }
-    
-    .subtitle {
-        font-size: 18px;
-    }
-    
-    .gallery-grid {
-        grid-template-columns: 1fr;
-    }
-}
-
-/* ================= SUCCESS ANIMATION ================= */
-.success-overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.85);
-    backdrop-filter: blur(8px);
-    z-index: 2000;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.3s ease;
-}
-.success-overlay.visible {
-    opacity: 1;
-    pointer-events: auto;
-}
-.success-card {
-    background: rgba(30, 30, 35, 0.95);
-    border: 1px solid rgba(102, 126, 234, 0.3);
-    padding: 40px;
-    border-radius: 24px;
-    text-align: center;
-    transform: translateY(30px) scale(0.9);
-    transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
-    box-shadow: 0 25px 80px rgba(0,0,0,0.7);
-    max-width: 90%;
-    width: 380px;
-}
-.success-overlay.visible .success-card {
-    transform: translateY(0) scale(1);
-}
-.success-icon-box {
-    width: 80px;
-    height: 80px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto 24px;
-    box-shadow: 0 10px 30px rgba(102, 126, 234, 0.5);
-}
-.check-svg {
-    width: 40px;
-    height: 40px;
-    fill: none;
-    stroke: white;
-    stroke-width: 4;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-    stroke-dasharray: 100;
-    stroke-dashoffset: 100;
-}
-.success-overlay.visible .check-svg {
-    animation: drawCheck 0.8s cubic-bezier(0.65, 0, 0.45, 1) 0.2s forwards;
-}
-@keyframes drawCheck {
-    to { stroke-dashoffset: 0; }
-}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <title>SwanNsfw — Art Gallery</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;600;700&family=Bebas+Neue&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-<!-- ================= AGE WARNING ================= -->
-<div class="age-warning-overlay" id="ageWarning">
-    <div class="age-warning-modal">
-        <div class="warning-icon">⚠️</div>
-        <h1 class="warning-title">18+ Content Warning</h1>
-        <p class="warning-text">
-            This portfolio contains mature content intended for adults only.<br>
-            By entering, you confirm that you are 18 years of age or older.
+  <div id="cur"></div>
+  <div id="cur-r"></div>
+
+  <div class="orbs">
+    <div class="orb o1"></div>
+    <div class="orb o2"></div>
+    <div class="orb o3"></div>
+  </div>
+  <div class="grid-ov"></div>
+  <div id="ptcl"></div>
+
+  <!-- AGE WARNING MODAL -->
+  <div id="age-warning" class="age-modal">
+    <div class="age-modal-content">
+      <div class="sh" style="margin-bottom: 24px; margin-top: 0;">
+        <span class="sl">✦ Warning</span>
+        <h2 class="st" style="font-size: 36px;">18+ Content</h2>
+        <div class="sline"></div>
+      </div>
+      <p
+        style="margin-bottom: 24px; color: var(--muted); font-size: 15px; text-align: center; max-width: 400px; line-height: 1.6;">
+        This website contains adult content. By entering, you confirm that you are at least 18 years of age.
+      </p>
+      <div style="display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;">
+        <button id="btn-yes" class="btn-p" style="padding: 12px 28px; font-size: 13px;">Yes, I am 18+</button>
+        <button id="btn-no" class="btn-g" style="padding: 12px 28px; font-size: 13px;">No, Exit</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- LIGHTBOX -->
+  <div id="lb">
+    <div class="lb-x" id="lb-close">✕</div>
+    <button class="lb-n" id="lb-pv">&#8592;</button>
+    <img id="lb-img" src="" alt="" />
+    <button class="lb-n" id="lb-nx">&#8594;</button>
+    <div class="lb-ct" id="lb-ct">1 / 1</div>
+  </div>
+
+  <!-- NAV -->
+  <nav id="nav">
+    <a href="#" class="nav-logo">
+      <svg class="nav-swan" width="22" height="22" viewBox="0 0 80 70" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="swanGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#f7f0e3" />
+            <stop offset="50%" stop-color="#d4b896" />
+            <stop offset="100%" stop-color="#a8895c" />
+          </linearGradient>
+        </defs>
+        <ellipse cx="48" cy="52" rx="28" ry="14" fill="url(#swanGrad)" opacity="0.95" />
+        <path d="M24 48 Q14 34 18 20 Q22 8 30 6" stroke="url(#swanGrad)" stroke-width="7" stroke-linecap="round"
+          fill="none" />
+        <circle cx="32" cy="4" r="7" fill="url(#swanGrad)" />
+        <path d="M38 3 L50 1 L47 8 Z" fill="url(#swanGrad)" opacity="0.85" />
+        <path d="M22 44 Q42 32 66 44 Q68 56 52 60 Q36 63 22 44Z" fill="url(#swanGrad)" opacity="0.55" />
+        <path d="M72 42 Q80 34 78 48 Q76 56 70 53 Q64 50 72 42Z" fill="url(#swanGrad)" opacity="0.7" />
+      </svg>
+      SwanNsfw
+    </a>
+    <ul class="nav-links">
+      <li><a href="#gallery">Gallery</a></li>
+      <li><a href="home.html">Characters</a></li>
+      <li><a href="commissions.html">Commissions</a></li>
+      <li><a href="#about">About</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <section id="hero">
+    <!-- Faint swan watermark -->
+    <div aria-hidden="true"
+      style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;z-index:0;opacity:0.15;">
+      <img src="images/SWAN.png" alt=""
+        style="width:60vw;max-width:780px;object-fit:contain;filter:grayscale(1) brightness(2);">
+    </div>
+    <p class="hero-eye">✦ Original Art &nbsp;·&nbsp; Character Design &nbsp;·&nbsp; Illustration ✦</p>
+    <h1 class="hero-title" data-text="SwanNsfw"><span class="g">SwanNsfw</span></h1>
+    <p class="hero-sub">Dark, expressive character art that lives at the edge of imagination. Every piece tells a story.
+    </p>
+    <div class="hero-cta">
+      <a href="#gallery" class="btn-p">✦ View Gallery</a>
+      <a href="#contact" class="btn-g">Get in Touch</a>
+    </div>
+    <div class="scroll-ind">
+      <span>Scroll</span>
+      <div class="scroll-line"></div>
+    </div>
+    <div class="hero-float">
+      <img src="images/PROMO.png" alt="Featured art" />
+    </div>
+  </section>
+
+  <!-- GALLERY -->
+  <section id="gallery">
+    <div class="sh reveal">
+      <span class="sl">✦ Portfolio</span>
+      <h2 class="st">The Gallery</h2>
+      <div class="sline"></div>
+    </div>
+
+    <div class="gf">
+      <button class="fb active" data-filter="all">All Works</button>
+      <button class="fb" data-filter="helsie">Helsie</button>
+      <button class="fb" data-filter="joni">Joni</button>
+      <button class="fb" data-filter="other">Other</button>
+    </div>
+
+    <div class="gg" id="gallery-grid">
+
+      <div class="gi" data-cat="helsie">
+        <img src="images/HelsieWitch.png" alt="Helsie — Piece I" loading="lazy" />
+        <div class="go">
+          <div class="go-i">⤢</div>
+          <div class="go-t">Helsie — Piece I</div>
+          <div class="go-s">Character Art</div>
+        </div>
+      </div>
+
+      <div class="gi" data-cat="helsie">
+        <img src="images/KpopDemon.png" alt="Helsie — Piece II" loading="lazy" />
+        <div class="go">
+          <div class="go-i">⤢</div>
+          <div class="go-t">Helsie — Piece II</div>
+          <div class="go-s">Character Art</div>
+        </div>
+      </div>
+
+      <div class="gi" data-cat="helsie">
+        <img src="images/Beach.png" alt="Helsie — Piece III" loading="lazy" />
+        <div class="go">
+          <div class="go-i">⤢</div>
+          <div class="go-t">Helsie — Piece III</div>
+          <div class="go-s">Character Art</div>
+        </div>
+      </div>
+
+      <div class="gi" data-cat="helsie">
+        <img src="images/Juno.png" alt="Helsie — Piece IV" loading="lazy" />
+        <div class="go">
+          <div class="go-i">⤢</div>
+          <div class="go-t">Helsie — Piece IV</div>
+          <div class="go-s">Character Art</div>
+        </div>
+      </div>
+
+      <div class="gi" data-cat="other">
+        <img src="images/AX.png" alt="AX" loading="lazy" />
+        <div class="go">
+          <div class="go-i">⤢</div>
+          <div class="go-t">AX</div>
+          <div class="go-s">Weapon</div>
+        </div>
+      </div>
+
+      <div class="gi" data-cat="helsie">
+        <img src="images/HELSIE%20TEST.png" alt="Helsie — Piece V" loading="lazy" />
+        <div class="go">
+          <div class="go-i">⤢</div>
+          <div class="go-t">Helsie — Piece V</div>
+          <div class="go-s">Character Art</div>
+        </div>
+      </div>
+
+      <div class="gi" data-cat="helsie">
+        <img src="images/HELSIE%20TEST3.png" alt="Helsie — Piece VI" loading="lazy" />
+        <div class="go">
+          <div class="go-i">⤢</div>
+          <div class="go-t">Helsie — Piece VI</div>
+          <div class="go-s">Character Art</div>
+        </div>
+      </div>
+
+      <div class="gi" data-cat="joni">
+        <img src="images/HELSIE%20TESTJ.png" alt="Joni — Piece I" loading="lazy" />
+        <div class="go">
+          <div class="go-i">⤢</div>
+          <div class="go-t">Joni — Piece I</div>
+          <div class="go-s">Character Art</div>
+        </div>
+      </div>
+
+      <div class="gi" data-cat="other">
+        <img src="images/HELSIE%20TESTu%20(1).png" alt="Helsie Test u1" loading="lazy" />
+        <div class="go">
+          <div class="go-i">⤢</div>
+          <div class="go-t">Helsie Test u1</div>
+          <div class="go-s">Character Art</div>
+        </div>
+      </div>
+
+      <div class="gi" data-cat="other">
+        <img src="images/HELSIE%20TESTu.png" alt="Helsie Test u" loading="lazy" />
+        <div class="go">
+          <div class="go-i">⤢</div>
+          <div class="go-t">Helsie Test u</div>
+          <div class="go-s">Character Art</div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section id="about">
+    <div class="ab-in reveal">
+      <div class="ab-art">
+        <img src="images/PFP.png" alt="About the artist" />
+      </div>
+      <div class="ab-c">
+        <div class="sh">
+          <span class="sl">✦ The Artist</span>
+          <h2 class="st">Swan</h2>
+          <div class="sline"></div>
+        </div>
+        <p class="ab-txt">
+          I'm a digital artist specializing in character design and illustration. My work explores dark, expressive
+          themes, bringing imaginative characters to life. This gallery is a collection of my personal projects and
+          commissions.
         </p>
-        <div class="warning-buttons">
-            <button class="warning-btn btn-enter" onclick="enterSite()">I am 18+</button>
-            <button class="warning-btn btn-exit" onclick="exitSite()">Exit</button>
+        <div class="ab-stats">
+          <div class="ab-s">
+            <div class="ab-sn">5+</div>
+            <div class="ab-sl">Years Experience</div>
+          </div>
+          <div class="ab-s">
+            <div class="ab-sn">100+</div>
+            <div class="ab-sl">Artworks Created</div>
+          </div>
+          <div class="ab-s">
+            <div class="ab-sn">42+</div>
+            <div class="ab-sl">Happy Clients</div>
+          </div>
         </div>
+      </div>
     </div>
-</div>
+  </section>
 
-<!-- ================= SUCCESS MODAL ================= -->
-<div class="success-overlay" id="successOverlay">
-    <div class="success-card">
-        <div class="success-icon-box">
-            <svg class="check-svg" viewBox="0 0 52 52">
-                <path d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+  <!-- CONTACT -->
+  <section id="contact">
+    <div class="ct-in reveal">
+      <div class="sh">
+        <span class="sl">✦ Get in Touch</span>
+        <h2 class="st">Contact Me</h2>
+        <div class="sline"></div>
+      </div>
+      <p class="ct-desc">
+        Have a question, a commission request, or just want to say hi? Feel free to reach out. I'm most active on these
+        platforms.
+      </p>
+      <div class="ct-cards">
+        <a href="#" class="cc tw">
+          <div class="cc-ico">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path
+                d="M22 4s-.7 2.1-2 3.4c1.6 1.4 1.6 3.6 0 5.1-1.6 1.5-4.4 1.5-6 0-1.6-1.5-1.6-3.6 0-5.1s4.4-3.6 6-5.1z" />
+              <path d="M16 8.4c-1.6 1.5-1.6 3.6 0 5.1s4.4 1.5 6 0" />
             </svg>
+          </div>
+          <div class="cc-info">
+            <div class="cc-name">Twitter</div>
+            <div class="cc-handle">@YourTwitter</div>
+          </div>
+        </a>
+        <a href="#" class="cc dc">
+          <div class="cc-ico">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z" />
+              <path d="M8 14s1.5 2 4 2 4-2 4-2" />
+              <line x1="9" y1="9" x2="9.01" y2="9" />
+              <line x1="15" y1="9" x2="15.01" y2="9" />
+            </svg>
+          </div>
+          <div class="cc-info">
+            <div class="cc-name">Discord</div>
+            <div class="cc-handle">YourDiscord#1234</div>
+          </div>
+        </a>
+      </div>
+      <div class="cm-box">
+        <h3>Commissions are Open</h3>
+        <p>I'm currently accepting new commission work. If you're interested in a custom piece, check my commission info
+          and let's create something amazing together.</p>
+        <div class="cm-tags">
+          <span class="cm-tag">Character Art</span>
+          <span class="cm-tag">OCs</span>
+          <span class="cm-tag">Illustrations</span>
+          <span class="cm-tag">Portraits</span>
         </div>
-        <h2 class="section-title" style="margin-bottom:10px;font-size:24px">Inquiry Ready!</h2>
-        <p style="color:rgba(255,255,255,0.7);margin-bottom:25px;line-height:1.5">Opening your email client to finalize the request...</p>
-        <button class="submit-btn" onclick="closeSuccess()" style="width:100%;padding:12px">Okay, Got it!</button>
-    </div>
-</div>
-
-<!-- ================= MAIN CONTENT ================= -->
-<div class="main-content" id="mainContent">
-    <div class="header">
-        <h1 class="main-title">Welcome to Swan Nsfw!</h1>
-        <p class="subtitle">3D Artist • Comic Artist • Comissions below!</p>
-    </div>
-
-    <div class="content-grid">
-        <!-- Social Media Section -->
-        <div class="section-card">
-            <h2 class="section-title">Connect With Me</h2>
-            <div class="social-links">
-                <a href="https://www.instagram.com/swan_nsfw" target="_blank" class="social-link instagram">
-                    <span class="social-icon">📷</span>
-                    <span class="social-name">Follow my Instagram</span>
-                </a>
-                <a href="https://x.com/Swan_Nsfw" target="_blank" class="social-link twitter">
-                    <span class="social-icon">🐦</span>
-                    <span class="social-name">My X!</span>
-                </a>
-                <a href="https://discord.gg/mU5UyD93wG" target="_blank" class="social-link discord">
-                    <span class="social-icon">💬</span>
-                    <span class="social-name">Join my Discord server!</span>
-                </a>
-            </div>
+        <div class="hero-cta" style="margin-top: 28px;">
+          <a href="commissions.html" class="btn-p">Commission Info</a>
         </div>
-
-        <!-- Commission Form Section -->
-        <div class="section-card">
-            <div style="display:flex;justify-content:space-between;align-items:flex-start;">
-                <h2 class="section-title">Commission Inquiry</h2>
-                <span class="status-badge">● OPEN</span>
-            </div>
-            <p class="commission-description">Ready to bring your ideas to life? Fill out the form below for a quote.</p>
-            
-            <form class="commission-form" id="commissionForm">
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="name">Name / Handle</label>
-                        <input type="text" id="name" name="name" required placeholder="Your name">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="email">Contact Email</label>
-                        <input type="email" id="email" name="email" required placeholder="name@example.com">
-                    </div>
-                </div>
-                
-                <div class="form-group">
-                    <label for="commissionType">Commission Type</label>
-                    <select id="commissionType" name="commissionType" required>
-                        <option value="" disabled selected>Select Service Type...</option>
-                        <optgroup label="Character Art">
-                            <option value="full_render">Full Render Character</option>
-                            <option value="emtoe_anim">Emote Animation</option>
-                            <option value="Animation">Animation</option>
-                        </optgroup>
-                    </select>
-                </div>
-                
-                <div class="form-group">
-                    <label for="message">Project Details</label>
-                    <textarea id="message" name="message" rows="5" required placeholder="Describe your character, pose, setting, and any references..."></textarea>
-                </div>
-                
-                <button type="submit" class="submit-btn">Send Request ➤</button>
-            </form>
-        </div>
+      </div>
     </div>
+  </section>
 
-    <!-- Navigation Buttons -->
-    <div class="enter-portfolio">
-        <a href="gallery.html" class="enter-btn" style="margin-right: 20px;">View Art Gallery 🎨</a>
-        <a href="home.html" class="enter-btn">Enter Character Viewer →</a>
-    </div>
-</div>
+  <!-- FOOTER -->
+  <footer>
+    © 2024 SwanNsfw. All Rights Reserved. Designed with <span>♥</span>.
+  </footer>
 
-<script>
-// ================= AGE VERIFICATION =================
-function enterSite() {
-    // Store verification in session storage
-    sessionStorage.setItem('ageVerified', 'true');
-    
-    // Hide warning and show content
-    document.getElementById('ageWarning').style.display = 'none';
-    document.getElementById('mainContent').classList.add('visible');
-}
+  <script>
+    // AGE WARNING
+    const ageWarning = document.getElementById('age-warning');
+    const btnYes = document.getElementById('btn-yes');
+    const btnNo = document.getElementById('btn-no');
 
-function exitSite() {
-    // Redirect to a safe page or close window
-    window.location.href = 'https://www.google.com';
-}
+    if (!localStorage.getItem('ageVerified')) {
+      document.body.style.overflow = 'hidden';
 
-// Check if user already verified age in this session
-window.addEventListener('DOMContentLoaded', function() {
-    if (sessionStorage.getItem('ageVerified') === 'true') {
-        document.getElementById('ageWarning').style.display = 'none';
-        document.getElementById('mainContent').classList.add('visible');
+      btnYes.addEventListener('click', () => {
+        localStorage.setItem('ageVerified', 'true');
+        ageWarning.classList.add('hidden');
+        document.body.style.overflow = '';
+      });
+
+      btnNo.addEventListener('click', () => {
+        window.history.back();
+        setTimeout(() => {
+          window.location.href = 'https://www.google.com';
+        }, 500);
+      });
+    } else {
+      ageWarning.classList.add('hidden');
     }
-});
 
-// ================= COMMISSION FORM HANDLING =================
-document.getElementById('commissionForm').addEventListener('submit', function(e) {
-    e.preventDefault();
-    
-    const formData = {
-        name: document.getElementById('name').value,
-        email: document.getElementById('email').value,
-        commissionType: document.getElementById('commissionType').value,
-        message: document.getElementById('message').value
-    };
-    
-    // Create mailto link
-    const subject = encodeURIComponent(`Commission Inquiry - ${formData.commissionType}`);
-    const body = encodeURIComponent(
-        `Name: ${formData.name}\n` +
-        `Email: ${formData.email}\n` +
-        `Commission Type: ${formData.commissionType}\n\n` +
-        `Message:\n${formData.message}`
-    );
-    
-    // Replace with your actual email
-    const mailtoLink = `mailto:officialswannyfn@gmail.com?subject=${subject}&body=${body}`;
-    
-    // Show success animation
-    const overlay = document.getElementById('successOverlay');
-    overlay.classList.add('visible');
+    // CURSOR
+    const cur = document.getElementById('cur');
+    const curR = document.getElementById('cur-r');
+    document.addEventListener('mousemove', e => {
+      cur.style.left = e.clientX + 'px';
+      cur.style.top = e.clientY + 'px';
+      curR.style.left = e.clientX + 'px';
+      curR.style.top = e.clientY + 'px';
+    });
 
-    // Delay the mailto slightly so the user sees the animation start
+    const links = document.querySelectorAll('a, button, .gi');
+    links.forEach(link => {
+      link.addEventListener('mouseenter', () => document.body.classList.add('cg'));
+      link.addEventListener('mouseleave', () => document.body.classList.remove('cg'));
+    });
+
+    // PARTICLES
+    const ptclContainer = document.getElementById('ptcl');
+    for (let i = 0; i < 30; i++) {
+      let p = document.createElement('div');
+      p.className = 'p';
+      p.style.left = Math.random() * 100 + 'vw';
+      p.style.top = Math.random() * 20 + 80 + 'vh';
+      p.style.width = Math.random() * 2 + 1 + 'px';
+      p.style.height = Math.random() * 18 + 10 + 'px';
+      p.style.animationDuration = Math.random() * 15 + 10 + 's';
+      p.style.animationDelay = Math.random() * -25 + 's';
+      p.style.transform = `rotate(${(Math.random() - 0.5) * 30}deg)`;
+      ptclContainer.appendChild(p);
+    }
+
+    // NAV SCROLL
+    const nav = document.getElementById('nav');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 50) {
+        nav.classList.add('sc');
+      } else {
+        nav.classList.remove('sc');
+      }
+    });
+
+    // REVEAL ON SCROLL
+    const revealElements = document.querySelectorAll('.reveal');
+    const galleryItems = document.querySelectorAll('.gi');
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('vis');
+        }
+      });
+    }, { threshold: 0.1 });
+
+    const galleryObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry, index) => {
+        if (entry.isIntersecting) {
+          setTimeout(() => {
+            entry.target.classList.add('rv');
+          }, index * 100);
+          galleryObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0, rootMargin: '0px 0px -30px 0px' });
+
+    // Fallback: reveal any items that the observer missed after 1.5s
     setTimeout(() => {
-        window.location.href = mailtoLink;
+      document.querySelectorAll('.gi:not(.rv)').forEach((item, i) => {
+        setTimeout(() => item.classList.add('rv'), i * 80);
+      });
     }, 1500);
-});
 
-function closeSuccess() {
-    document.getElementById('successOverlay').classList.remove('visible');
-}
+    revealElements.forEach(el => observer.observe(el));
+    galleryItems.forEach(item => galleryObserver.observe(item));
 
-// ================= 3D TILT EFFECT FOR SOCIAL CARDS =================
-document.querySelectorAll('.social-link').forEach(card => {
-    card.addEventListener('mousemove', (e) => {
-        const rect = card.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
-        
-        const centerX = rect.width / 2;
-        const centerY = rect.height / 2;
-        
-        // Calculate rotation (max 15 degrees)
-        const rotateX = ((y - centerY) / centerY) * -15;
-        const rotateY = ((x - centerX) / centerX) * 15;
+    // GALLERY FILTERING
+    const filterBtns = document.querySelectorAll('.fb');
+    const allItems = document.querySelectorAll('.gi');
 
-        card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.05, 1.05, 1.05)`;
+    filterBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        filterBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const filter = btn.getAttribute('data-filter');
+
+        allItems.forEach(item => {
+          item.style.display = 'block';
+          if (filter !== 'all' && !item.getAttribute('data-cat').includes(filter)) {
+            item.style.display = 'none';
+          }
+        });
+      });
     });
 
-    card.addEventListener('mouseleave', () => {
-        card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) scale3d(1, 1, 1)';
-    });
-});
-</script>
+    // LIGHTBOX
+    const lb = document.getElementById('lb');
+    const lbImg = document.getElementById('lb-img');
+    const lbClose = document.getElementById('lb-close');
+    const lbPrev = document.getElementById('lb-pv');
+    const lbNext = document.getElementById('lb-nx');
+    const lbCounter = document.getElementById('lb-ct');
+    let currentGallery = [];
+    let currentIndex = 0;
 
+    function openLightbox(index) {
+      currentIndex = index;
+      updateLightbox();
+      lb.classList.add('open');
+    }
+
+    function updateLightbox() {
+      const item = currentGallery[currentIndex];
+      const src = item.querySelector('img').src;
+      const alt = item.querySelector('img').alt;
+      lbImg.src = src;
+      lbImg.alt = alt;
+      lbCounter.textContent = `${currentIndex + 1} / ${currentGallery.length}`;
+      lbPrev.style.display = currentIndex === 0 ? 'none' : 'flex';
+      lbNext.style.display = currentIndex === currentGallery.length - 1 ? 'none' : 'flex';
+    }
+
+    function closeLightbox() {
+      lb.classList.remove('open');
+    }
+
+    function prevImage() {
+      if (currentIndex > 0) {
+        currentIndex--;
+        updateLightbox();
+      }
+    }
+
+    function nextImage() {
+      if (currentIndex < currentGallery.length - 1) {
+        currentIndex++;
+        updateLightbox();
+      }
+    }
+
+    document.querySelectorAll('.gi').forEach((item, index) => {
+      item.addEventListener('click', () => {
+        currentGallery = Array.from(document.querySelectorAll('.gi:not([style*="display: none"])'));
+        const actualIndex = currentGallery.indexOf(item);
+        openLightbox(actualIndex);
+      });
+    });
+
+    lbClose.addEventListener('click', closeLightbox);
+    lbPrev.addEventListener('click', prevImage);
+    lbNext.addEventListener('click', nextImage);
+    lb.addEventListener('click', e => {
+      if (e.target === lb) closeLightbox();
+    });
+    document.addEventListener('keydown', e => {
+      if (!lb.classList.contains('open')) return;
+      if (e.key === 'Escape') closeLightbox();
+      if (e.key === 'ArrowLeft') prevImage();
+      if (e.key === 'ArrowRight') nextImage();
+    });
+
+  </script>
 </body>
+
 </html>
