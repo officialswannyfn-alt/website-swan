@@ -1064,6 +1064,39 @@
         height: 50px;
       }
     }
+
+    /* ─── CONSTRUCTION BANNER ───────────────────────── */
+    .construction-banner {
+      position: absolute;
+      top: 80px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(212, 184, 150, 0.15);
+      border: 1px solid var(--a1);
+      color: var(--text);
+      padding: 10px 24px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      z-index: 101;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 4px 20px rgba(212, 184, 150, 0.2);
+      text-align: center;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      pointer-events: none;
+    }
+
+    @media (max-width: 600px) {
+      .construction-banner {
+        top: 110px;
+        font-size: 11px;
+        padding: 8px 16px;
+        width: 90%;
+      }
+    }
   </style>
 </head>
 
@@ -1109,6 +1142,11 @@
       <li><a href="index.html#contact">Contact</a></li>
     </ul>
   </nav>
+
+  <div class="construction-banner">
+    <span style="font-size:16px">🚧</span>
+    <span>Characters Viewer is currently under construction.</span>
+  </div>
 
   <div class="wrap">
 
