@@ -22,16 +22,16 @@
     :root {
       --bg: #0e090c;
       --bg2: #1c1410;
-      --a1: #d4b896;
-      --a2: #a8895c;
-      --a3: #f0e2cc;
+      --a1: #ff349d;
+      --a2: #b82070;
+      --a3: #f8d6e8;
       --text: #f7f0e3;
       --muted: rgba(247, 240, 227, 0.55);
-      --border: rgba(212, 184, 150, 0.22);
+      --border: rgba(255, 52, 157, 0.22);
       --glass: rgba(20, 12, 10, 0.78);
-      --glow: 0 0 40px rgba(212, 184, 150, 0.22), 0 0 80px rgba(168, 137, 92, 0.12);
-      --accent: #d4b896;
-      --accent-soft: #a8895c;
+      --glow: 0 0 40px rgba(255, 52, 157, 0.22), 0 0 80px rgba(174, 25, 101, 0.12);
+      --accent: #ff349d;
+      --accent-soft: #b82070;
       --accent-dark: #6b4f2a;
     }
 
@@ -323,14 +323,14 @@
       font-size: 20px;
       letter-spacing: 2px;
       color: #fff;
-      box-shadow: 0 6px 22px rgba(212, 184, 150, 0.5);
+      box-shadow: 0 6px 22px rgba(255, 52, 157, 0.5);
       cursor: none;
       transition: transform 0.2s, box-shadow 0.2s;
     }
 
     .logo:hover {
       transform: scale(1.06);
-      box-shadow: 0 0 36px rgba(212, 184, 150, 0.8);
+      box-shadow: 0 0 36px rgba(255, 52, 157, 0.8);
     }
 
     .thumb {
@@ -348,14 +348,14 @@
 
     .thumb.active {
       border-color: var(--a1);
-      box-shadow: 0 0 22px rgba(212, 184, 150, 0.65);
+      box-shadow: 0 0 22px rgba(255, 52, 157, 0.65);
       filter: none;
       transform: translateY(-4px) scale(1.05);
     }
 
     .thumb:hover:not(.active) {
       filter: grayscale(0) brightness(1);
-      border-color: rgba(212, 184, 150, 0.5);
+      border-color: rgba(255, 52, 157, 0.5);
       transform: translateY(-2px);
     }
 
@@ -377,10 +377,10 @@
     }
 
     .control-btn:hover {
-      background: rgba(212, 184, 150, 0.2);
+      background: rgba(255, 52, 157, 0.2);
       border-color: var(--a1);
       transform: translateY(-2px);
-      box-shadow: 0 0 20px rgba(212, 184, 150, 0.35);
+      box-shadow: 0 0 20px rgba(255, 52, 157, 0.35);
     }
 
     .scroll-btn {
@@ -400,7 +400,7 @@
     }
 
     .scroll-btn:hover {
-      background: rgba(212, 184, 150, 0.2);
+      background: rgba(255, 52, 157, 0.2);
       border-color: var(--a1);
     }
 
@@ -481,7 +481,7 @@
       transition: transform .5s ease, opacity .35s;
       user-select: none;
       pointer-events: none;
-      filter: drop-shadow(0 10px 30px rgba(212, 184, 150, 0.35));
+      filter: drop-shadow(0 10px 30px rgba(255, 52, 157, 0.35));
     }
 
     .character-art.hidden {
@@ -520,7 +520,7 @@
     }
 
     .arrow:hover {
-      background: rgba(212, 184, 150, 0.25);
+      background: rgba(255, 52, 157, 0.25);
       border-color: var(--a1);
       transform: scale(1.1);
     }
@@ -542,7 +542,7 @@
     }
 
     .dot:hover {
-      background: rgba(212, 184, 150, 0.45);
+      background: rgba(255, 52, 157, 0.45);
       transform: scale(1.1);
     }
 
@@ -550,7 +550,7 @@
       background: linear-gradient(135deg, var(--a1), var(--a2));
       border-color: var(--a1);
       transform: scale(1.25);
-      box-shadow: 0 0 14px rgba(212, 184, 150, 0.65);
+      box-shadow: 0 0 14px rgba(255, 52, 157, 0.65);
     }
 
     /* ─── FLOATING CONTROLS ─────────────────────────── */
@@ -613,7 +613,7 @@
       text-transform: uppercase;
       background: linear-gradient(135deg, var(--accent) 0%, var(--accent-soft) 100%);
       color: #fff;
-      box-shadow: 0 0 22px rgba(212, 184, 150, 0.45);
+      box-shadow: 0 0 22px rgba(255, 52, 157, 0.45);
       border: 1px solid rgba(255, 255, 255, 0.2);
       transition: box-shadow 0.4s;
     }
@@ -777,7 +777,7 @@
 
     .rel-item:hover .rel-avatar {
       border-color: var(--a1);
-      box-shadow: 0 0 18px rgba(212, 184, 150, 0.5);
+      box-shadow: 0 0 18px rgba(255, 52, 157, 0.5);
     }
 
     .rel-name {
@@ -864,10 +864,10 @@
     }
 
     .gear-item:hover {
-      background: rgba(212, 184, 150, 0.1);
+      background: rgba(255, 52, 157, 0.1);
       transform: translateY(-3px);
       border-color: var(--a1);
-      box-shadow: 0 8px 28px rgba(212, 184, 150, 0.25);
+      box-shadow: 0 8px 28px rgba(255, 52, 157, 0.25);
     }
 
     .gear-icon {
@@ -879,7 +879,7 @@
       align-items: center;
       justify-content: center;
       font-size: 22px;
-      box-shadow: 0 4px 14px rgba(212, 184, 150, 0.4);
+      box-shadow: 0 4px 14px rgba(255, 52, 157, 0.4);
       overflow: hidden;
       flex-shrink: 0;
     }
@@ -1071,7 +1071,7 @@
       top: 80px;
       left: 50%;
       transform: translateX(-50%);
-      background: rgba(212, 184, 150, 0.15);
+      background: rgba(255, 52, 157, 0.15);
       border: 1px solid var(--a1);
       color: var(--text);
       padding: 10px 24px;
@@ -1081,7 +1081,7 @@
       letter-spacing: 1px;
       z-index: 101;
       backdrop-filter: blur(10px);
-      box-shadow: 0 4px 20px rgba(212, 184, 150, 0.2);
+      box-shadow: 0 4px 20px rgba(255, 52, 157, 0.2);
       text-align: center;
       display: flex;
       align-items: center;
@@ -1098,9 +1098,11 @@
       }
     }
   </style>
+  <link rel="stylesheet" href="theme.css">
+  <script src="site.js" defer></script>
 </head>
 
-<body>
+<body class="characters-page">
 
   <div id="cur"></div>
   <div id="cur-r"></div>
@@ -1114,33 +1116,17 @@
   <div id="ptcl"></div>
 
   <!-- NAV -->
-  <nav id="nav">
-    <a href="index.html" class="nav-logo">
-      <svg class="nav-swan" width="22" height="22" viewBox="0 0 80 70" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-          <linearGradient id="swanGradH" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stop-color="#f7f0e3" />
-            <stop offset="50%" stop-color="#d4b896" />
-            <stop offset="100%" stop-color="#a8895c" />
-          </linearGradient>
-        </defs>
-        <ellipse cx="48" cy="52" rx="28" ry="14" fill="url(#swanGradH)" opacity="0.95" />
-        <path d="M24 48 Q14 34 18 20 Q22 8 30 6" stroke="url(#swanGradH)" stroke-width="7" stroke-linecap="round"
-          fill="none" />
-        <circle cx="32" cy="4" r="7" fill="url(#swanGradH)" />
-        <path d="M38 3 L50 1 L47 8 Z" fill="url(#swanGradH)" opacity="0.85" />
-        <path d="M22 44 Q42 32 66 44 Q68 56 52 60 Q36 63 22 44Z" fill="url(#swanGradH)" opacity="0.55" />
-        <path d="M72 42 Q80 34 78 48 Q76 56 70 53 Q64 50 72 42Z" fill="url(#swanGradH)" opacity="0.7" />
-      </svg>
-      SwanNsfw
-    </a>
+  <nav id="nav" class="site-nav"><a class="brand" href="index.html" aria-label="Swan NSFW home"><span>SWAN
+        <b>NSFW</b></span><small>3D ART</small></a><button class="menu-toggle" aria-label="Toggle navigation"
+      aria-expanded="false">☰</button>
     <ul class="nav-links">
-      <li><a href="index.html">Gallery</a></li>
-      <li><a href="home.html" class="active">Characters</a></li>
+      <li><a href="index.html">Home</a></li>
+      <li><a href="gallery.html">Gallery</a></li>
+      <li><a href="home.html" class="active" aria-current="page">Characters</a></li>
       <li><a href="commissions.html">Commissions</a></li>
-      <li><a href="index.html#about">About</a></li>
-      <li><a href="index.html#contact">Contact</a></li>
-    </ul>
+      <li><a href="about.html">About Me</a></li>
+      <li><a href="gallery.html#contact">Contact</a></li>
+    </ul><a class="open-badge" href="commissions.html"><i></i> Commissions open</a>
   </nav>
 
   <div class="construction-banner">
@@ -1262,7 +1248,7 @@
       p.style.height = p.style.width;
       p.style.animationDuration = Math.random() * 15 + 10 + 's';
       p.style.animationDelay = Math.random() * -25 + 's';
-      p.style.background = 'rgba(212, 184, 150, 0.6)';
+      p.style.background = 'rgba(255, 52, 157, 0.6)';
       ptclContainer.appendChild(p);
     }
 
@@ -1321,7 +1307,7 @@
     ];
 
     const FACTION_COLORS = {
-      shadow: { primary: '#d4b896', secondary: '#a8895c', dark: '#6b4f2a' },
+      shadow: { primary: '#ff349d', secondary: '#b82070', dark: '#6b4f2a' },
       band: { primary: '#c8b08a', secondary: '#967050', dark: '#5c4228' },
       endfield: { primary: '#bca888', secondary: '#8a7050', dark: '#4e3820' },
       neutral: { primary: '#d0bc9a', secondary: '#a08060', dark: '#604830' }
@@ -1538,6 +1524,12 @@
 
     init();
   </script>
+  <footer class="site-footer"><a class="brand" href="index.html" aria-label="Swan NSFW home"><span>SWAN
+        <b>NSFW</b></span><small>3D ART</small></a>
+    <div class="footer-motto">hiiiiiiii<span>♧</span><small>© 2026 SwanNsfw</small></div>
+    <div class="socials"><a href="https://x.com/Swan_Nsfw" target="_blank" rel="noopener noreferrer"
+        aria-label="Swan on X">𝕏</a><a href="gallery.html#contact" aria-label="Contact Swan">✉</a></div>
+  </footer>
 </body>
 
 </html>

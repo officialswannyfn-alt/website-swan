@@ -193,12 +193,12 @@
         }
 
         .tier-card:hover {
-            box-shadow: 0 24px 70px rgba(0, 0, 0, 0.55), 0 0 50px rgba(212, 184, 150, 0.35);
+            box-shadow: 0 24px 70px rgba(0, 0, 0, 0.55), 0 0 50px rgba(255, 52, 157, 0.35);
         }
 
         .tier-card.featured {
-            border-color: rgba(212, 184, 150, 0.5);
-            box-shadow: 0 0 50px rgba(212, 184, 150, 0.2);
+            border-color: rgba(255, 52, 157, 0.5);
+            box-shadow: 0 0 50px rgba(255, 52, 157, 0.2);
         }
 
         .tier-card.featured::after {
@@ -225,7 +225,7 @@
             align-items: center;
             justify-content: center;
             font-size: 24px;
-            box-shadow: 0 6px 22px rgba(212, 184, 150, 0.4);
+            box-shadow: 0 6px 22px rgba(255, 52, 157, 0.4);
         }
 
         .tier-name {
@@ -297,13 +297,13 @@
             letter-spacing: 2px;
             text-transform: uppercase;
             transition: transform 0.3s, box-shadow 0.3s;
-            box-shadow: 0 0 28px rgba(212, 184, 150, 0.35);
+            box-shadow: 0 0 28px rgba(255, 52, 157, 0.35);
             cursor: none;
         }
 
         .tier-btn:hover {
             transform: translateY(-3px);
-            box-shadow: 0 0 50px rgba(212, 184, 150, 0.65), 0 0 100px rgba(168, 137, 92, 0.3);
+            box-shadow: 0 0 50px rgba(255, 52, 157, 0.65), 0 0 100px rgba(174, 25, 101, 0.3);
         }
 
         /* ─── PROCESS STEPS ─────────────────────────────── */
@@ -351,13 +351,13 @@
             font-size: 28px;
             letter-spacing: 1px;
             background: linear-gradient(135deg, var(--a1), var(--a2));
-            box-shadow: 0 0 30px rgba(212, 184, 150, 0.4);
+            box-shadow: 0 0 30px rgba(255, 52, 157, 0.4);
             transition: transform 0.3s, box-shadow 0.3s;
         }
 
         .step:hover .step-num {
             transform: scale(1.1);
-            box-shadow: 0 0 50px rgba(212, 184, 150, 0.7);
+            box-shadow: 0 0 50px rgba(255, 52, 157, 0.7);
         }
 
         .step-title {
@@ -578,9 +578,13 @@
             }
         }
     </style>
+    <link rel="stylesheet" href="theme.css">
+    <script src="site.js" defer></script>
+    <script src="commission-previews.js" defer></script>
+    <link rel="stylesheet" href="commission-previews.css">
 </head>
 
-<body>
+<body class="commissions-page">
 
     <div id="cur"></div>
     <div id="cur-r"></div>
@@ -594,33 +598,17 @@
     <div id="ptcl"></div>
 
     <!-- NAV -->
-    <nav id="nav">
-        <a href="index.html" class="nav-logo">
-            <svg class="nav-swan" width="22" height="22" viewBox="0 0 80 70" xmlns="http://www.w3.org/2000/svg">
-                <defs>
-                    <linearGradient id="swanGradC" x1="0%" y1="0%" x2="100%" y2="100%">
-                        <stop offset="0%" stop-color="#f7f0e3" />
-                        <stop offset="50%" stop-color="#d4b896" />
-                        <stop offset="100%" stop-color="#a8895c" />
-                    </linearGradient>
-                </defs>
-                <ellipse cx="48" cy="52" rx="28" ry="14" fill="url(#swanGradC)" opacity="0.95" />
-                <path d="M24 48 Q14 34 18 20 Q22 8 30 6" stroke="url(#swanGradC)" stroke-width="7"
-                    stroke-linecap="round" fill="none" />
-                <circle cx="32" cy="4" r="7" fill="url(#swanGradC)" />
-                <path d="M38 3 L50 1 L47 8 Z" fill="url(#swanGradC)" opacity="0.85" />
-                <path d="M22 44 Q42 32 66 44 Q68 56 52 60 Q36 63 22 44Z" fill="url(#swanGradC)" opacity="0.55" />
-                <path d="M72 42 Q80 34 78 48 Q76 56 70 53 Q64 50 72 42Z" fill="url(#swanGradC)" opacity="0.7" />
-            </svg>
-            SwanNsfw
-        </a>
+    <nav id="nav" class="site-nav"><a class="brand" href="index.html" aria-label="Swan NSFW home"><span>SWAN
+                <b>NSFW</b></span><small>3D ART</small></a><button class="menu-toggle" aria-label="Toggle navigation"
+            aria-expanded="false">☰</button>
         <ul class="nav-links">
-            <li><a href="index.html">Gallery</a></li>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="gallery.html">Gallery</a></li>
             <li><a href="home.html">Characters</a></li>
-            <li><a href="commissions.html" style="color:var(--a3)">Commissions</a></li>
-            <li><a href="index.html#about">About</a></li>
-            <li><a href="index.html#contact">Contact</a></li>
-        </ul>
+            <li><a href="commissions.html" class="active" aria-current="page">Commissions</a></li>
+            <li><a href="about.html">About Me</a></li>
+            <li><a href="gallery.html#contact">Contact</a></li>
+        </ul><a class="open-badge" href="commissions.html"><i></i> Commissions open</a>
     </nav>
 
     <!-- STATUS BANNER -->
@@ -659,7 +647,8 @@
                     <li>Simple or no background</li>
                     <li>1 round of revisions</li>
                 </ul>
-                <a href="https://x.com/Swan_Nsfw" target="_blank" class="tier-btn">Request →</a>
+                <button type="button" class="tier-btn" data-preview="image" aria-haspopup="dialog"
+                    aria-controls="commission-preview">Request →</button>
             </div>
 
             <div class="tier-card featured reveal">
@@ -671,7 +660,8 @@
                     <li>Looping animation</li>
                     <li>Delivered as MP4</li>
                 </ul>
-                <a href="https://x.com/Swan_Nsfw" target="_blank" class="tier-btn">Request →</a>
+                <button type="button" class="tier-btn" data-preview="emote" aria-haspopup="dialog"
+                    aria-controls="commission-preview">Request →</button>
             </div>
 
             <div class="tier-card reveal">
@@ -684,7 +674,8 @@
                     <li>Background included</li>
                     <li>Quote provided upfront</li>
                 </ul>
-                <a href="https://x.com/Swan_Nsfw" target="_blank" class="tier-btn">Request →</a>
+                <button type="button" class="tier-btn" data-preview="animation" aria-haspopup="dialog"
+                    aria-controls="commission-preview">Request →</button>
             </div>
 
         </div>
@@ -777,9 +768,30 @@
         </div>
     </div>
 
+    <dialog id="commission-preview" class="commission-preview" aria-labelledby="preview-title">
+        <div class="preview-header">
+            <div>
+                <p class="preview-eyebrow">Commission preview (Example)</p>
+                <h2 id="preview-title"></h2>
+            </div>
+            <button type="button" class="preview-close" aria-label="Close preview" autofocus>×</button>
+        </div>
+        <div id="preview-media" class="preview-media"></div>
+        <p id="preview-status" class="preview-status" role="status"></p>
+        <div class="preview-actions">
+            <a id="preview-x-link" class="outline-button" target="_blank" rel="noopener noreferrer" hidden>Open on X
+                ↗</a>
+            <a class="pink-button" href="https://x.com/Swan_Nsfw" target="_blank" rel="noopener noreferrer">Request this
+                commission <span>→</span></a>
+        </div>
+    </dialog>
+
     <!-- FOOTER -->
-    <footer>
-        © 2024 SwanNsfw. All Rights Reserved. Designed with <span>♥</span>.
+    <footer class="site-footer"><a class="brand" href="index.html" aria-label="Swan NSFW home"><span>SWAN
+                <b>NSFW</b></span><small> 3D ART</small></a>
+        <div class="footer-motto">SAME CHARACTERS. MORE STORIES.<span>♧</span><small>© 2026 SwanNsfw</small></div>
+        <div class="socials"><a href="https://x.com/Swan_Nsfw" target="_blank" rel="noopener noreferrer"
+                aria-label="Swan on X">𝕏</a><a href="gallery.html#contact" aria-label="Contact Swan">✉</a></div>
     </footer>
 
     <script>

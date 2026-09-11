@@ -2,29 +2,16 @@
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
-  <title>SwanNsfw — Art Gallery</title>
-  <link
-    href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;600;700&family=Bebas+Neue&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&display=swap"
-    rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Swan — 3D Art</title>
+  <meta name="description"
+    content="3D character art, renders and custom animations by Swan. Explore the gallery and commission your next idea.">
+  <link rel="stylesheet" href="theme.css">
+  <script src="site.js" defer></script>
 </head>
 
-<body>
-
-  <div id="cur"></div>
-  <div id="cur-r"></div>
-
-  <div class="orbs">
-    <div class="orb o1"></div>
-    <div class="orb o2"></div>
-    <div class="orb o3"></div>
-  </div>
-  <div class="grid-ov"></div>
-  <div id="ptcl"></div>
-
-  <!-- AGE WARNING MODAL -->
+<body class="landing-page">
   <div id="age-warning" class="age-modal">
     <div class="age-modal-content">
       <div class="sh" style="margin-bottom: 24px; margin-top: 0;">
@@ -42,472 +29,182 @@
       </div>
     </div>
   </div>
-
-  <!-- LIGHTBOX -->
-  <div id="lb">
-    <div class="lb-x" id="lb-close">✕</div>
-    <button class="lb-n" id="lb-pv">&#8592;</button>
-    <img id="lb-img" src="" alt="" />
-    <button class="lb-n" id="lb-nx">&#8594;</button>
-    <div class="lb-ct" id="lb-ct">1 / 1</div>
-  </div>
-
-  <!-- NAV -->
-  <nav id="nav">
-    <a href="#" class="nav-logo">
-      <svg class="nav-swan" width="22" height="22" viewBox="0 0 80 70" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-          <linearGradient id="swanGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stop-color="#f7f0e3" />
-            <stop offset="50%" stop-color="#d4b896" />
-            <stop offset="100%" stop-color="#a8895c" />
-          </linearGradient>
-        </defs>
-        <ellipse cx="48" cy="52" rx="28" ry="14" fill="url(#swanGrad)" opacity="0.95" />
-        <path d="M24 48 Q14 34 18 20 Q22 8 30 6" stroke="url(#swanGrad)" stroke-width="7" stroke-linecap="round"
-          fill="none" />
-        <circle cx="32" cy="4" r="7" fill="url(#swanGrad)" />
-        <path d="M38 3 L50 1 L47 8 Z" fill="url(#swanGrad)" opacity="0.85" />
-        <path d="M22 44 Q42 32 66 44 Q68 56 52 60 Q36 63 22 44Z" fill="url(#swanGrad)" opacity="0.55" />
-        <path d="M72 42 Q80 34 78 48 Q76 56 70 53 Q64 50 72 42Z" fill="url(#swanGrad)" opacity="0.7" />
-      </svg>
-      SwanNsfw
-    </a>
+  <nav id="nav" class="site-nav"><a class="brand" href="index.html" aria-label="Swan NSFW home"><span>SWAN
+        <b>NSFW</b></span><small>3D ART</small></a><button class="menu-toggle" aria-label="Toggle navigation"
+      aria-expanded="false">☰</button>
     <ul class="nav-links">
-      <li><a href="#gallery">Gallery</a></li>
+      <li><a href="index.html" class="active" aria-current="page">Home</a></li>
+      <li><a href="gallery.html">Gallery</a></li>
       <li><a href="home.html">Characters</a></li>
       <li><a href="commissions.html">Commissions</a></li>
-      <li><a href="#about">About</a></li>
-      <li><a href="#contact">Contact</a></li>
-    </ul>
+      <li><a href="about.html">About Me</a></li>
+      <li><a href="gallery.html#contact">Contact</a></li>
+    </ul><a class="open-badge" href="commissions.html"><i></i> Commissions open</a>
   </nav>
-
-  <!-- HERO -->
-  <section id="hero">
-    <!-- Faint swan watermark -->
-    <div aria-hidden="true"
-      style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;z-index:0;opacity:0.15;">
-      <img src="images/SWAN.png" alt=""
-        style="width:60vw;max-width:780px;object-fit:contain;filter:grayscale(1) brightness(2);">
-    </div>
-    <p class="hero-eye">✦ Original Art &nbsp;·&nbsp; Character Design &nbsp;·&nbsp; Illustration ✦</p>
-    <h1 class="hero-title" data-text="SwanNsfw"><span class="g">SwanNsfw</span></h1>
-    <p class="hero-sub">Dark, expressive character art that lives at the edge of imagination. Every piece tells a story.
-    </p>
-    <div class="hero-cta">
-      <a href="#gallery" class="btn-p">✦ View Gallery</a>
-      <a href="#contact" class="btn-g">Get in Touch</a>
-    </div>
-    <div class="scroll-ind">
-      <span>Scroll</span>
-      <div class="scroll-line"></div>
-    </div>
-    <div class="hero-float">
-      <img src="images/PROMO.png" alt="Featured art" />
-    </div>
-  </section>
-
-  <!-- GALLERY -->
-  <section id="gallery">
-    <div class="sh reveal">
-      <span class="sl">✦ Portfolio</span>
-      <h2 class="st">The Gallery</h2>
-      <div class="sline"></div>
-    </div>
-
-    <div class="gf">
-      <button class="fb active" data-filter="all">All Works</button>
-    </div>
-
-    <div class="gg" id="gallery-grid">
-
-      <div class="gi" data-cat="helsie">
-        <img src="images/HelsieWitch.png" alt="Helsie — Piece I" loading="lazy" />
-        <div class="go">
-          <div class="go-i">⤢</div>
-          <div class="go-t">Helsie</div>
-          <div class="go-s">Character Art</div>
-        </div>
-      </div>
-
-      <div class="gi" data-cat="helsie">
-        <img src="images/KpopDemon.png" alt="Helsie — Piece II" loading="lazy" />
-        <div class="go">
-          <div class="go-i">⤢</div>
-          <div class="go-t">Zoey Demon Hunter</div>
-          <div class="go-s">Character Art</div>
-        </div>
-      </div>
-
-      <div class="gi" data-cat="helsie">
-        <img src="images/Beach.png" alt="Helsie — Piece III" loading="lazy" />
-        <div class="go">
-          <div class="go-i">⤢</div>
-          <div class="go-t">SunStrider</div>
-          <div class="go-s">Character Art</div>
-        </div>
-      </div>
-
-      <div class="gi" data-cat="helsie">
-        <img src="images/Juno.png" alt="Helsie — Piece IV" loading="lazy" />
-        <div class="go">
-          <div class="go-i">⤢</div>
-          <div class="go-t">Juno</div>
-          <div class="go-s">Character Art</div>
-        </div>
-      </div>
-
-      <div class="gi" data-cat="other">
-        <img src="images/Chord.png" alt="AX" loading="lazy" />
-        <div class="go">
-          <div class="go-i">⤢</div>
-          <div class="go-t">Power Chord</div>
-          <div class="go-s">Character Art</div>
-        </div>
-      </div>
-
-      <div class="gi" data-cat="helsie">
-        <img src="images/Hope.png" alt="Helsie — Piece V" loading="lazy" />
-        <div class="go">
-          <div class="go-i">⤢</div>
-          <div class="go-t">Hope</div>
-          <div class="go-s">Character Art</div>
-        </div>
-      </div>
-
-      <div class="gi" data-cat="helsie">
-        <img src="images/PunkFeet.png" alt="Helsie — Piece VI" loading="lazy" />
-        <div class="go">
-          <div class="go-i">⤢</div>
-          <div class="go-t">PowerPunk</div>
-          <div class="go-s">Character Art</div>
-        </div>
-      </div>
-
-      <div class="gi" data-cat="joni">
-        <img src="images/Lisa.png" alt="Joni — Piece I" loading="lazy" />
-        <div class="go">
-          <div class="go-i">⤢</div>
-          <div class="go-t">Lisa</div>
-          <div class="go-s">Character Art</div>
-        </div>
-      </div>
-
-      <div class="gi" data-cat="other">
-        <img src="images/Emo.png" alt="Emo" loading="lazy" />
-        <div class="go">
-          <div class="go-i">⤢</div>
-          <div class="go-t">Festival Lace</div>
-          <div class="go-s">Character Art</div>
-        </div>
-      </div>
-
-      <div class="gi" data-cat="other">
-        <img src="images/Fox.png" alt="Fox" loading="lazy" />
-        <div class="go">
-          <div class="go-i">⤢</div>
-          <div class="go-t">Miyabi</div>
-          <div class="go-s">Character Art</div>
-        </div>
-      </div>
-
-      <div class="gi" data-cat="other">
-        <img src="images/ft.png" alt="Fox" loading="lazy" />
-        <div class="go">
-          <div class="go-i">⤢</div>
-          <div class="go-t">Safari</div>
-          <div class="go-s">Character Art</div>
-        </div>
-      </div>
-
-    </div>
-  </section>
-
-  <!-- ABOUT -->
-  <section id="about">
-    <div class="ab-in reveal">
-      <div class="ab-art">
-        <img src="images/PFP.png" alt="About the artist" />
-      </div>
-      <div class="ab-c">
-        <div class="sh">
-          <span class="sl">✦ The Artist</span>
-          <h2 class="st">Swan</h2>
-          <div class="sline"></div>
-        </div>
-        <p class="ab-txt">
-          Hi! I'm a digital artist who loves making characters do all sorts of stuff. I enjoy bringing imaginative ideas
-          to life and giving each character their own vibe and personality.
-          This gallery is a mix of my personal work and commissions I've created along the way.
+  <main class="site-main">
+    <section class="landing-hero">
+      <div class="hero-copy">
+        <p class="eyebrow">SFW <span>×</span> NSFW <span>×</span> 3D RENDERS</p>
+        <h1>SWAN'S<br><em>3D ART</em></h1>
+        <p class="hero-description">Characters, pinups, poses and<br class="desktop-break"> commissioned artwork.
         </p>
-        <div class="ab-stats">
-          <div class="ab-s">
-            <div class="ab-sn">5+</div>
-            <div class="ab-sl">Years Experience</div>
-          </div>
-          <div class="ab-s">
-            <div class="ab-sn">100+</div>
-            <div class="ab-sl">Artworks Created</div>
-          </div>
-          <div class="ab-s">
-            <div class="ab-sn">42+</div>
-            <div class="ab-sl">Happy Clients</div>
-          </div>
-        </div>
+        <div class="actions"><a class="pink-button" href="gallery.html">View gallery <span>→</span></a><a
+            class="outline-button" href="commissions.html">Commissions <span>→</span></a></div>
+        <div class="specialties"><span><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linejoin="round" aria-hidden="true">
+              <rect x="3" y="3" width="26" height="26" rx="2" />
+              <circle cx="11" cy="11" r="2" />
+              <path d="m3 24 8-8 6 6 5-5 7 7" />
+            </svg> 3D RENDERS</span><span><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linejoin="round" aria-hidden="true">
+              <path d="m16 2 13 7v15l-13 7L3 24V9z M3 9l13 8 13-8 M16 17v14" />
+            </svg> Animations</span><span><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linejoin="round" aria-hidden="true">
+              <path d="m16 2 4 9 10 1-8 7 3 11-9-6-9 6 3-11-8-7 10-1z" />
+            </svg> MADE IN BLENDER</span></div>
       </div>
-    </div>
-  </section>
+      <div class="hero-art"><span class="hero-watermark" aria-hidden="true">SWAN</span><span class="scribble"
+          aria-hidden="true">ART<br>WITH<br>LOVE<br>━━━━</span><a href="gallery.html" class="featured-print"><img
+            src="images/VIVIANFINAL1.jpg" alt="Featured character render by Swan"><span class="print-label"><span
+              class="barcode"></span>3D ARTS<br>SFW / NSFW</span></a><span class="cross cross-one"
+          aria-hidden="true">+</span><span class="cross cross-two" aria-hidden="true">+</span></div>
+    </section>
+    <section class="latest-section">
+      <div class="section-heading">
+        <h2><span>✦</span> Latest work</h2>
+        <div></div><a href="gallery.html">More in gallery <span>→</span></a>
+      </div>
 
-  <!-- CONTACT -->
-  <section id="contact">
-    <div class="ct-in reveal">
-      <div class="sh">
-        <span class="sl">✦ Get in Touch</span>
-        <h2 class="st">Contact Me</h2>
-        <div class="sline"></div>
-      </div>
-      <p class="ct-desc">
-        Have a question, a commission request, or just want to say hi? Feel free to reach out. I'm most active on these
-        platforms.
-      </p>
-      <div class="ct-cards">
-        <a href="https://x.com/Swan_Nsfw" target="_blank" class="cc tw">
-          <div class="cc-ico">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path
-                d="M22 4s-.7 2.1-2 3.4c1.6 1.4 1.6 3.6 0 5.1-1.6 1.5-4.4 1.5-6 0-1.6-1.5-1.6-3.6 0-5.1s4.4-3.6 6-5.1z" />
-              <path d="M16 8.4c-1.6 1.5-1.6 3.6 0 5.1s4.4 1.5 6 0" />
-            </svg>
-          </div>
-          <div class="cc-info">
-            <div class="cc-name">X</div>
-            <div class="cc-handle">@Swan_Nsfw</div>
-          </div>
+      <div class="latest-grid"><a class="art-card lead" href="gallery.html#gallery"><img src="images/Mali.png"
+            alt="Mali, 3D artwork by Swan">
+          <div class="art-caption"><strong>Mali</strong><small>3D RENDER · SWAN</small></div><span
+            class="new-tag">NEW</span><span class="art-arrow">↗</span>
+        </a><a class="art-card " href="gallery.html#gallery"><img src="images/KpopDemon.png"
+            alt="Zoey Demon Hunter, 3D artwork by Swan" loading="lazy">
+          <div class="art-caption"><strong>Zoey Demon Hunter</strong><small>3D RENDER · SWAN</small></div><span
+            class="art-arrow">↗</span>
+        </a><a class="art-card " href="gallery.html#gallery"><img src="images/BeachHelsie.png"
+            alt="Helsie, 3D artwork by Swan" loading="lazy">
+          <div class="art-caption"><strong>Helsie</strong><small>3D RENDER · SWAN</small></div><span
+            class="art-arrow">↗</span>
+        </a><a class="art-card " href="gallery.html#gallery"><img src="images/Joni.png" alt="Joni, 3D artwork by Swan"
+            loading="lazy">
+          <div class="art-caption"><strong>Joni</strong><small>3D RENDER · SWAN</small></div><span
+            class="art-arrow">↗</span>
+        </a><a class="art-card " href="gallery.html#gallery"><img src="images/Juno.png" alt="Juno, 3D artwork by Swan"
+            loading="lazy">
+          <div class="art-caption"><strong>Juno</strong><small>3D RENDER · SWAN</small></div><span
+            class="art-arrow">↗</span>
+        </a><a class="art-card tall" href="gallery.html#gallery"><img src="images/Hope.png"
+            alt="Hope, 3D artwork by Swan" loading="lazy">
+          <div class="art-caption"><strong>Hope</strong><small>3D RENDER · SWAN</small></div><span
+            class="art-arrow">↗</span>
+        </a><a class="art-card wide" href="gallery.html#gallery"><img src="images/Beach.png"
+            alt="SunStrider, 3D artwork by Swan" loading="lazy">
+          <div class="art-caption"><strong>SunStrider</strong><small>3D RENDER · SWAN</small></div><span
+            class="art-arrow">↗</span>
         </a>
-        <a href="https://discord.com/" target="_blank" class="cc dc">
-          <div class="cc-ico">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z" />
-              <path d="M8 14s1.5 2 4 2 4-2 4-2" />
-              <line x1="9" y1="9" x2="9.01" y2="9" />
-              <line x1="15" y1="9" x2="15.01" y2="9" />
-            </svg>
-          </div>
-          <div class="cc-info">
-            <div class="cc-name">Discord</div>
-            <div class="cc-handle">LewdCastle</div>
-          </div>
+        </a><a class="art-card " href="gallery.html#gallery"><img src="images/HelsieWitch.png"
+            alt="Helsie, 3D artwork by Swan" loading="lazy">
+          <div class="art-caption"><strong>Helsie</strong><small>3D RENDER · SWAN</small></div><span
+            class="art-arrow">↗</span>
+        </a><a class="art-card tall" href="gallery.html#gallery"><img src="images/Catwoman.png"
+            alt="Coastal Catwoman, 3D artwork by Swan" loading="lazy">
+          <div class="art-caption"><strong>Coastal Catwoman</strong><small>3D RENDER · SWAN</small></div><span
+            class="art-arrow">↗</span>
         </a>
       </div>
-      <div class="cm-box">
-        <h3>Commissions are Open</h3>
-        <p>I'm currently accepting new commission work. If you're interested in a custom piece, check my commission info
-          and let's create something amazing together.</p>
-        <div class="cm-tags">
-          <span class="cm-tag">Character Art</span>
-          <span class="cm-tag">OCs</span>
-          <span class="cm-tag">Illustrations</span>
-          <span class="cm-tag">Portraits</span>
-        </div>
-        <div class="hero-cta" style="margin-top: 28px;">
-          <a href="commissions.html" class="btn-p">Commission Info</a>
-        </div>
+    </section>
+    <section class="commission-strip">
+      <div class="commission-copy">
+        <h2><span>✦</span> Commissions</h2>
+        <h3>Bring your ideas to life</h3>
+        <p>Custom 3D renders, animations and more.<br>Check out the options or send me a message with your idea.</p><a
+          class="pink-button" href="https://x.com/Swan_Nsfw" target="_blank" rel="noopener noreferrer">✉ &nbsp; DM me to
+          order! <span>→</span></a><small>MESSAGE ME ON X DISCORD · CUSTOM REQUESTS WELCOME</small><span
+          class="commission-note" aria-hidden="true">SFW<br>& NSFW<br>BOTH OK! ♡</span>
       </div>
-    </div>
-  </section>
-
-  <!-- FOOTER -->
-  <footer>
-    © 2026 SwanNsfw. All Rights Reserved. Designed with <span>♥</span>.
+      <article class="price-card"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linejoin="round" aria-hidden="true">
+          <rect x="3" y="3" width="26" height="26" rx="2" />
+          <circle cx="11" cy="11" r="2" />
+          <path d="m3 24 8-8 6 6 5-5 7 7" />
+        </svg>
+        <h3>Image</h3><strong class="price">$20</strong>
+        <ul>
+          <li>Single render</li>
+          <li>Full character or bust</li>
+          <li>Simple background</li>
+        </ul><a class="outline-button" href="commissions.html">Order <span>→</span></a>
+      </article>
+      <article class="price-card"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linejoin="round" aria-hidden="true">
+          <circle cx="16" cy="16" r="13" />
+          <path d="m13 10 9 6-9 6z" />
+        </svg>
+        <h3>Emote animation</h3><strong class="price">$35</strong>
+        <ul>
+          <li>Looping animation</li>
+          <li>Delivered as MP4</li>
+          <li>Fortnite emotes</li>
+        </ul><a class="outline-button" href="commissions.html">Order <span>→</span></a>
+      </article>
+      <article class="price-card"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linejoin="round" aria-hidden="true">
+          <path d="m16 2 13 7v15l-13 7L3 24V9z M3 9l13 8 13-8 M16 17v14" />
+        </svg>
+        <h3>Custom animation</h3><strong class="price">$50+</strong>
+        <ul>
+          <li>Full character animation</li>
+          <li>Background included</li>
+          <li>Quote provided upfront</li>
+        </ul><a class="outline-button" href="commissions.html">Order <span>→</span></a>
+      </article>
+    </section>
+    <section class="explore-section">
+      <div class="section-heading">
+        <h2><span>✦</span> Explore</h2>
+        <div></div><span class="section-kicker">Find what you like →</span>
+      </div>
+      <div class="explore-grid"><a class="explore-card" href="home.html"
+          style="--card-art:url('images/HelsieWitch.png')"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor"
+            stroke-width="2" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="16" cy="10" r="7" />
+            <path d="M3 30v-3c0-12 26-12 26 0v3z" />
+          </svg>
+          <h3>Characters</h3>
+          <p>Original characters<br>and designs</p><span>→</span>
+        </a><a class="explore-card" href="gallery.html#gallery" style="--card-art:url('images/Juno.png')"><svg
+            viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"
+            aria-hidden="true">
+            <rect x="3" y="3" width="26" height="26" rx="2" />
+            <circle cx="11" cy="11" r="2" />
+            <path d="m3 24 8-8 6 6 5-5 7 7" />
+          </svg>
+          <h3>Poses</h3>
+          <p>Pose variety<br>and references</p><span>→</span>
+        </a><a class="explore-card" href="gallery.html#gallery" style="--card-art:url('images/Beach.png')"><svg
+            viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"
+            aria-hidden="true">
+            <path d="M3 9V5h10l4 4h12v20H3z M3 14h26" />
+          </svg>
+          <h3>Scenes</h3>
+          <p>Renders and<br>compositions</p><span>→</span>
+        </a><a class="explore-card" href="about.html" style="--card-art:url('images/Mali.png')"><svg viewBox="0 0 32 32"
+            fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true">
+            <path d="m16 2 4 9 10 1-8 7 3 11-9-6-9 6 3-11-8-7 10-1z" />
+          </svg>
+          <h3>About Swan</h3>
+          <p>Meet the artist<br>behind the renders</p><span>→</span>
+        </a></div>
+    </section>
+  </main>
+  <footer class="site-footer"><a class="brand" href="index.html" aria-label="Swan NSFW home"><span>SWAN
+        <b>NSFW</b></span><small>3D ART</small></a>
+    <div class="footer-motto">hiiiiii<span>♧</span><small>© 2026 SwanNsfw</small></div>
+    <div class="socials"><a href="https://x.com/Swan_Nsfw" target="_blank" rel="noopener noreferrer"
+        aria-label="Swan on X">𝕏</a><a href="gallery.html#contact" aria-label="Contact Swan">✉</a></div>
   </footer>
-
-  <script>
-    // AGE WARNING
-    const ageWarning = document.getElementById('age-warning');
-    const btnYes = document.getElementById('btn-yes');
-    const btnNo = document.getElementById('btn-no');
-
-    if (!localStorage.getItem('ageVerified')) {
-      document.body.style.overflow = 'hidden';
-
-      btnYes.addEventListener('click', () => {
-        localStorage.setItem('ageVerified', 'true');
-        ageWarning.classList.add('hidden');
-        document.body.style.overflow = '';
-      });
-
-      btnNo.addEventListener('click', () => {
-        window.history.back();
-        setTimeout(() => {
-          window.location.href = 'https://www.google.com';
-        }, 500);
-      });
-    } else {
-      ageWarning.classList.add('hidden');
-    }
-
-    // CURSOR
-    const cur = document.getElementById('cur');
-    const curR = document.getElementById('cur-r');
-    document.addEventListener('mousemove', e => {
-      cur.style.left = e.clientX + 'px';
-      cur.style.top = e.clientY + 'px';
-      curR.style.left = e.clientX + 'px';
-      curR.style.top = e.clientY + 'px';
-    });
-
-    const links = document.querySelectorAll('a, button, .gi');
-    links.forEach(link => {
-      link.addEventListener('mouseenter', () => document.body.classList.add('cg'));
-      link.addEventListener('mouseleave', () => document.body.classList.remove('cg'));
-    });
-
-    // PARTICLES
-    const ptclContainer = document.getElementById('ptcl');
-    for (let i = 0; i < 30; i++) {
-      let p = document.createElement('div');
-      p.className = 'p';
-      p.style.left = Math.random() * 100 + 'vw';
-      p.style.top = Math.random() * 20 + 80 + 'vh';
-      p.style.width = Math.random() * 2 + 1 + 'px';
-      p.style.height = Math.random() * 18 + 10 + 'px';
-      p.style.animationDuration = Math.random() * 15 + 10 + 's';
-      p.style.animationDelay = Math.random() * -25 + 's';
-      p.style.transform = `rotate(${(Math.random() - 0.5) * 30}deg)`;
-      ptclContainer.appendChild(p);
-    }
-
-    // NAV SCROLL
-    const nav = document.getElementById('nav');
-    window.addEventListener('scroll', () => {
-      if (window.scrollY > 50) {
-        nav.classList.add('sc');
-      } else {
-        nav.classList.remove('sc');
-      }
-    });
-
-    // REVEAL ON SCROLL
-    const revealElements = document.querySelectorAll('.reveal');
-    const galleryItems = document.querySelectorAll('.gi');
-
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('vis');
-        }
-      });
-    }, { threshold: 0.1 });
-
-    const galleryObserver = new IntersectionObserver((entries) => {
-      entries.forEach((entry, index) => {
-        if (entry.isIntersecting) {
-          setTimeout(() => {
-            entry.target.classList.add('rv');
-          }, index * 100);
-          galleryObserver.unobserve(entry.target);
-        }
-      });
-    }, { threshold: 0, rootMargin: '0px 0px -30px 0px' });
-
-    // Fallback: reveal any items that the observer missed after 1.5s
-    setTimeout(() => {
-      document.querySelectorAll('.gi:not(.rv)').forEach((item, i) => {
-        setTimeout(() => item.classList.add('rv'), i * 80);
-      });
-    }, 1500);
-
-    revealElements.forEach(el => observer.observe(el));
-    galleryItems.forEach(item => galleryObserver.observe(item));
-
-    // GALLERY FILTERING
-    const filterBtns = document.querySelectorAll('.fb');
-    const allItems = document.querySelectorAll('.gi');
-
-    filterBtns.forEach(btn => {
-      btn.addEventListener('click', () => {
-        filterBtns.forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        const filter = btn.getAttribute('data-filter');
-
-        allItems.forEach(item => {
-          item.style.display = 'block';
-          if (filter !== 'all' && !item.getAttribute('data-cat').includes(filter)) {
-            item.style.display = 'none';
-          }
-        });
-      });
-    });
-
-    // LIGHTBOX
-    const lb = document.getElementById('lb');
-    const lbImg = document.getElementById('lb-img');
-    const lbClose = document.getElementById('lb-close');
-    const lbPrev = document.getElementById('lb-pv');
-    const lbNext = document.getElementById('lb-nx');
-    const lbCounter = document.getElementById('lb-ct');
-    let currentGallery = [];
-    let currentIndex = 0;
-
-    function openLightbox(index) {
-      currentIndex = index;
-      updateLightbox();
-      lb.classList.add('open');
-    }
-
-    function updateLightbox() {
-      const item = currentGallery[currentIndex];
-      const src = item.querySelector('img').src;
-      const alt = item.querySelector('img').alt;
-      lbImg.src = src;
-      lbImg.alt = alt;
-      lbCounter.textContent = `${currentIndex + 1} / ${currentGallery.length}`;
-      lbPrev.style.display = currentIndex === 0 ? 'none' : 'flex';
-      lbNext.style.display = currentIndex === currentGallery.length - 1 ? 'none' : 'flex';
-    }
-
-    function closeLightbox() {
-      lb.classList.remove('open');
-    }
-
-    function prevImage() {
-      if (currentIndex > 0) {
-        currentIndex--;
-        updateLightbox();
-      }
-    }
-
-    function nextImage() {
-      if (currentIndex < currentGallery.length - 1) {
-        currentIndex++;
-        updateLightbox();
-      }
-    }
-
-    document.querySelectorAll('.gi').forEach((item, index) => {
-      item.addEventListener('click', () => {
-        currentGallery = Array.from(document.querySelectorAll('.gi:not([style*="display: none"])'));
-        const actualIndex = currentGallery.indexOf(item);
-        openLightbox(actualIndex);
-      });
-    });
-
-    lbClose.addEventListener('click', closeLightbox);
-    lbPrev.addEventListener('click', prevImage);
-    lbNext.addEventListener('click', nextImage);
-    lb.addEventListener('click', e => {
-      if (e.target === lb) closeLightbox();
-    });
-    document.addEventListener('keydown', e => {
-      if (!lb.classList.contains('open')) return;
-      if (e.key === 'Escape') closeLightbox();
-      if (e.key === 'ArrowLeft') prevImage();
-      if (e.key === 'ArrowRight') nextImage();
-    });
-
-  </script>
 </body>
 
 </html>
