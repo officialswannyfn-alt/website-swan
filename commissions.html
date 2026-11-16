@@ -2,847 +2,124 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
-    <title>Commissions — SwanNsfw</title>
-    <meta name="description"
-        content="Commission SwanNsfw for original character art, emote animations, and full animations. Starting at $20." />
-    <link
-        href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;600;700&family=Bebas+Neue&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&display=swap"
-        rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
-    <style>
-        /* ─── COMMISSIONS-SPECIFIC STYLES ───────────────── */
-
-        /* Status banner */
-        .status-wrap {
-            display: flex;
-            justify-content: center;
-            padding: 140px 24px 0;
-            position: relative;
-            z-index: 2;
-        }
-
-        .status-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 12px;
-            padding: 14px 36px;
-            border-radius: 50px;
-            font-family: 'Bebas Neue', sans-serif;
-            font-size: 22px;
-            letter-spacing: 4px;
-            border: 1.5px solid var(--border);
-            background: var(--glass);
-            backdrop-filter: blur(16px);
-            animation: fU 0.8s 0.2s both;
-        }
-
-        .status-badge.open {
-            border-color: rgba(52, 211, 153, 0.6);
-            box-shadow: 0 0 40px rgba(52, 211, 153, 0.2), 0 0 80px rgba(52, 211, 153, 0.08);
-            color: #34d399;
-        }
-
-        .status-dot {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            background: #34d399;
-            box-shadow: 0 0 10px #34d399;
-            animation: pulse 2s ease-in-out infinite;
-        }
-
-        @keyframes pulse {
-
-            0%,
-            100% {
-                opacity: 1;
-                transform: scale(1);
-            }
-
-            50% {
-                opacity: 0.6;
-                transform: scale(1.3);
-            }
-        }
-
-        /* Page hero */
-        .cm-hero {
-            text-align: center;
-            padding: 32px 24px 0;
-            position: relative;
-            z-index: 2;
-            animation: fU 0.8s 0.35s both;
-        }
-
-        .cm-eyebrow {
-            font-size: 11px;
-            letter-spacing: 6px;
-            text-transform: uppercase;
-            color: var(--a1);
-            margin-bottom: 16px;
-        }
-
-        .cm-title {
-            font-family: 'Cormorant Garamond', serif;
-            font-style: italic;
-            font-weight: 300;
-            font-size: clamp(56px, 10vw, 120px);
-            line-height: 0.9;
-            letter-spacing: 5px;
-            background: linear-gradient(135deg, #fff 0%, var(--a3) 40%, var(--a1) 80%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .cm-sub {
-            margin-top: 18px;
-            font-size: 15px;
-            color: var(--muted);
-            max-width: 520px;
-            margin-left: auto;
-            margin-right: auto;
-            line-height: 1.75;
-        }
-
-        /* ─── SECTION WRAPPER ───────────────────────────── */
-        .cm-section {
-            position: relative;
-            z-index: 2;
-            max-width: 1100px;
-            margin: 0 auto;
-            padding: 80px 32px 0;
-        }
-
-        .cm-sh {
-            text-align: center;
-            margin-bottom: 48px;
-        }
-
-        .cm-sl {
-            display: block;
-            font-size: 10px;
-            letter-spacing: 5px;
-            text-transform: uppercase;
-            color: var(--a1);
-            margin-bottom: 10px;
-        }
-
-        .cm-st {
-            font-family: 'Cormorant Garamond', serif;
-            font-style: italic;
-            font-weight: 300;
-            font-size: clamp(38px, 5vw, 64px);
-            letter-spacing: 2px;
-            background: linear-gradient(135deg, var(--text) 0%, var(--a3) 55%, var(--a1) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            line-height: 1.05;
-        }
-
-        .cm-sline {
-            width: 56px;
-            height: 2px;
-            background: linear-gradient(90deg, var(--a1), var(--a2));
-            margin: 14px auto 0;
-            border-radius: 2px;
-        }
-
-        /* ─── TIER CARDS ────────────────────────────────── */
-        .tiers {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 20px;
-        }
-
-        .tier-card {
-            background: var(--glass);
-            border: 1px solid var(--border);
-            border-radius: 20px;
-            padding: 32px 28px;
-            backdrop-filter: blur(16px);
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-            position: relative;
-            overflow: hidden;
-            transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.4s, border-color 0.4s;
-        }
-
-        .tier-card::before {
-            content: '';
-            position: absolute;
-            inset: -1px;
-            border-radius: 21px;
-            background: linear-gradient(135deg, var(--a1), var(--a2), var(--a3));
-            z-index: -1;
-            opacity: 0;
-            transition: opacity 0.4s;
-        }
-
-        .tier-card:hover {
-            transform: translateY(-8px);
-            border-color: transparent;
-        }
-
-        .tier-card:hover::before {
-            opacity: 1;
-        }
-
-        .tier-card:hover {
-            box-shadow: 0 24px 70px rgba(0, 0, 0, 0.55), 0 0 50px rgba(255, 52, 157, 0.35);
-        }
-
-        .tier-card.featured {
-            border-color: rgba(255, 52, 157, 0.5);
-            box-shadow: 0 0 50px rgba(255, 52, 157, 0.2);
-        }
-
-        .tier-card.featured::after {
-            content: '✦ POPULAR';
-            position: absolute;
-            top: 18px;
-            right: 18px;
-            font-size: 9px;
-            letter-spacing: 2px;
-            font-weight: 700;
-            color: var(--a3);
-            background: rgba(232, 180, 204, 0.15);
-            border: 1px solid rgba(232, 180, 204, 0.4);
-            padding: 4px 10px;
-            border-radius: 50px;
-        }
-
-        .tier-icon {
-            width: 52px;
-            height: 52px;
-            border-radius: 14px;
-            background: linear-gradient(135deg, var(--a1), var(--a2));
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-            box-shadow: 0 6px 22px rgba(255, 52, 157, 0.4);
-        }
-
-        .tier-name {
-            font-family: 'Bebas Neue', sans-serif;
-            font-size: 28px;
-            letter-spacing: 2px;
-            color: var(--text);
-        }
-
-        .tier-price {
-            font-family: 'Bebas Neue', sans-serif;
-            font-size: 44px;
-            letter-spacing: 1px;
-            background: linear-gradient(135deg, #fff, var(--a3));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            line-height: 1;
-        }
-
-        .tier-price span {
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 16px;
-            font-weight: 400;
-            color: var(--muted);
-            -webkit-text-fill-color: var(--muted);
-        }
-
-        .tier-desc {
-            color: var(--muted);
-            font-size: 14px;
-            line-height: 1.7;
-            flex: 1;
-        }
-
-        .tier-features {
-            list-style: none;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .tier-features li {
-            font-size: 13px;
-            color: var(--muted);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .tier-features li::before {
-            content: '✦';
-            color: var(--a1);
-            font-size: 10px;
-            flex-shrink: 0;
-        }
-
-        .tier-btn {
-            display: block;
-            text-align: center;
-            padding: 13px 24px;
-            border-radius: 50px;
-            background: linear-gradient(135deg, var(--a1), var(--a2));
-            color: #fff;
-            text-decoration: none;
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 12px;
-            font-weight: 700;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            transition: transform 0.3s, box-shadow 0.3s;
-            box-shadow: 0 0 28px rgba(255, 52, 157, 0.35);
-            cursor: none;
-        }
-
-        .tier-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 0 50px rgba(255, 52, 157, 0.65), 0 0 100px rgba(174, 25, 101, 0.3);
-        }
-
-        /* ─── PROCESS STEPS ─────────────────────────────── */
-        .process-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 0;
-            position: relative;
-        }
-
-        .process-grid::before {
-            content: '';
-            position: absolute;
-            top: 36px;
-            left: 10%;
-            right: 10%;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, var(--a1), var(--a2), var(--a3), transparent);
-            opacity: 0.4;
-            z-index: 0;
-        }
-
-        .step {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-            gap: 16px;
-            padding: 0 16px;
-            position: relative;
-            z-index: 1;
-        }
-
-        .step-num {
-            width: 72px;
-            height: 72px;
-            border-radius: 50%;
-            background: var(--glass);
-            border: 1.5px solid var(--border);
-            backdrop-filter: blur(12px);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-family: 'Bebas Neue', sans-serif;
-            font-size: 28px;
-            letter-spacing: 1px;
-            background: linear-gradient(135deg, var(--a1), var(--a2));
-            box-shadow: 0 0 30px rgba(255, 52, 157, 0.4);
-            transition: transform 0.3s, box-shadow 0.3s;
-        }
-
-        .step:hover .step-num {
-            transform: scale(1.1);
-            box-shadow: 0 0 50px rgba(255, 52, 157, 0.7);
-        }
-
-        .step-title {
-            font-family: 'Bebas Neue', sans-serif;
-            font-size: 20px;
-            letter-spacing: 2px;
-            color: var(--text);
-        }
-
-        .step-desc {
-            font-size: 13px;
-            color: var(--muted);
-            line-height: 1.65;
-        }
-
-        /* ─── WILL / WON'T ──────────────────────────────── */
-        .tos-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-        }
-
-        .tos-box {
-            background: var(--glass);
-            border: 1px solid var(--border);
-            border-radius: 18px;
-            padding: 28px;
-            backdrop-filter: blur(14px);
-        }
-
-        .tos-box.will {
-            border-color: rgba(52, 211, 153, 0.35);
-        }
-
-        .tos-box.wont {
-            border-color: rgba(239, 68, 68, 0.35);
-        }
-
-        .tos-title {
-            font-family: 'Bebas Neue', sans-serif;
-            font-size: 26px;
-            letter-spacing: 3px;
-            margin-bottom: 18px;
-        }
-
-        .tos-box.will .tos-title {
-            color: #34d399;
-        }
-
-        .tos-box.wont .tos-title {
-            color: #f87171;
-        }
-
-        .tos-list {
-            list-style: none;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .tos-list li {
-            display: flex;
-            align-items: flex-start;
-            gap: 10px;
-            font-size: 14px;
-            color: var(--muted);
-            line-height: 1.5;
-        }
-
-        .tos-list li .ic {
-            flex-shrink: 0;
-            font-size: 14px;
-            margin-top: 1px;
-        }
-
-        /* ─── CTA BLOCK ─────────────────────────────────── */
-        .cta-block {
-            position: relative;
-            z-index: 2;
-            max-width: 720px;
-            margin: 0 auto;
-            padding: 80px 32px 120px;
-            text-align: center;
-        }
-
-        .cta-inner {
-            background: var(--glass);
-            border: 1px solid var(--border);
-            border-radius: 24px;
-            padding: 52px 40px;
-            backdrop-filter: blur(16px);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .cta-inner::before {
-            content: '';
-            position: absolute;
-            inset: -1px;
-            border-radius: 25px;
-            background: linear-gradient(135deg, var(--a1), var(--a2), var(--a3));
-            z-index: -1;
-            opacity: 0.3;
-        }
-
-        .cta-title {
-            font-family: 'Cormorant Garamond', serif;
-            font-style: italic;
-            font-weight: 300;
-            font-size: clamp(36px, 5vw, 58px);
-            letter-spacing: 3px;
-            background: linear-gradient(135deg, #fff, var(--a3));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 12px;
-        }
-
-        .cta-sub {
-            color: var(--muted);
-            font-size: 15px;
-            line-height: 1.7;
-            margin-bottom: 32px;
-        }
-
-        .cta-btns {
-            display: flex;
-            gap: 14px;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-
-        .btn-tw {
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            padding: 14px 32px;
-            border-radius: 50px;
-            background: #000;
-            color: #fff;
-            text-decoration: none;
-            border: 1.5px solid rgba(255, 255, 255, 0.2);
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 13px;
-            font-weight: 700;
-            letter-spacing: 1.5px;
-            text-transform: uppercase;
-            cursor: none;
-            transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s;
-        }
-
-        .btn-tw:hover {
-            transform: translateY(-4px);
-            border-color: rgba(255, 255, 255, 0.5);
-            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
-        }
-
-        .btn-tw svg {
-            flex-shrink: 0;
-        }
-
-        /* ─── FOOTER ────────────────────────────────────── */
-        footer {
-            position: relative;
-            z-index: 2;
-            text-align: center;
-            padding: 32px 24px;
-            border-top: 1px solid var(--border);
-            color: var(--muted);
-            font-size: 12px;
-            letter-spacing: 1px;
-        }
-
-        footer span {
-            color: var(--a1);
-        }
-
-        @keyframes fU {
-            from {
-                opacity: 0;
-                transform: translateY(28px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        /* responsive */
-        @media (max-width: 700px) {
-            .tos-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .process-grid::before {
-                display: none;
-            }
-
-            .cta-inner {
-                padding: 36px 24px;
-            }
-        }
-
-        @media (max-width: 900px) {
-            nav {
-                padding: 16px 24px;
-            }
-
-            .nav-links {
-                gap: 20px;
-            }
-        }
-
-        @media (max-width: 600px) {
-            .nav-links {
-                display: none;
-            }
-        }
-    </style>
-    <link rel="stylesheet" href="theme.css">
-    <script src="site.js" defer></script>
-    <script src="commission-previews.js" defer></script>
-    <link rel="stylesheet" href="commission-previews.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Commissions, Swan</title>
+  <meta name="description" content="Commission Swan for 3D renders, emote animations and custom animations. From $20.">
+  <meta name="theme-color" content="#0c0a0c">
+  <link rel="icon" href="images/SWAN.png">
+  <link rel="stylesheet" href="site.css">
+  <script src="site.js" defer></script>
+  <script src="commission-previews.js" defer></script>
 </head>
 
-<body class="commissions-page">
-
-    <div id="cur"></div>
-    <div id="cur-r"></div>
-
-    <div class="orbs">
-        <div class="orb o1"></div>
-        <div class="orb o2"></div>
-        <div class="orb o3"></div>
+<body>
+  <header class="site-header">
+    <div class="wrap"><a class="wordmark" href="index.html">Swan<span>3D art</span></a>
+      <nav class="site-nav" aria-label="Main"><a href="gallery.html">Work</a><a href="characters.html">Characters</a><a href="commissions.html" aria-current="page">Commissions</a><a href="about.html">About</a></nav>
+      <a class="status" href="commissions.html">Commissions open</a>
     </div>
-    <div class="grid-ov"></div>
-    <div id="ptcl"></div>
-
-    <!-- NAV -->
-    <nav id="nav" class="site-nav"><a class="brand" href="index.html" aria-label="Swan NSFW home"><span>SWAN
-                <b>NSFW</b></span><small>3D ART</small></a><button class="menu-toggle" aria-label="Toggle navigation"
-            aria-expanded="false">☰</button>
-        <ul class="nav-links">
-            <li><a href="index.html">Home</a></li>
-            <li><a href="gallery.html">Gallery</a></li>
-            <li><a href="home.html">Characters</a></li>
-            <li><a href="commissions.html" class="active" aria-current="page">Commissions</a></li>
-            <li><a href="about.html">About Me</a></li>
-            <li><a href="gallery.html#contact">Contact</a></li>
-        </ul><a class="open-badge" href="commissions.html"><i></i> Commissions open</a>
-    </nav>
-
-    <!-- STATUS BANNER -->
-    <div class="status-wrap">
-        <div class="status-badge open">
-            <div class="status-dot"></div>
-            Commissions Open
-        </div>
+  </header>
+  <main>
+    <div class="wrap page-head">
+      <h1>Commissions</h1>
+      <p class="lede">Open now. DM me on X with your idea and references, and I'll get back to you with a price.</p>
     </div>
 
-    <!-- HERO -->
-    <div class="cm-hero">
-        <p class="cm-eyebrow">✦ Original Art · Animation · Character Design ✦</p>
-        <h1 class="cm-title">Commission<br>Me</h1>
-        <p class="cm-sub">Dark, expressive character art crafted with care. Pick a tier below, reach out, and let's make
-            something you'll love.</p>
-    </div>
-
-    <!-- TIER CARDS -->
-    <section class="cm-section">
-        <div class="cm-sh reveal">
-            <span class="cm-sl">✦ Pricing</span>
-            <h2 class="cm-st">Pick Your Tier</h2>
-            <div class="cm-sline"></div>
-        </div>
-
-        <div class="tiers">
-
-            <div class="tier-card reveal">
-                <div class="tier-icon">🎨</div>
-                <div class="tier-name">Simple Illustration</div>
-                <div class="tier-price">$20 <span>starting at</span></div>
-                <p class="tier-desc">Character Images of the pose you want with 3 clothing variants</p>
-                <ul class="tier-features">
-                    <li>Full character or bust</li>
-                    <li>Simple or no background</li>
-                    <li>1 round of revisions</li>
-                </ul>
-                <button type="button" class="tier-btn" data-preview="image" aria-haspopup="dialog"
-                    aria-controls="commission-preview">Request →</button>
-            </div>
-
-            <div class="tier-card featured reveal">
-                <div class="tier-icon">✨</div>
-                <div class="tier-name">Emote Animation</div>
-                <div class="tier-price">$35 <span>flat</span></div>
-                <p class="tier-desc">Make characters do any Fortnite emote you want clothed or not.</p>
-                <ul class="tier-features">
-                    <li>Looping animation</li>
-                    <li>Delivered as MP4</li>
-                </ul>
-                <button type="button" class="tier-btn" data-preview="emote" aria-haspopup="dialog"
-                    aria-controls="commission-preview">Request →</button>
-            </div>
-
-            <div class="tier-card reveal">
-                <div class="tier-icon">🎬</div>
-                <div class="tier-name">Full Animation</div>
-                <div class="tier-price">$50+ <span>starting at</span></div>
-                <p class="tier-desc">Complex animations of any kind. Price scales with complexity.</p>
-                <ul class="tier-features">
-                    <li>Full character animation</li>
-                    <li>Background included</li>
-                    <li>Quote provided upfront</li>
-                </ul>
-                <button type="button" class="tier-btn" data-preview="animation" aria-haspopup="dialog"
-                    aria-controls="commission-preview">Request →</button>
-            </div>
-
-        </div>
+    <section class="wrap" aria-labelledby="prices-title">
+      <h2 id="prices-title" class="section-head">Prices</h2>
+      <div class="prices">
+          <div class="price-row"><h3>Image</h3><span class="price">from $20</span><p>A character in the pose you want, with 3 clothing variants. Full character or bust, simple or no background, 1 round of revisions.</p><div class="price-actions"><button type="button" class="link" data-preview="image" aria-haspopup="dialog" aria-controls="commission-preview">See an example</button></div></div>
+          <div class="price-row"><h3>Emote animation</h3><span class="price">$35</span><p>Any Fortnite emote you want, clothed or not. Looping, delivered as MP4.</p><div class="price-actions"><button type="button" class="link" data-preview="emote" aria-haspopup="dialog" aria-controls="commission-preview">See an example</button></div></div>
+          <div class="price-row"><h3>Custom animation</h3><span class="price">$50+</span><p>Full character animation with a background. Price depends on complexity, and you get a quote upfront.</p><div class="price-actions"><button type="button" class="link" data-preview="animation" aria-haspopup="dialog" aria-controls="commission-preview">See an example</button></div></div>
+      </div>
     </section>
 
-    <!-- PROCESS STEPS -->
-    <section class="cm-section">
-        <div class="cm-sh reveal">
-            <span class="cm-sl">✦ How it works</span>
-            <h2 class="cm-st">The Process</h2>
-            <div class="cm-sline"></div>
-        </div>
-
-        <div class="process-grid">
-            <div class="step reveal">
-                <div class="step-num">1</div>
-                <div class="step-title">Contact Me</div>
-                <p class="step-desc">DM me on Twitter with your idea, reference images, and which tier you want.</p>
-            </div>
-            <div class="step reveal">
-                <div class="step-num">2</div>
-                <div class="step-title">Quote & Payment</div>
-                <p class="step-desc">I'll confirm the scope, send a quote, and start working on your commission after
-                    receiving payment.</p>
-            </div>
-            <div class="step reveal">
-                <div class="step-num">3</div>
-                <div class="step-title">WIP Approval</div>
-                <p class="step-desc">I share a rough WIP for your feedback before moving to shading and rendering.
-                </p>
-            </div>
-            <div class="step reveal">
-                <div class="step-num">4</div>
-                <div class="step-title">Final Delivery</div>
-                <p class="step-desc">You receive the high-res file ready to use however you like.
-                </p>
-            </div>
-        </div>
+    <section class="wrap section" aria-labelledby="process-title">
+      <h2 id="process-title" class="section-head">How it works</h2>
+      <ol class="steps">
+        <li>
+          <h3>Message me</h3>
+          <p>DM me on X with your idea, reference images and which option you want.</p>
+        </li>
+        <li>
+          <h3>Quote and payment</h3>
+          <p>I confirm the scope and send a quote. I start once payment is in.</p>
+        </li>
+        <li>
+          <h3>WIP check</h3>
+          <p>You get a rough WIP to give feedback on before I move to lighting and rendering.</p>
+        </li>
+        <li>
+          <h3>Delivery</h3>
+          <p>You get the high-res file, yours to use however you like.</p>
+        </li>
+      </ol>
     </section>
 
-    <!-- WILL / WON'T -->
-    <section class="cm-section">
-        <div class="cm-sh reveal">
-            <span class="cm-sl">✦ Terms of Service</span>
-            <h2 class="cm-st">Will &amp; Won't Render</h2>
-            <div class="cm-sline"></div>
+    <section class="wrap section" aria-labelledby="rules-title">
+      <h2 id="rules-title" class="section-head">What I will and won't render</h2>
+      <div class="rules">
+        <div>
+          <h3>Will</h3>
+          <ul>
+            <li>Original characters (if you provide the model)</li>
+            <li>Fan art of existing characters</li>
+            <li>Furry and anthro characters</li>
+            <li>NSFW (18+ only)</li>
+            <li>Dark themes</li>
+            <li>VTuber and streamer assets</li>
+            <li>Couples and group shots</li>
+          </ul>
         </div>
-
-        <div class="tos-grid">
-            <div class="tos-box will reveal">
-                <div class="tos-title">✦ Will Render</div>
-                <ul class="tos-list">
-                    <li><span class="ic">✅</span> Original characters (If model is provided)</li>
-                    <li><span class="ic">✅</span> Fan art of existing characters</li>
-                    <li><span class="ic">✅</span> Furry / anthropomorphic characters</li>
-                    <li><span class="ic">✅</span> NSFW content (18+ only)</li>
-                    <li><span class="ic">✅</span> Dark themes</li>
-                    <li><span class="ic">✅</span> VTuber &amp; streamer assets</li>
-                    <li><span class="ic">✅</span> Couples &amp; group shots</li>
-                </ul>
-            </div>
-            <div class="tos-box wont reveal">
-                <div class="tos-title">✦ Won't Render</div>
-                <ul class="tos-list">
-                    <li><span class="ic">❌</span> Minor characters in NSFW context</li>
-                    <li><span class="ic">❌</span> Hate symbols or discriminatory content</li>
-                    <li><span class="ic">❌</span> Traced or plagiarised references</li>
-                    <li><span class="ic">❌</span> Heavily complex mechs / armor (ask first)</li>
-                </ul>
-            </div>
+        <div>
+          <h3>Won't</h3>
+          <ul>
+            <li>Minors in any NSFW context</li>
+            <li>Hate symbols or discriminatory content</li>
+            <li>Traced or plagiarised references</li>
+            <li>Very complex mechs or armor (ask first)</li>
+          </ul>
         </div>
+      </div>
     </section>
 
-    <!-- CTA -->
-    <div class="cta-block">
-        <div class="cta-inner reveal">
-            <div class="cta-title">Ready to Order?</div>
-            <p class="cta-sub">Slots are limited. Send me a DM on Twitter to claim your spot — I reply fast and love
-                hearing your ideas!</p>
-            <div class="cta-btns">
-                <a href="https://x.com/Swan_Nsfw" target="_blank" class="btn-tw">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
-                        fill="currentColor">
-                        <path
-                            d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.73-8.835L1.254 2.25H8.08l4.262 5.636 5.902-5.636Zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
-                    </svg>
-                    DM on Twitter / X
-                </a>
-            </div>
+    <section class="wrap section">
+      <div class="cta">
+        <div>
+          <h2>Ready to order?</h2>
+          <p>Slots are limited. DM me and tell me what you have in mind.</p>
         </div>
-    </div>
+        <div class="intro-actions"><a class="button" href="https://x.com/Swan_Nsfw" target="_blank"
+            rel="noopener noreferrer">DM me on X</a><a class="link" href="https://discord.gg/askz9kZTuz" target="_blank"
+            rel="noopener noreferrer">or join the Discord</a></div>
+      </div>
+    </section>
 
-    <dialog id="commission-preview" class="commission-preview" aria-labelledby="preview-title">
-        <div class="preview-header">
-            <div>
-                <p class="preview-eyebrow">Commission preview (Example)</p>
-                <h2 id="preview-title"></h2>
-            </div>
-            <button type="button" class="preview-close" aria-label="Close preview" autofocus>×</button>
+    <dialog id="commission-preview" class="preview" aria-labelledby="preview-title">
+      <div class="preview-head">
+        <div>
+          <p class="label">Example</p>
+          <h2 id="preview-title"></h2>
         </div>
-        <div id="preview-media" class="preview-media"></div>
-        <p id="preview-status" class="preview-status" role="status"></p>
-        <div class="preview-actions">
-            <a id="preview-x-link" class="outline-button" target="_blank" rel="noopener noreferrer" hidden>Open on X
-                ↗</a>
-            <a class="pink-button" href="https://x.com/Swan_Nsfw" target="_blank" rel="noopener noreferrer">Request this
-                commission <span>→</span></a>
-        </div>
+        <button type="button" class="preview-close" aria-label="Close preview" autofocus>Close</button>
+      </div>
+      <div id="preview-media" class="preview-media"></div>
+      <p id="preview-status" class="preview-status" role="status"></p>
+      <div class="preview-actions">
+        <a id="preview-x-link" class="link" target="_blank" rel="noopener noreferrer" hidden>Open on X</a>
+        <a class="button" href="https://x.com/Swan_Nsfw" target="_blank" rel="noopener noreferrer">Request this</a>
+      </div>
     </dialog>
-
-    <!-- FOOTER -->
-    <footer class="site-footer"><a class="brand" href="index.html" aria-label="Swan NSFW home"><span>SWAN
-                <b>NSFW</b></span><small> 3D ART</small></a>
-        <div class="footer-motto">SAME CHARACTERS. MORE STORIES.<span>♧</span><small>© 2026 SwanNsfw</small></div>
-        <div class="socials"><a href="https://x.com/Swan_Nsfw" target="_blank" rel="noopener noreferrer"
-                aria-label="Swan on X">𝕏</a><a href="gallery.html#contact" aria-label="Contact Swan">✉</a></div>
-    </footer>
-
-    <script>
-        // ─── CURSOR
-        const cur = document.getElementById('cur');
-        const curR = document.getElementById('cur-r');
-        document.addEventListener('mousemove', e => {
-            cur.style.left = e.clientX + 'px';
-            cur.style.top = e.clientY + 'px';
-            curR.style.left = e.clientX + 'px';
-            curR.style.top = e.clientY + 'px';
-        });
-        document.querySelectorAll('a, button, .tier-card, .step').forEach(el => {
-            el.addEventListener('mouseenter', () => document.body.classList.add('cg'));
-            el.addEventListener('mouseleave', () => document.body.classList.remove('cg'));
-        });
-
-        // ─── PARTICLES
-        const ptcl = document.getElementById('ptcl');
-        for (let i = 0; i < 30; i++) {
-            let p = document.createElement('div');
-            p.className = 'p';
-            p.style.left = Math.random() * 100 + 'vw';
-            p.style.top = Math.random() * 100 + 'vh';
-            p.style.width = Math.random() * 2 + 1 + 'px';
-            p.style.height = Math.random() * 18 + 10 + 'px';
-            p.style.animationDuration = Math.random() * 15 + 10 + 's';
-            p.style.animationDelay = Math.random() * -25 + 's';
-            p.style.transform = `rotate(${(Math.random() - 0.5) * 30}deg)`;
-            ptcl.appendChild(p);
-        }
-
-        // ─── NAV SCROLL
-        const nav = document.getElementById('nav');
-        window.addEventListener('scroll', () => {
-            nav.classList.toggle('sc', window.scrollY > 50);
-        }, { passive: true });
-
-        // ─── REVEAL ON SCROLL
-        const observer = new IntersectionObserver(entries => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) entry.target.classList.add('vis');
-            });
-        }, { threshold: 0.08 });
-        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
-
-        // Fallback reveal
-        setTimeout(() => {
-            document.querySelectorAll('.reveal:not(.vis)').forEach(el => el.classList.add('vis'));
-        }, 1200);
-    </script>
+  </main>
+  <footer class="site-footer">
+    <div class="wrap"><a class="wordmark" href="index.html">Swan<span>3D art</span></a>
+      <nav aria-label="Elsewhere"><a href="https://x.com/Swan_Nsfw" target="_blank" rel="noopener noreferrer">X</a><a
+          href="https://discord.gg/askz9kZTuz" target="_blank" rel="noopener noreferrer">Discord</a><a
+          href="about.html#contact">Contact</a></nav>
+      <small>© 2026 SwanNsfw</small>
+    </div>
+  </footer>
 </body>
 
 </html>

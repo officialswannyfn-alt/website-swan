@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Characters, Swan</title>
+  <meta name="description" content="Swan's original characters.">
+  <meta name="theme-color" content="#0c0a0c">
+  <link rel="icon" href="images/SWAN.png">
+  <link rel="stylesheet" href="site.css">
+  <script src="site.js" defer></script>
+</head>
+
+<body>
+  <header class="site-header">
+    <div class="wrap"><a class="wordmark" href="index.html">Swan<span>3D art</span></a>
+      <nav class="site-nav" aria-label="Main"><a href="gallery.html">Work</a><a href="characters.html" aria-current="page">Characters</a><a href="commissions.html">Commissions</a><a href="about.html">About</a></nav>
+      <a class="status" href="commissions.html">Commissions open</a>
+    </div>
+  </header>
+  <main>
+    <div class="wrap page-head">
+      <h1>Characters</h1>
+      <p class="lede">My own cast. Still building this page out, more characters soon.</p>
+    </div>
+    <section class="wrap" aria-label="Character profiles">
+      <div class="cast" id="cast" role="group" aria-label="Choose a character"></div>
+      <article class="profile" aria-live="polite">
+        <div class="profile-art">
+          <img id="art" src="images/web/HELSIE-TEST1.jpg" alt="" width="2000" height="833">
+          <div class="outfits" id="outfits"><span id="outfit-label"></span><button type="button" id="prev"
+              aria-label="Previous outfit">← Prev</button><button type="button" id="next" aria-label="Next outfit">Next →</button></div>
+        </div>
+        <div class="profile-info">
+          <p class="label" id="group"></p>
+          <h2 id="name"></h2>
+          <p id="desc"></p>
+          <dl class="profile-facts" id="facts"></dl>
+        </div>
+        <div class="profile-side">
+          <div class="profile-block">
+            <h3>Stats</h3>
+            <div id="stats"></div>
+          </div>
+          <div class="profile-block" id="gear-block">
+            <h3>Gear</h3>
+            <div class="chips" id="gear"></div>
+          </div>
+          <div class="profile-block" id="friends-block">
+            <h3>Appears with</h3>
+            <div class="chips" id="friends"></div>
+          </div>
+        </div>
+      </article>
+    </section>
+    <script>
+      // To add a character, copy one of the objects below. Images live in images/web/ (or images/).
+      const CHARACTERS = [
+        {
+          name: 'Helsie',
+          group: 'High Stakes Club',
+          thumbnail: 'images/Helsie_thumb.png',
+          outfits: ['images/web/HELSIE-TEST1.jpg', 'images/web/HELSIE-TEST33.jpg', 'images/web/HELSIE-TEST22.jpg'],
+          description: 'The dumbass of the group. Boba tea artist, skilled vampire hunter.',
+          facts: { Role: 'Dumbahh', Age: '19', Race: 'Human', Height: '165 cm', Weight: '52 kg', Status: 'Active' },
+          stats: { STR: 65, AGI: 90, INT: 45, VIT: 70 },
+          gear: [{ name: 'AX', type: 'Melee', icon: 'images/AX.png' }],
+          friends: ['Joni']
+        },
+        {
+          name: 'Joni',
+          group: 'Chors N Chaos',
+          thumbnail: 'images/web/HELSIE-TESTJ.jpg',
+          outfits: ['images/web/HELSIE-TESTJ.jpg'],
+          description: 'The leader.',
+          facts: { Role: 'Leader', Age: '21', Race: 'Human', Height: '172 cm', Weight: '60 kg', Status: 'Active' },
+          stats: { STR: 75, AGI: 80, INT: 85, VIT: 60 },
+          gear: [{ name: 'Bass', type: 'Instrument' }],
+          friends: ['Helsie']
+        }
+      ];
+
+      const $ = id => document.getElementById(id);
+      const el = (tag, props = {}, ...kids) => { const n = Object.assign(document.createElement(tag), props); n.append(...kids); return n; };
+      let current = 0, outfit = 0;
+
+      function showOutfit() {
+        const c = CHARACTERS[current];
+        const art = $('art');
+        art.classList.add('swap');
+        setTimeout(() => {
+          art.src = c.outfits[outfit];
+          art.alt = `${c.name}, outfit ${outfit + 1}`;
+          art.classList.remove('swap');
+        }, 160);
+        $('outfits').hidden = c.outfits.length < 2;
+        $('outfit-label').textContent = `Outfit ${outfit + 1} of ${c.outfits.length}`;
+      }
+
+      function show(index) {
+        current = index; outfit = 0;
+        const c = CHARACTERS[current];
+        document.querySelectorAll('#cast button').forEach((b, i) => b.setAttribute('aria-pressed', String(i === current)));
+        $('group').textContent = c.group;
+        $('name').textContent = c.name;
+        $('desc').textContent = c.description;
+        $('facts').replaceChildren(...Object.entries(c.facts).map(([k, v]) => el('div', {}, el('dt', { textContent: k }), el('dd', { textContent: v }))));
+        $('stats').replaceChildren(...Object.entries(c.stats).map(([k, v]) => {
+          const bar = el('i'); bar.style.setProperty('--v', v + '%');
+          return el('div', { className: 'stat' }, el('b', { textContent: k }), bar, el('span', { textContent: v }));
+        }));
+        $('gear-block').hidden = !c.gear?.length;
+        $('gear').replaceChildren(...(c.gear || []).map(g => el('span', {},
+          ...(g.icon ? [el('img', { src: g.icon, alt: '' })] : []), g.name, el('small', { textContent: g.type }))));
+        const friends = (c.friends || []).map(n => CHARACTERS.findIndex(x => x.name === n)).filter(i => i >= 0);
+        $('friends-block').hidden = !friends.length;
+        $('friends').replaceChildren(...friends.map(i => {
+          const b = el('button', { type: 'button' }, el('img', { src: CHARACTERS[i].thumbnail, alt: '' }), CHARACTERS[i].name);
+          b.addEventListener('click', () => show(i));
+          return b;
+        }));
+        showOutfit();
+      }
+
+      $('cast').append(...CHARACTERS.map((c, i) => {
+        const b = el('button', { type: 'button' }, el('img', { src: c.thumbnail, alt: '' }), c.name);
+        b.addEventListener('click', () => show(i));
+        return b;
+      }));
+      $('prev').addEventListener('click', () => { const n = CHARACTERS[current].outfits.length; outfit = (outfit - 1 + n) % n; showOutfit(); });
+      $('next').addEventListener('click', () => { const n = CHARACTERS[current].outfits.length; outfit = (outfit + 1) % n; showOutfit(); });
+      show(0);
+    </script>
+  </main>
+  <footer class="site-footer">
+    <div class="wrap"><a class="wordmark" href="index.html">Swan<span>3D art</span></a>
+      <nav aria-label="Elsewhere"><a href="https://x.com/Swan_Nsfw" target="_blank" rel="noopener noreferrer">X</a><a
+          href="https://discord.gg/askz9kZTuz" target="_blank" rel="noopener noreferrer">Discord</a><a
+          href="about.html#contact">Contact</a></nav>
+      <small>© 2026 SwanNsfw</small>
+    </div>
+  </footer>
+</body>
+
+</html>

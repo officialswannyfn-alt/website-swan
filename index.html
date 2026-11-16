@@ -4,238 +4,87 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Swan — 3D Art</title>
-  <meta name="description"
-    content="3D character art, renders and custom animations by Swan. Explore the gallery and commission your next idea.">
-  <link rel="stylesheet" href="theme.css">
+  <title>Swan, 3D art</title>
+  <meta name="description" content="3D renders and animations by Swan: Fortnite, Overwatch, Genshin and original characters. Commissions open.">
+  <meta name="theme-color" content="#0c0a0c">
+  <link rel="icon" href="images/SWAN.png">
+  <link rel="stylesheet" href="site.css">
   <script src="site.js" defer></script>
 </head>
 
-<body class="landing-page">
-  <div id="age-warning" class="age-modal">
-    <div class="age-modal-content">
-      <div class="sh" style="margin-bottom: 24px; margin-top: 0;">
-        <span class="sl">✦ Warning</span>
-        <h2 class="st" style="font-size: 36px;">18+ Content</h2>
-        <div class="sline"></div>
-      </div>
-      <p
-        style="margin-bottom: 24px; color: var(--muted); font-size: 15px; text-align: center; max-width: 400px; line-height: 1.6;">
-        This website contains adult content. By entering, you confirm that you are at least 18 years of age.
-      </p>
-      <div style="display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;">
-        <button id="btn-yes" class="btn-p" style="padding: 12px 28px; font-size: 13px;">Yes, I am 18+</button>
-        <button id="btn-no" class="btn-g" style="padding: 12px 28px; font-size: 13px;">No, Exit</button>
-      </div>
+<body>
+  <header class="site-header">
+    <div class="wrap"><a class="wordmark" href="index.html">Swan<span>3D art</span></a>
+      <nav class="site-nav" aria-label="Main"><a href="gallery.html">Work</a><a href="characters.html">Characters</a><a href="commissions.html">Commissions</a><a href="about.html">About</a></nav>
+      <a class="status" href="commissions.html">Commissions open</a>
     </div>
-  </div>
-  <nav id="nav" class="site-nav"><a class="brand" href="index.html" aria-label="Swan NSFW home"><span>SWAN
-        <b>NSFW</b></span><small>3D ART</small></a><button class="menu-toggle" aria-label="Toggle navigation"
-      aria-expanded="false">☰</button>
-    <ul class="nav-links">
-      <li><a href="index.html" class="active" aria-current="page">Home</a></li>
-      <li><a href="gallery.html">Gallery</a></li>
-      <li><a href="home.html">Characters</a></li>
-      <li><a href="commissions.html">Commissions</a></li>
-      <li><a href="about.html">About Me</a></li>
-      <li><a href="gallery.html#contact">Contact</a></li>
-    </ul><a class="open-badge" href="commissions.html"><i></i> Commissions open</a>
-  </nav>
-  <main class="site-main">
-    <section class="landing-hero">
-      <div class="hero-copy">
-        <p class="eyebrow">SFW <span>×</span> NSFW <span>×</span> 3D RENDERS</p>
-        <h1>SWAN'S<br><em>3D ART</em></h1>
-        <p class="hero-description">Characters, pinups, poses and<br class="desktop-break"> commissioned artwork.
-        </p>
-        <div class="actions"><a class="pink-button" href="gallery.html">View gallery <span>→</span></a><a
-            class="outline-button" href="commissions.html">Commissions <span>→</span></a></div>
-        <div class="specialties"><span><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2"
-              stroke-linejoin="round" aria-hidden="true">
-              <rect x="3" y="3" width="26" height="26" rx="2" />
-              <circle cx="11" cy="11" r="2" />
-              <path d="m3 24 8-8 6 6 5-5 7 7" />
-            </svg> 3D RENDERS</span><span><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2"
-              stroke-linejoin="round" aria-hidden="true">
-              <path d="m16 2 13 7v15l-13 7L3 24V9z M3 9l13 8 13-8 M16 17v14" />
-            </svg> Animations</span><span><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2"
-              stroke-linejoin="round" aria-hidden="true">
-              <path d="m16 2 4 9 10 1-8 7 3 11-9-6-9 6 3-11-8-7 10-1z" />
-            </svg> MADE IN BLENDER</span></div>
+  </header>
+  <main>
+    <section class="wrap intro">
+      <div class="intro-copy">
+        <h1>3D renders by Swan.</h1>
+        <p class="lede">Fortnite, Overwatch, Genshin and my own characters, SFW and NSFW. Made in Blender.</p>
+        <div class="intro-actions"><a class="button" href="gallery.html">See the work</a><a class="link arrow"
+            href="commissions.html">Commissions from $20</a></div>
       </div>
-      <div class="hero-art"><span class="hero-watermark" aria-hidden="true">SWAN</span><span class="scribble"
-          aria-hidden="true">ART<br>WITH<br>LOVE<br>━━━━</span><a href="gallery.html" class="featured-print"><img
-            src="images/VIVIANFINAL1.jpg" alt="Featured character render by Swan"><span class="print-label"><span
-              class="barcode"></span>3D ARTS<br>SFW / NSFW</span></a><span class="cross cross-one"
-          aria-hidden="true">+</span><span class="cross cross-two" aria-hidden="true">+</span></div>
+      <figure class="intro-art"><img src="images/web/Mali.jpg" alt="Mali, 3D render by Swan" width="1728" height="2000" fetchpriority="high">
+        <figcaption>Mali<span>Newest, 2026</span></figcaption>
+      </figure>
     </section>
-    <!--
-      ✦ CURRENTLY WORKING ON ✦
-      To update: change the title, type, client and note below.
-      data-stage = how far along it is (1 Planning, 2 Posing, 3 Lighting, 4 Rendering, 5 Delivered).
-      Optional sneak peek: put an img tag (pointing at a file in images/) inside .wip-peek (it shows blurred).
-      Nothing in progress? Add the word hidden to the section:  <section class="wip-section" hidden>
-    -->
-    <section class="wip-section" data-stage="2" aria-labelledby="wip-title">
-      <div class="section-heading">
-        <h2><span>✦</span> On the desk</h2>
-        <div></div><span class="section-kicker">Updated live-ish ♡</span>
-      </div>
-      <article class="wip-card">
-        <div class="wip-peek" aria-hidden="true">
-          <span class="wip-stamp">WIP</span>
-        </div>
-        <div class="wip-body">
-          <p class="wip-status"><i></i> Swan is currently working on</p>
-          <h3 id="wip-title">Custom emote animation</h3>
-          <p class="wip-meta">Commission <span>·</span> for a lovely client</p>
-          <p class="wip-note">Blocking out the poses and timing right now. Sneak peek soon!</p>
-          <ol class="wip-steps">
-            <li>Planning</li>
-            <li>Posing</li>
-            <li>Lighting</li>
-            <li>Rendering</li>
-            <li>Delivered</li>
-          </ol>
-          <a class="outline-button" href="commissions.html">Get in the queue <span>→</span></a>
-        </div>
-      </article>
-    </section>
-    <section class="latest-section">
-      <div class="section-heading">
-        <h2><span>✦</span> Latest work</h2>
-        <div></div><a href="gallery.html">More in gallery <span>→</span></a>
-      </div>
 
-      <div class="latest-grid"><a class="art-card lead" href="gallery.html#gallery"><img src="images/Mali.png"
-            alt="Mali, 3D artwork by Swan">
-          <div class="art-caption"><strong>Mali</strong><small>3D RENDER · SWAN</small></div><span
-            class="new-tag">NEW</span><span class="art-arrow">↗</span>
-        </a><a class="art-card " href="gallery.html#gallery"><img src="images/KpopDemon.png"
-            alt="Zoey Demon Hunter, 3D artwork by Swan" loading="lazy">
-          <div class="art-caption"><strong>Zoey Demon Hunter</strong><small>3D RENDER · SWAN</small></div><span
-            class="art-arrow">↗</span>
-        </a><a class="art-card " href="gallery.html#gallery"><img src="images/BeachHelsie.png"
-            alt="Helsie, 3D artwork by Swan" loading="lazy">
-          <div class="art-caption"><strong>Helsie</strong><small>3D RENDER · SWAN</small></div><span
-            class="art-arrow">↗</span>
-        </a><a class="art-card " href="gallery.html#gallery"><img src="images/Joni.png" alt="Joni, 3D artwork by Swan"
-            loading="lazy">
-          <div class="art-caption"><strong>Joni</strong><small>3D RENDER · SWAN</small></div><span
-            class="art-arrow">↗</span>
-        </a><a class="art-card " href="gallery.html#gallery"><img src="images/Juno.png" alt="Juno, 3D artwork by Swan"
-            loading="lazy">
-          <div class="art-caption"><strong>Juno</strong><small>3D RENDER · SWAN</small></div><span
-            class="art-arrow">↗</span>
-        </a><a class="art-card tall" href="gallery.html#gallery"><img src="images/Hope.png"
-            alt="Hope, 3D artwork by Swan" loading="lazy">
-          <div class="art-caption"><strong>Hope</strong><small>3D RENDER · SWAN</small></div><span
-            class="art-arrow">↗</span>
-        </a><a class="art-card wide" href="gallery.html#gallery"><img src="images/Beach.png"
-            alt="SunStrider, 3D artwork by Swan" loading="lazy">
-          <div class="art-caption"><strong>SunStrider</strong><small>3D RENDER · SWAN</small></div><span
-            class="art-arrow">↗</span>
-        </a>
-        </a><a class="art-card " href="gallery.html#gallery"><img src="images/HelsieWitch.png"
-            alt="Helsie, 3D artwork by Swan" loading="lazy">
-          <div class="art-caption"><strong>Helsie</strong><small>3D RENDER · SWAN</small></div><span
-            class="art-arrow">↗</span>
-        </a><a class="art-card tall" href="gallery.html#gallery"><img src="images/Catwoman.png"
-            alt="Coastal Catwoman, 3D artwork by Swan" loading="lazy">
-          <div class="art-caption"><strong>Coastal Catwoman</strong><small>3D RENDER · SWAN</small></div><span
-            class="art-arrow">↗</span>
-        </a>
+    <!--
+      ON THE DESK: what Swan is working on right now.
+      Edit the title and note. data-stage is how far along it is (1 to 5, matching data-steps).
+      Nothing in progress? Add the word hidden:  <section class="desk" hidden ...>
+    -->
+    <section class="desk" data-stage="2" data-steps="Planning,Posing,Lighting,Rendering,Delivered" aria-labelledby="desk-title">
+      <div class="wrap">
+        <div class="label">On the desk right now</div>
+        <div>
+          <h3 id="desk-title">Custom emote animation</h3>
+          <p>Commission. Blocking out the poses and timing.</p>
+        </div>
+        <div class="desk-progress"><span class="desk-text">Step 2 of 5: <strong>Posing</strong></span>
+          <div class="desk-bar"><i></i></div>
+        </div>
       </div>
     </section>
-    <section class="commission-strip">
-      <div class="commission-copy">
-        <h2><span>✦</span> Commissions</h2>
-        <h3>Bring your ideas to life</h3>
-        <p>Custom 3D renders, animations and more.<br>Check out the options or send me a message with your idea.</p><a
-          class="pink-button" href="https://x.com/Swan_Nsfw" target="_blank" rel="noopener noreferrer">✉ &nbsp; DM me to
-          order! <span>→</span></a><small>MESSAGE ME ON X DISCORD · CUSTOM REQUESTS WELCOME</small><span
-          class="commission-note" aria-hidden="true">SFW<br>& NSFW<br>BOTH OK! ♡</span>
+
+    <section class="wrap section" aria-labelledby="recent-title">
+      <div class="section-head">
+        <h2 id="recent-title">Recent work</h2><a class="link arrow" href="gallery.html">All 15 pieces</a>
       </div>
-      <article class="price-card"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2"
-          stroke-linejoin="round" aria-hidden="true">
-          <rect x="3" y="3" width="26" height="26" rx="2" />
-          <circle cx="11" cy="11" r="2" />
-          <path d="m3 24 8-8 6 6 5-5 7 7" />
-        </svg>
-        <h3>Image</h3><strong class="price">$20</strong>
-        <ul>
-          <li>Single render</li>
-          <li>Full character or bust</li>
-          <li>Simple background</li>
-        </ul><a class="outline-button" href="commissions.html">Order <span>→</span></a>
-      </article>
-      <article class="price-card"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2"
-          stroke-linejoin="round" aria-hidden="true">
-          <circle cx="16" cy="16" r="13" />
-          <path d="m13 10 9 6-9 6z" />
-        </svg>
-        <h3>Emote animation</h3><strong class="price">$35</strong>
-        <ul>
-          <li>Looping animation</li>
-          <li>Delivered as MP4</li>
-          <li>Fortnite emotes</li>
-        </ul><a class="outline-button" href="commissions.html">Order <span>→</span></a>
-      </article>
-      <article class="price-card"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2"
-          stroke-linejoin="round" aria-hidden="true">
-          <path d="m16 2 13 7v15l-13 7L3 24V9z M3 9l13 8 13-8 M16 17v14" />
-        </svg>
-        <h3>Custom animation</h3><strong class="price">$50+</strong>
-        <ul>
-          <li>Full character animation</li>
-          <li>Background included</li>
-          <li>Quote provided upfront</li>
-        </ul><a class="outline-button" href="commissions.html">Order <span>→</span></a>
-      </article>
+      <div class="work-grid">
+      <figure class="work-item"><button type="button" data-full="images/web/KpopDemon.jpg" aria-label="View Zoey Demon Hunter full size"><img src="images/web/KpopDemon.jpg" alt="Zoey Demon Hunter, 3D render" width="1390" height="782" loading="lazy"></button><figcaption><strong>Zoey Demon Hunter</strong><span>2025</span></figcaption></figure>
+      <figure class="work-item"><button type="button" data-full="images/web/BeachHelsie.jpg" aria-label="View Helsie full size"><img src="images/web/BeachHelsie.jpg" alt="Helsie at the beach, 3D render" width="604" height="768" loading="lazy"></button><figcaption><strong>Helsie</strong><span>2026</span></figcaption></figure>
+      <figure class="work-item"><button type="button" data-full="images/web/Joni.jpg" aria-label="View Joni full size"><img src="images/web/Joni.jpg" alt="Joni, 3D render" width="575" height="768" loading="lazy"></button><figcaption><strong>Joni</strong><span>2026</span></figcaption></figure>
+      <figure class="work-item"><button type="button" data-full="images/web/Catwoman.jpg" aria-label="View Coastal Catwoman full size"><img src="images/web/Catwoman.jpg" alt="Coastal Catwoman, 3D render" width="694" height="768" loading="lazy"></button><figcaption><strong>Coastal Catwoman</strong><span>2026</span></figcaption></figure>
+      <figure class="work-item"><button type="button" data-full="images/web/Juno.jpg" aria-label="View Juno full size"><img src="images/web/Juno.jpg" alt="Juno, 3D render" width="1390" height="782" loading="lazy"></button><figcaption><strong>Juno</strong><span>2025</span></figcaption></figure>
+      <figure class="work-item"><button type="button" data-full="images/web/HelsieWitch.jpg" aria-label="View Helsie full size"><img src="images/web/HelsieWitch.jpg" alt="Helsie as a witch, 3D render" width="704" height="886" loading="lazy"></button><figcaption><strong>Helsie</strong><span>2025</span></figcaption></figure>
+      </div>
     </section>
-    <section class="explore-section">
-      <div class="section-heading">
-        <h2><span>✦</span> Explore</h2>
-        <div></div><span class="section-kicker">Find what you like →</span>
+
+    <section class="wrap section commission-teaser" aria-labelledby="commissions-title">
+      <div>
+        <h2 id="commissions-title">Commissions are open</h2>
+        <p class="muted">DM me on X with your idea and a few references. I'll confirm the price before I start.</p>
+        <div class="intro-actions"><a class="button" href="https://x.com/Swan_Nsfw" target="_blank"
+            rel="noopener noreferrer">DM me on X</a><a class="link arrow" href="commissions.html">How it works</a></div>
       </div>
-      <div class="explore-grid"><a class="explore-card" href="home.html"
-          style="--card-art:url('images/HelsieWitch.png')"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor"
-            stroke-width="2" stroke-linejoin="round" aria-hidden="true">
-            <circle cx="16" cy="10" r="7" />
-            <path d="M3 30v-3c0-12 26-12 26 0v3z" />
-          </svg>
-          <h3>Characters</h3>
-          <p>Original characters<br>and designs</p><span>→</span>
-        </a><a class="explore-card" href="gallery.html#gallery" style="--card-art:url('images/Juno.png')"><svg
-            viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"
-            aria-hidden="true">
-            <rect x="3" y="3" width="26" height="26" rx="2" />
-            <circle cx="11" cy="11" r="2" />
-            <path d="m3 24 8-8 6 6 5-5 7 7" />
-          </svg>
-          <h3>Poses</h3>
-          <p>Pose variety<br>and references</p><span>→</span>
-        </a><a class="explore-card" href="gallery.html#gallery" style="--card-art:url('images/Beach.png')"><svg
-            viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"
-            aria-hidden="true">
-            <path d="M3 9V5h10l4 4h12v20H3z M3 14h26" />
-          </svg>
-          <h3>Scenes</h3>
-          <p>Renders and<br>compositions</p><span>→</span>
-        </a><a class="explore-card" href="about.html" style="--card-art:url('images/Mali.png')"><svg viewBox="0 0 32 32"
-            fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true">
-            <path d="m16 2 4 9 10 1-8 7 3 11-9-6-9 6 3-11-8-7 10-1z" />
-          </svg>
-          <h3>About Swan</h3>
-          <p>Meet the artist<br>behind the renders</p><span>→</span>
-        </a></div>
+      <div class="prices">
+          <div class="price-row"><h3>Image</h3><span class="price">from $20</span><p>A character in the pose you want, with 3 clothing variants. Full character or bust, simple or no background, 1 round of revisions.</p></div>
+          <div class="price-row"><h3>Emote animation</h3><span class="price">$35</span><p>Any Fortnite emote you want, clothed or not. Looping, delivered as MP4.</p></div>
+          <div class="price-row"><h3>Custom animation</h3><span class="price">$50+</span><p>Full character animation with a background. Price depends on complexity, and you get a quote upfront.</p></div>
+      </div>
     </section>
   </main>
-  <footer class="site-footer"><a class="brand" href="index.html" aria-label="Swan NSFW home"><span>SWAN
-        <b>NSFW</b></span><small>3D ART</small></a>
-    <div class="footer-motto">hiiiiii<span>♧</span><small>© 2026 SwanNsfw</small></div>
-    <div class="socials"><a href="https://x.com/Swan_Nsfw" target="_blank" rel="noopener noreferrer"
-        aria-label="Swan on X">𝕏</a><a href="gallery.html#contact" aria-label="Contact Swan">✉</a></div>
+  <footer class="site-footer">
+    <div class="wrap"><a class="wordmark" href="index.html">Swan<span>3D art</span></a>
+      <nav aria-label="Elsewhere"><a href="https://x.com/Swan_Nsfw" target="_blank" rel="noopener noreferrer">X</a><a
+          href="https://discord.gg/askz9kZTuz" target="_blank" rel="noopener noreferrer">Discord</a><a
+          href="about.html#contact">Contact</a></nav>
+      <small>© 2026 SwanNsfw</small>
+    </div>
   </footer>
 </body>
 

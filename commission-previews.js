@@ -2,7 +2,7 @@
   // Set video to a local MP4/WebM path for reliable playback inside the popup.
   // These X previews have failed to embed; retain their links as a fallback.
   const previews = {
-    image: { title: 'Image · MALI', image: 'images/Mali.png', alt: 'MALI — image commission example by Swan' },
+    image: { title: 'Image: Mali', image: 'images/web/Mali.jpg', alt: 'Mali, image commission example by Swan' },
     emote: { title: 'Emote Animation', video: '', embedEnabled: false, postUrl: 'https://x.com/Swan_Nsfw/status/2087918746241208388' },
     animation: { title: 'Full Animation', video: '', embedEnabled: false, postUrl: 'https://x.com/Swan_Nsfw/status/1970760902967234670' },
   };

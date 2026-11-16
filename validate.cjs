@@ -2,7 +2,7 @@ const fs = require('fs');
 const vm = require('vm');
 const path = require('path');
 let errors = [];
-for (const file of ['index.html', 'gallery.html', 'home.html', 'commissions.html', 'about.html']) {
+for (const file of ['index.html', 'gallery.html', 'characters.html', 'commissions.html', 'about.html']) {
  const html = fs.readFileSync(file,'utf8');
  for (const [,src] of html.matchAll(/(?:src|href)="([^"]+)"/g)) {
   if (/^(?:https?:|#|data:|mailto:)/.test(src) || src.includes('${') || !src) continue;
@@ -14,7 +14,7 @@ for (const file of ['index.html', 'gallery.html', 'home.html', 'commissions.html
  for(const [,script] of html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/g)) {
   try { new vm.Script(script); } catch(e) {errors.push(`${file}: ${e.message}`);}
  }
- if (!html.includes('theme.css')) errors.push(`${file}: missing shared theme`);
+ if (!html.includes('site.css')) errors.push(`${file}: missing shared stylesheet`);
  console.log(`Checked ${file}: assets, destinations, inline JavaScript, theme`);
 }
 new vm.Script(fs.readFileSync('site.js','utf8'));

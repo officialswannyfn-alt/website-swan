@@ -4,72 +4,55 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>About Me — Swan</title>
-  <meta name="description" content="Meet Swan, the digital artist behind the  3D characters, renders and commissions.">
-  <link rel="stylesheet" href="style.css">
-  <link rel="stylesheet" href="theme.css">
+  <title>About, Swan</title>
+  <meta name="description" content="Meet Swan, the 3D artist behind the renders.">
+  <meta name="theme-color" content="#0c0a0c">
+  <link rel="icon" href="images/SWAN.png">
+  <link rel="stylesheet" href="site.css">
   <script src="site.js" defer></script>
 </head>
 
-<body class="about-page">
-  <nav id="nav" class="site-nav"><a class="brand" href="index.html" aria-label="Swan NSFW home"><span>SWAN
-        <b>NSFW</b></span><small>3D ART</small></a><button class="menu-toggle" aria-label="Toggle navigation"
-      aria-expanded="false">☰</button>
-    <ul class="nav-links">
-      <li><a href="index.html">Home</a></li>
-      <li><a href="gallery.html">Gallery</a></li>
-      <li><a href="home.html">Characters</a></li>
-      <li><a href="commissions.html">Commissions</a></li>
-      <li><a href="about.html" class="active" aria-current="page">About Me</a></li>
-      <li><a href="gallery.html#contact">Contact</a></li>
-    </ul><a class="open-badge" href="commissions.html"><i></i> Commissions open</a>
-  </nav>
+<body>
+  <header class="site-header">
+    <div class="wrap"><a class="wordmark" href="index.html">Swan<span>3D art</span></a>
+      <nav class="site-nav" aria-label="Main"><a href="gallery.html">Work</a><a href="characters.html">Characters</a><a href="commissions.html">Commissions</a><a href="about.html" aria-current="page">About</a></nav>
+      <a class="status" href="commissions.html">Commissions open</a>
+    </div>
+  </header>
   <main>
-    <header class="page-heading">
-      <p class="eyebrow">BEHIND THE RENDERS</p>
-      <h1>ABOUT <em>ME.</em></h1>
-    </header>
-    <!-- ABOUT -->
-    <section id="about">
-      <div class="ab-in">
-        <div class="ab-art">
-          <img src="images/NAGAPFP1.png" alt="About the artist" />
-        </div>
-        <div class="ab-c">
-          <div class="sh">
-            <span class="sl">✦ The Artist</span>
-            <h2 class="st">Swan</h2>
-            <div class="sline"></div>
-          </div>
-          <p class="ab-txt">
-            Hey! I'm a 19-year-old artist, and I'm thrilled to welcome you to The Lewd Palace.
-            Mostly Fortnite Art (Nsfw and Sfw) i do other stuff too! like overwatch, Genshin, among other stuff
-          </p>
-          <div class="ab-stats">
-            <div class="ab-s">
-              <div class="ab-sn">5+</div>
-              <div class="ab-sl">Years Experience</div>
-            </div>
-            <div class="ab-s">
-              <div class="ab-sn">100+</div>
-              <div class="ab-sl">Artworks Created</div>
-            </div>
-            <div class="ab-s">
-              <div class="ab-sn">42+</div>
-              <div class="ab-sl">Happy Clients</div>
-            </div>
-          </div>
-        </div>
+    <div class="wrap page-head">
+      <h1>About</h1>
+    </div>
+    <section class="wrap about">
+      <img src="images/web/NAGAPFP.jpg" alt="Swan's profile picture" width="381" height="452">
+      <div class="about-copy">
+        <p class="lede">Hey! I'm Swan, a 19-year-old 3D artist. Welcome to The Lewd Palace.</p>
+        <p class="lede">Mostly Fortnite art, NSFW and SFW, but I do other stuff too, like Overwatch and Genshin.</p>
+        <dl class="facts">
+          <div><dt>Years making art</dt><dd>5+</dd></div>
+          <div><dt>Pieces made</dt><dd>100+</dd></div>
+          <div><dt>Happy clients</dt><dd>42+</dd></div>
+        </dl>
       </div>
     </section>
-    <div class="about-actions"><a class="pink-button" href="gallery.html">Explore my work <span>→</span></a><a
-        class="outline-button" href="gallery.html#contact">Get in touch <span>→</span></a></div>
+    <section class="wrap section" id="contact" aria-labelledby="contact-title">
+      <div class="section-head">
+        <h2 id="contact-title">Contact</h2>
+      </div>
+      <div class="contact-list">
+        <a href="https://x.com/Swan_Nsfw" target="_blank" rel="noopener noreferrer">X<span>@Swan_Nsfw ↗</span></a>
+        <a href="https://discord.gg/askz9kZTuz" target="_blank" rel="noopener noreferrer">Discord<span>LewdCastle ↗</span></a>
+      </div>
+      <p class="muted" style="margin-top:20px">I'm most active on X. Questions, commission requests or just saying hi are all welcome.</p>
+    </section>
   </main>
-  <footer class="site-footer"><a class="brand" href="index.html" aria-label="Swan NSFW home"><span>SWAN
-        <b>NSFW</b></span><small>3D ART</small></a>
-    <div class="footer-motto">Hiiiiiiiii.<span>♧</span><small>© 2026 SwanNsfw</small></div>
-    <div class="socials"><a href="https://x.com/Swan_Nsfw" target="_blank" rel="noopener noreferrer"
-        aria-label="Swan on X">𝕏</a><a href="gallery.html#contact" aria-label="Contact Swan">✉</a></div>
+  <footer class="site-footer">
+    <div class="wrap"><a class="wordmark" href="index.html">Swan<span>3D art</span></a>
+      <nav aria-label="Elsewhere"><a href="https://x.com/Swan_Nsfw" target="_blank" rel="noopener noreferrer">X</a><a
+          href="https://discord.gg/askz9kZTuz" target="_blank" rel="noopener noreferrer">Discord</a><a
+          href="about.html#contact">Contact</a></nav>
+      <small>© 2026 SwanNsfw</small>
+    </div>
   </footer>
 </body>
 

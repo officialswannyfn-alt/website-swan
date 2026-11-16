@@ -1,18 +1,100 @@
 (() => {
-  const nav = document.querySelector('.site-nav');
-  const menu = document.querySelector('.menu-toggle');
-  menu?.addEventListener('click', () => {
-    const open = nav.classList.toggle('menu-open');
-    menu.setAttribute('aria-expanded', String(open));
-  });
+  // ---------- Age gate (shared by every page) ----------
+  let verified = false;
+  try { verified = localStorage.getItem('ageVerified') === 'true'; } catch {}
+  if (!verified) {
+    const gate = document.createElement('div');
+    gate.className = 'age-gate';
+    gate.setAttribute('role', 'dialog');
+    gate.setAttribute('aria-modal', 'true');
+    gate.setAttribute('aria-labelledby', 'age-title');
+    gate.innerHTML = '<div class="age-gate-box"><span class="wordmark">Swan<span>3D art</span></span>'
+      + '<h2 id="age-title">This site is 18+</h2>'
+      + '<p>It contains adult artwork. By entering, you confirm you are at least 18 years old.</p>'
+      + '<div class="intro-actions"><button type="button" class="button" id="btn-yes">I\'m 18 or older</button>'
+      + '<button type="button" class="button quiet" id="btn-no">Leave</button></div></div>';
+    const pageContent = [...document.body.children].filter(el => el.tagName !== 'SCRIPT');
+    document.body.append(gate);
+    pageContent.forEach(el => el.inert = true);
+    document.documentElement.style.overflow = 'hidden';
+    const yes = gate.querySelector('#btn-yes');
+    const no = gate.querySelector('#btn-no');
+    yes.focus();
+    gate.addEventListener('keydown', event => {
+      if (event.key !== 'Tab') return;
+      event.preventDefault();
+      (document.activeElement === yes ? no : yes).focus();
+    });
+    yes.addEventListener('click', () => {
+      try { localStorage.setItem('ageVerified', 'true'); } catch {}
+      gate.remove();
+      document.documentElement.style.overflow = '';
+      pageContent.forEach(el => el.inert = false);
+    });
+    no.addEventListener('click', () => location.replace('https://www.google.com'));
+  }
+
   document.querySelectorAll('a[target="_blank"]').forEach(link => link.rel = 'noopener noreferrer');
+
+  // ---------- On the desk: data-stage fills the progress text and bar ----------
+  document.querySelectorAll('.desk[data-stage]').forEach(desk => {
+    const steps = (desk.dataset.steps || '').split(',').map(s => s.trim()).filter(Boolean);
+    if (!steps.length) return;
+    const stage = Math.min(Math.max(Number(desk.dataset.stage) || 1, 1), steps.length);
+    const text = desk.querySelector('.desk-text');
+    if (text) {
+      const strong = document.createElement('strong');
+      strong.textContent = steps[stage - 1];
+      text.replaceChildren(`Step ${stage} of ${steps.length}: `, strong);
+    }
+    desk.querySelector('.desk-bar')?.style.setProperty('--progress', (stage / steps.length * 100) + '%');
+  });
+
+  // ---------- Lightbox for any .work-grid ----------
+  const items = [...document.querySelectorAll('.work-grid [data-full]')];
+  if (items.length) {
+    const box = document.createElement('dialog');
+    box.className = 'lightbox';
+    box.setAttribute('aria-label', 'Artwork viewer');
+    box.innerHTML = '<button type="button" class="lightbox-close">Close</button><figure><img alt=""></figure>'
+      + '<div class="lightbox-bar"><span class="count"></span><button type="button" data-step="-1">← Prev</button>'
+      + '<button type="button" data-step="1">Next →</button></div>';
+    document.body.append(box);
+    const img = box.querySelector('img');
+    const count = box.querySelector('.count');
+    const [prev, next] = box.querySelectorAll('[data-step]');
+    let index = 0, trigger;
+    const show = i => {
+      index = i;
+      const thumb = items[i].querySelector('img');
+      img.src = items[i].dataset.full;
+      img.alt = thumb?.alt || '';
+      const title = items[i].closest('figure')?.querySelector('figcaption strong')?.textContent;
+      count.textContent = `${title ? title + '  ·  ' : ''}${i + 1} / ${items.length}`;
+      prev.disabled = i === 0;
+      next.disabled = i === items.length - 1;
+    };
+    items.forEach((item, i) => item.addEventListener('click', () => {
+      trigger = item; show(i); box.showModal();
+      document.documentElement.style.overflow = 'hidden';
+    }));
+    box.querySelectorAll('[data-step]').forEach(b => b.addEventListener('click', () => show(index + Number(b.dataset.step))));
+    box.querySelector('.lightbox-close').addEventListener('click', () => box.close());
+    box.addEventListener('click', e => { if (e.target === box || e.target.tagName === 'FIGURE') box.close(); });
+    box.addEventListener('keydown', e => {
+      if (e.key === 'ArrowLeft' && index > 0) show(index - 1);
+      if (e.key === 'ArrowRight' && index < items.length - 1) show(index + 1);
+    });
+    box.addEventListener('close', () => { document.documentElement.style.overflow = ''; img.removeAttribute('src'); trigger?.focus(); });
+  }
+
   // Five footer-logo presses reveal KITTY. Keep the header logo as the home link.
-  const footerLogo = document.querySelector('.site-footer .brand');
+  const footerLogo = document.querySelector('.site-footer .wordmark');
   if (footerLogo) {
     const secretButton = document.createElement('button');
     secretButton.type = 'button';
-    secretButton.className = 'brand kitty-trigger';
-    secretButton.setAttribute('aria-label', 'SWAN NSFW');
+    secretButton.className = 'wordmark kitty-trigger';
+    secretButton.setAttribute('aria-label', 'Swan');
     secretButton.append(...footerLogo.childNodes);
     footerLogo.replaceWith(secretButton);
     let presses = 0;
@@ -69,49 +151,4 @@
       video.addEventListener('playing', () => { message.textContent = ''; });
     });
   }
-  // The original gallery owns its existing age prompt; other routes share this one.
-  if (!document.body.classList.contains('gallery-page')) {
-    let verified = false;
-    try { verified = localStorage.getItem('ageVerified') === 'true'; } catch {}
-    let modal = document.getElementById('age-warning');
-    if (!modal && !verified) {
-      modal = document.createElement('div');
-      modal.id = 'age-warning'; modal.className = 'age-modal';
-      modal.innerHTML = '<div class="age-modal-content"><div class="sh"><span class="sl">Before you enter</span><h2 class="st">18+ Content</h2></div><p style="color:var(--muted);line-height:1.6;margin:20px 0">This website contains adult content. By entering, you confirm that you are at least 18 years of age.</p><div style="display:flex;gap:14px;flex-wrap:wrap"><button id="btn-yes" class="btn-p">Yes, I am 18+</button><button id="btn-no" class="btn-g">No, exit</button></div></div>';
-      document.body.append(modal);
-    }
-    if (modal) {
-      modal.classList.toggle('hidden', verified);
-      if (!verified) {
-        modal.setAttribute('role', 'dialog'); modal.setAttribute('aria-modal', 'true'); modal.setAttribute('aria-label', 'Age confirmation');
-        const pageContent = [...document.body.children].filter(el => el !== modal && el.tagName !== 'SCRIPT');
-        pageContent.forEach(el => el.inert = true);
-        document.body.style.overflow = 'hidden';
-        const yes = document.getElementById('btn-yes');
-        const no = document.getElementById('btn-no');
-        yes.focus();
-        modal.addEventListener('keydown', event => {
-          if (event.key !== 'Tab') return;
-          event.preventDefault();
-          (document.activeElement === yes ? no : yes).focus();
-        });
-        yes.addEventListener('click', () => {
-          try { localStorage.setItem('ageVerified', 'true'); } catch {}
-          modal.classList.add('hidden'); document.body.style.overflow = '';
-          pageContent.forEach(el => el.inert = false);
-          document.querySelector('.brand')?.focus();
-        });
-        no.addEventListener('click', () => location.replace('https://www.google.com'));
-      }
-    }
-  }
 })();
-
-// "On the desk" progress: data-stage on .wip-section marks steps done/current.
-document.querySelectorAll('.wip-section').forEach(section => {
-  const stage = Number(section.dataset.stage) || 1;
-  section.querySelectorAll('.wip-steps li').forEach((step, i) => {
-    if (i + 1 < stage) step.classList.add('done');
-    else if (i + 1 === stage) { step.classList.add('current'); step.setAttribute('aria-current', 'step'); }
-  });
-});
