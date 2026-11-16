@@ -106,3 +106,12 @@
     }
   }
 })();
+
+// "On the desk" progress: data-stage on .wip-section marks steps done/current.
+document.querySelectorAll('.wip-section').forEach(section => {
+  const stage = Number(section.dataset.stage) || 1;
+  section.querySelectorAll('.wip-steps li').forEach((step, i) => {
+    if (i + 1 < stage) step.classList.add('done');
+    else if (i + 1 === stage) { step.classList.add('current'); step.setAttribute('aria-current', 'step'); }
+  });
+});
