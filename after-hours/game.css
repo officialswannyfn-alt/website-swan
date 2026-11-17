@@ -1,0 +1,62 @@
+/* After Hours: loaded only when the game opens. Uses the tokens from site.css. */
+.ah { position: fixed; inset: 0; width: 100%; height: 100%; max-width: none; max-height: none; margin: 0; padding: 0; border: 0; background: var(--bg); color: var(--text); overflow: hidden; }
+.ah::backdrop { background: var(--bg); }
+.ah[open] { display: block; }
+.ah-frame { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); gap: clamp(24px, 4vw, 56px); width: 100%; max-width: 1180px; height: 100%; margin: 0 auto; padding: clamp(16px, 3vw, 40px) var(--pad); }
+
+.ah-art { position: relative; min-height: 0; border-radius: 4px; overflow: hidden; background: var(--surface); }
+.ah-portrait { width: 100%; height: 100%; object-fit: cover; object-position: center 20%; transition: opacity .2s; }
+.ah-portrait.ah-swap { opacity: 0; }
+.ah-portrait[hidden], .ah-both[hidden] { display: none; }
+.ah-both { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; height: 100%; }
+.ah-both img { width: 100%; height: 100%; object-fit: cover; object-position: center 20%; filter: brightness(.55) saturate(.8); }
+
+.ah-side { display: flex; flex-direction: column; min-height: 0; }
+.ah-top { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding-bottom: 16px; border-bottom: 1px solid var(--line); }
+.ah-title { font-weight: 800; font-stretch: 112%; font-size: 18px; letter-spacing: -.01em; }
+.ah-close { border: 0; background: none; color: var(--muted); padding: 6px 2px; font-size: 15px; }
+.ah-close:hover { color: var(--text); }
+.ah-stage { flex: 1; display: flex; flex-direction: column; justify-content: flex-end; min-height: 0; overflow-y: auto; padding: 24px 0 8px; }
+
+/* Title / ending cards */
+.ah-card h2 { font-size: clamp(36px, 5vw, 56px); margin: 6px 0 14px; }
+.ah-kicker { color: var(--pink); font-size: 14px; font-weight: 600; }
+.ah-muted { color: var(--muted); max-width: 32em; }
+.ah-muted + .ah-muted, .ah-prize { margin-top: 12px; }
+.ah-prize { color: var(--text); max-width: 32em; padding-left: 14px; border-left: 2px solid var(--pink); }
+.ah-form { display: grid; gap: 8px; margin-top: 28px; max-width: 360px; }
+.ah-form label { font-size: 14px; color: var(--muted); }
+.ah-form input { padding: 13px 14px; border: 1px solid var(--line-strong); border-radius: 6px; background: var(--surface); color: var(--text); font: inherit; }
+.ah-form input:focus { outline: 2px solid var(--pink); outline-offset: 1px; border-color: transparent; }
+.ah-form .button { justify-self: start; margin-top: 8px; }
+.ah-error { color: #ff8fc3; font-size: 14px; min-height: 1em; }
+.ah-error:empty { display: none; }
+.ah-card .intro-actions { margin-top: 28px; }
+.ah-code { display: grid; gap: 4px; margin: 8px 0 18px; padding: 18px 20px; border: 1px dashed var(--pink); border-radius: 6px; max-width: 360px; }
+.ah-code span { font-size: 13px; color: var(--muted); }
+.ah-code strong { font-size: 28px; font-weight: 750; font-stretch: 108%; letter-spacing: .02em; font-variant-numeric: tabular-nums; user-select: all; }
+.ah-code small { font-size: 13px; color: var(--faint); }
+
+/* Dialogue */
+.ah-box { cursor: pointer; }
+.ah-speaker { font-weight: 750; font-stretch: 108%; font-size: 20px; color: var(--pink); margin-bottom: 8px; }
+.ah-text { font-size: clamp(19px, 2vw, 23px); line-height: 1.45; min-height: 3.2em; }
+.ah-text.ah-narration { color: var(--muted); font-style: italic; }
+.ah-next { margin-top: 20px; padding: 10px 0; border: 0; background: none; color: var(--muted); font-size: 15px; }
+.ah-next::after { content: ' →'; }
+.ah-next:hover { color: var(--text); }
+.ah-choices { display: grid; gap: 8px; margin-top: 18px; cursor: default; }
+.ah-choices:empty { display: none; }
+.ah-choice { text-align: left; padding: 15px 18px; border: 1px solid var(--line-strong); border-radius: 6px; background: none; font-size: 16px; line-height: 1.4; transition: border-color .15s, background .15s; }
+.ah-choice:hover, .ah-choice:focus-visible { border-color: var(--pink); background: var(--surface); }
+
+@media (max-width: 760px) {
+  .ah-frame { grid-template-columns: 1fr; grid-template-rows: minmax(0, 42dvh) minmax(0, 1fr); gap: 16px; padding-top: 12px; padding-bottom: 16px; }
+  .ah-art { grid-row: 1; }
+  .ah-side { grid-row: 2; }
+  .ah-top { position: absolute; top: 20px; left: calc(var(--pad) + 8px); right: calc(var(--pad) + 8px); border: 0; padding: 0; z-index: 1; text-shadow: 0 1px 8px #000; }
+  .ah-close { color: var(--text); }
+  .ah-stage { padding-top: 0; justify-content: flex-start; }
+  .ah-card h2 { margin-top: 2px; }
+  .ah-form { margin-top: 18px; }
+}

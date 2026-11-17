@@ -139,7 +139,22 @@
         if (event.key === 'Escape' && !document.querySelector('dialog[open]')) dismiss();
       }
       close.addEventListener('click', dismiss);
-      video.addEventListener('ended', dismiss);
+      // Watching KITTY to the very end unlocks the After Hours dating sim.
+      video.addEventListener('ended', () => {
+        if (kittyPopup !== popup) return;
+        const invite = document.createElement('button');
+        invite.type = 'button';
+        invite.className = 'kitty-invite';
+        invite.textContent = 'KITTY wants to hang out after hours ♡';
+        invite.addEventListener('click', () => {
+          dismiss();
+          loadAfterHours().then(() => window.openAfterHours(secretButton)).catch(() => {
+            alert('After Hours could not load. Check your connection and try again.');
+          });
+        });
+        message.replaceChildren(invite);
+        invite.focus();
+      });
       video.addEventListener('error', () => {
         if (kittyPopup === popup) message.textContent = 'KITTY could not load. Close and try again.';
       });
@@ -150,5 +165,23 @@
       });
       video.addEventListener('playing', () => { message.textContent = ''; });
     });
+  }
+
+  // Loads the After Hours game files only when someone unlocks it.
+  let afterHoursLoading;
+  function loadAfterHours() {
+    if (window.openAfterHours) return Promise.resolve();
+    if (afterHoursLoading) return afterHoursLoading;
+    const load = (tag, attrs) => new Promise((resolve, reject) => {
+      const node = Object.assign(document.createElement(tag), attrs);
+      node.onload = resolve;
+      node.onerror = reject;
+      document.head.append(node);
+    });
+    afterHoursLoading = load('link', { rel: 'stylesheet', href: 'after-hours/game.css' })
+      .then(() => load('script', { src: 'after-hours/story.js' }))
+      .then(() => load('script', { src: 'after-hours/game.js' }))
+      .catch(error => { afterHoursLoading = undefined; throw error; });
+    return afterHoursLoading;
   }
 })();

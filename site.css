@@ -270,3 +270,5 @@ h3 { font-size: 19px; line-height: 1.25; font-weight: 650; }
 .kitty-close { position: absolute; top: 12px; right: 12px; width: 32px; height: 32px; padding: 0; border: 0; border-radius: 50%; background: #000c; color: #fff; font-size: 20px; line-height: 1; }
 .kitty-message { font-size: 13px; color: var(--muted); padding: 8px 4px 2px; }
 .kitty-message:empty { display: none; }
+.kitty-invite { width: 100%; margin-top: 2px; padding: 11px 12px; border: 0; border-radius: 6px; background: var(--pink); color: var(--pink-ink); font-weight: 650; font-size: 14px; }
+.kitty-invite:hover { background: #ff73b6; }
